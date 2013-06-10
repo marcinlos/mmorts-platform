@@ -1,5 +1,8 @@
 package com.app.ioapp;
 
+import java.io.File;
+
+import com.app.ioapp.init.Initializer;
 import com.app.ioapp.interfaces.UIListener;
 
 import android.app.Activity;
@@ -12,7 +15,12 @@ public class MainActivity extends Activity implements UIListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//new initialiser();
+		
+		File configurationFile = null;         // trzeba go skads wziac
+		
+		Initializer initializer = new Initializer(configurationFile);
+		initializer.initialize();
+		
 		//activity który bêdzie tym listenerem dodatkowo odpali
 		// mainView.setListener(this)
 	}
