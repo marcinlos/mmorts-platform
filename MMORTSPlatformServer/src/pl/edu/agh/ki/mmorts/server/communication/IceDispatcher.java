@@ -2,16 +2,16 @@ package pl.edu.agh.ki.mmorts.server.communication;
 
 import org.apache.log4j.Logger;
 
-import pl.edu.agh.ki.mmorts.server.core.ModuleContainer;
+import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
- * Concrete {@linkplain Dispatcher} and {@linkplain ModuleContainer} implementation, using
+ * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation, using
  * Ice.
  * 
  * @author los
  */
-public class IceDispatcher implements Dispatcher, ModuleContainer {
+public class IceDispatcher extends AbstractDispatcher {
     
     private static final Logger logger = Logger.getLogger(IceDispatcher.class);
 

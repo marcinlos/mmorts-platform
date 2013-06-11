@@ -2,7 +2,7 @@ package pl.edu.agh.ki.mmorts.server.data;
 
 import org.apache.log4j.Logger;
 
-import pl.edu.agh.ki.mmorts.server.core.ModuleContainer;
+import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 
 /**
  * Implementation of {@linkplain PlayersManager}, providing CRUD operations

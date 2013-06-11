@@ -1,12 +1,13 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
  * Interface of the dispatcher used by the {@linkplain Init} to initialize
  * modules.
  */
-public interface ModuleContainer {
+public interface Dispatcher extends Gateway {
 
     /**
      * Register all the modules, i.e. iterate through all of them twice, calling
@@ -25,6 +26,13 @@ public interface ModuleContainer {
      * @param modules Modules to initialize
      */
     void registerModules(Iterable<? extends Module> modules);
+    
+    /**
+     * Registers a moduleClass with its own unique unicast address. Other modules
+     * @param moduleClass
+     * @param category
+     */
+    void registerUnicastReceiver(Module module, String category);
     
     /**
      * Releases resources (such as connections etc) held by this object.
