@@ -6,19 +6,19 @@ import org.apache.log4j.Logger;
 
 /**
  * Implementation of {@linkplain PlayersManager}, providing CRUD operations
- * for players and playesr data caching.
+ * for database and playesr data caching.
  */
 public class PlayersPersistence implements PlayersManager {
 
     private static final Logger logger = Logger.getLogger(PlayersPersistence.class); 
     
-    /** Players database access */
-    private PlayersDAO players;
+    /** Database access */
+    private Database database;
     
     @Inject
-    public PlayersPersistence(PlayersDAO players) {
+    public PlayersPersistence(Database database) {
         logger.debug("Begin initialization...");
-        this.players = players;
+        this.database = database;
         
         logger.debug("Succesfully initialized");
     }

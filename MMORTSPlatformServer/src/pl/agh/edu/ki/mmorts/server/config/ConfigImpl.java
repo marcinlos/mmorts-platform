@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import pl.agh.edu.ki.mmorts.server.util.PropertiesAdapter;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
-import pl.edu.agh.ki.mmorts.server.data.PlayersDAO;
+import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 
 /**
@@ -36,8 +36,8 @@ class ConfigImpl implements Config {
     /** Used custom persistor class */
     private Class<? extends CustomPersistor> customPersistorClass;
 
-    /** Used players data access object class */
-    private Class<? extends PlayersDAO> playersDaoClass;
+    /** Used database class */
+    private Class<? extends Database> databaseClass;
 
     /** Used players manager class */
     private Class<? extends PlayersManager> playersManagerClass;
@@ -72,7 +72,7 @@ class ConfigImpl implements Config {
     private void process() {
         logger.debug("Processing read configuration properties");
 
-        loadPlayersDaoClass();
+        loadDatabaseClass();
         loadPlayersManagerClass();
         loadCustomPersistorClass();
         loadDispatcherClass();
@@ -118,18 +118,18 @@ class ConfigImpl implements Config {
     }
 
     /*
-     * Retrieves a {@code Class} object for the specified players DAO class
+     * Retrieves a {@code Class} object for the specified database class
      */
-    private void loadPlayersDaoClass() {
-        logger.debug("Loading players DAO class");
+    private void loadDatabaseClass() {
+        logger.debug("Loading database class");
         try {
-            playersDaoClass = loadClass(PLAYERS_DAO_CLASS, PlayersDAO.class);
-            if (playersDaoClass == null) {
-                addMissing(PLAYERS_DAO_CLASS);
-                logger.fatal("Failed to load players DAO class (missing)");
+            databaseClass = loadClass(DATABASE_CLASS, Database.class);
+            if (databaseClass == null) {
+                addMissing(DATABASE_CLASS);
+                logger.fatal("Failed to load database class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load players DAO class", e);
+            logger.fatal("Failed to load database class", e);
         }
     }
 
@@ -220,8 +220,8 @@ class ConfigImpl implements Config {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends PlayersDAO> getPlayersDaoClass() {
-        return playersDaoClass;
+    public Class<? extends Database> getDatabaseClass() {
+        return databaseClass;
     }
 
     /**

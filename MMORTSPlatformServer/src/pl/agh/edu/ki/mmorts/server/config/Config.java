@@ -4,7 +4,7 @@ import java.util.Map;
 
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
-import pl.edu.agh.ki.mmorts.server.data.PlayersDAO;
+import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 
 /**
@@ -18,8 +18,8 @@ public interface Config {
     /** Implementation of the custom persistor */
     public static final String CUSTOM_PERSISTOR_CLASS = "sv.persistor.class";
 
-    /** Implementation of PlayersDAO */
-    public static final String PLAYERS_DAO_CLASS = "sv.dao.class";
+    /** Implementation of Database */
+    public static final String DATABASE_CLASS = "sv.database.class";
 
     /** Implementation of ordinary persistence */
     public static final String PLAYERS_MANAGER_CLASS = "sv.persistence.class";
@@ -48,7 +48,7 @@ public interface Config {
      * @return Implementation of players database access object specified in the
      *         configuration
      */
-    Class<? extends PlayersDAO> getPlayersDaoClass();
+    Class<? extends Database> getDatabaseClass();
 
     /**
      * @return Implementation of players manager specified in the configuration

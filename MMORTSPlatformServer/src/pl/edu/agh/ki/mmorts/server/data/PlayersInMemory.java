@@ -9,7 +9,7 @@ import pl.agh.edu.ki.mmorts.server.config.Config;
 /**
  * Mock implementation of players database access
  */
-public class PlayersInMemory implements PlayersDAO {
+public class PlayersInMemory implements Database {
     
     private static final Logger logger = Logger.getLogger(PlayersInMemory.class);
 

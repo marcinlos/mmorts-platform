@@ -9,7 +9,7 @@ import pl.agh.edu.ki.mmorts.server.util.DI;
 import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
-import pl.edu.agh.ki.mmorts.server.data.PlayersDAO;
+import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 
 import com.google.inject.Injector;
@@ -47,8 +47,8 @@ public class Init {
 
     private PlayersManager playersManager;
 
-    private PlayersDAO playersDao;
-    private Module daoModule;
+    private Database database;
+    private Module databaseModule;
 
     private Config config;
     private Module configModule;
@@ -102,9 +102,9 @@ public class Init {
 
     private void createDataSource() {
         logger.debug("Creating database connection");
-        Class<? extends PlayersDAO> cl = config.getPlayersDaoClass();
-        playersDao = DI.createWith(cl, configModule);
-        daoModule = DI.objectModule(playersDao, PlayersDAO.class);
+        Class<? extends Database> cl = config.getDatabaseClass();
+        database = DI.createWith(cl, configModule);
+        databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");
     }
 
@@ -118,7 +118,7 @@ public class Init {
     private void createCustomPersistor() {
         logger.debug("Creating custom persistor");
         Class<? extends CustomPersistor> cl = config.getCustomPersistorClass();
-        customPersistor = DI.createWith(cl, configModule, daoModule);
+        customPersistor = DI.createWith(cl, configModule, databaseModule);
         logger.debug("Custom persistor created");
     }
 
