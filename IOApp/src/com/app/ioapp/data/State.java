@@ -1,6 +1,9 @@
 package com.app.ioapp.data;
 
-// pewnie bedzie osobna dla kazdego modulu
+/**
+ * User data that changes frequently and needs synchronization every time slot
+ *
+ */
 public class State {
 
 }
