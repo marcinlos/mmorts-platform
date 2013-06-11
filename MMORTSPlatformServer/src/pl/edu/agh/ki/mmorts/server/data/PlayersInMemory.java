@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
@@ -19,6 +21,11 @@ public class PlayersInMemory implements Database {
     public PlayersInMemory(Config config) {
         logger.debug("Initializing in-memory database");
         this.config = config;
+    }
+
+    @Override
+    public void close() throws IOException {
+        logger.debug("Closing");
     }
 
 }

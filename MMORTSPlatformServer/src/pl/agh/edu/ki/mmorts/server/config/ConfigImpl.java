@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.util.PropertiesAdapter;
+import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.data.Database;
@@ -41,6 +42,9 @@ class ConfigImpl implements Config {
 
     /** Used players manager class */
     private Class<? extends PlayersManager> playersManagerClass;
+
+    /** Used message channel class */
+    private Class<? extends MessageChannel> channelClass;
 
     /**
      * Creates new {@code Config} implementation.
@@ -75,6 +79,7 @@ class ConfigImpl implements Config {
         loadDatabaseClass();
         loadPlayersManagerClass();
         loadCustomPersistorClass();
+        loadChannelClass();
         loadDispatcherClass();
 
         // We have delayed the exception to gather all the missing values
@@ -97,6 +102,22 @@ class ConfigImpl implements Config {
             }
         } catch (Exception e) {
             logger.fatal("Failed to load Dispatcher class", e);
+        }
+    }
+
+    /*
+     * Retrieves a {@code Class} object for the specified message channel class
+     */
+    private void loadChannelClass() {
+        logger.debug("Loading pmessage channel class");
+        try {
+            channelClass = loadClass(CHANNEL_CLASS, MessageChannel.class);
+            if (playersManagerClass == null) {
+                addMissing(CHANNEL_CLASS);
+                logger.fatal("Failed to load message channel class (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load message channel class", e);
         }
     }
 
@@ -230,6 +251,14 @@ class ConfigImpl implements Config {
     @Override
     public Class<? extends PlayersManager> getPlayerManagerClass() {
         return playersManagerClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends MessageChannel> getChannelClass() {
+        return channelClass;
     }
 
 }

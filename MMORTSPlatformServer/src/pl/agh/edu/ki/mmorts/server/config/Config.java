@@ -2,6 +2,7 @@ package pl.agh.edu.ki.mmorts.server.config;
 
 import java.util.Map;
 
+import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.data.Database;
@@ -24,6 +25,9 @@ public interface Config {
     /** Implementation of ordinary persistence */
     public static final String PLAYERS_MANAGER_CLASS = "sv.persistence.class";
 
+    /** Implementation of message delivery mechanism */
+    public static final String CHANNEL_CLASS = "sv.message.channel.class";
+
     /**
      * Retrieves a string value of a property
      * 
@@ -33,6 +37,12 @@ public interface Config {
      *         configuration.
      */
     String getString(String key);
+
+    /**
+     * @return MessageChannel implementation class specified in the
+     *         configuration
+     */
+    Class<? extends MessageChannel> getChannelClass();
 
     /**
      * @return Dispatcher implementation class specified in the configuration

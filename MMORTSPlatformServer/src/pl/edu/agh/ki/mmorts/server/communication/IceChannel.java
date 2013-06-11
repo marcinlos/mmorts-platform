@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.agh.edu.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
-import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
  * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
@@ -15,9 +14,9 @@ import pl.edu.agh.ki.mmorts.server.modules.Module;
  * 
  * @author los
  */
-public class IceDispatcher extends AbstractDispatcher {
+public class IceChannel extends AbstractChannel {
 
-    private static final Logger logger = Logger.getLogger(IceDispatcher.class);
+    private static final Logger logger = Logger.getLogger(IceChannel.class);
 
     /** Name of the config property denoting ice communicator args */
     public static final String ICE_ARGS = "sv.dispatcher.ice.args";
@@ -34,7 +33,7 @@ public class IceDispatcher extends AbstractDispatcher {
      *            Injected configuration
      */
     @Inject
-    public IceDispatcher(Config config) {
+    public IceChannel(Config config) {
         logger.debug("Begin initialization");
         this.config = config;
         initIce(getArgs());
@@ -100,50 +99,10 @@ public class IceDispatcher extends AbstractDispatcher {
      * {@inheritDoc}
      */
     @Override
-    public void registerModules(Module... modules) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerModules(Iterable<? extends Module> modules) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void shutdown() {
         logger.debug("Shutting down");
         shutdownIce();
         logger.debug("Done");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void sendTo(Message message, String address) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void send(Message mesage, String category) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerUnicastReceiver(Module module, String category) {
-        // TODO Auto-generated method stub
     }
 
     /**
@@ -153,7 +112,7 @@ public class IceDispatcher extends AbstractDispatcher {
      * Delegates to {@link Ice.Communicator#waitForShutdown()}.
      */
     @Override
-    public void run() {
+    public void receiveLoop() {
         logger.debug("Entered dispatcher main loop, processing requests");
         try {
             ice.waitForShutdown();
@@ -162,6 +121,17 @@ public class IceDispatcher extends AbstractDispatcher {
             logger.error("Dispatcher loop left abruptly", e);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * TODO: Establish some protocol and actually DO SOMETHING
+     */
+    @Override
+    public void sendMessage(Message message) {
+        logger.debug("Message sent: " + message);
+        // ????
     }
 
 }

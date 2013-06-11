@@ -11,6 +11,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
+
 import com.google.gson.Gson;
 
 /**

@@ -8,6 +8,7 @@ import pl.agh.edu.ki.mmorts.server.config.ConfigReader;
 import pl.agh.edu.ki.mmorts.server.util.DI;
 import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
+import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
@@ -38,6 +39,13 @@ public class Init {
      * Dispatcher object created using the class specified in the configuration
      */
     private Dispatcher dispatcher;
+    private Module dispatcherModule;
+    
+    /**
+     * Message channel created using the class specified in the configuration
+     */
+    private MessageChannel channel;
+    private Module channelModule;
 
     /**
      * Custom persistor object created using the class specified in the
@@ -47,9 +55,15 @@ public class Init {
 
     private PlayersManager playersManager;
 
+    /**
+     * Database interface, implementation as in the configuration file
+     */
     private Database database;
     private Module databaseModule;
 
+    /**
+     * Configuration read from the config file and processed a bit
+     */
     private Config config;
     private Module configModule;
 
@@ -62,13 +76,14 @@ public class Init {
      *             In case of an initialization failure
      */
     public Init(String[] args) {
-        logger.info("Begin server initialization");
         try {
             init();
-            logger.info("Server successfully initialized");
+            // Dispatch incoming messages
+            dispatcher.run();
         } catch (Exception e) {
-            logger.fatal("Server initialization error");
-            throw new InitException(e);
+            logger.fatal("Server error, cannot continue", e);
+        } finally {
+            shutdown();
         }
     }
 
@@ -76,11 +91,29 @@ public class Init {
      * Handles details of initialization
      */
     private void init() {
-        readConfig(CONFIG);
-        createDataSource();
-        createDispatcher();
-        createCustomPersistor();
-        createPersistence();
+        logger.info("Begin server initialization");
+        try {
+            readConfig(CONFIG);
+            createDataSource();
+            createChannel();
+            createDispatcher();
+            createCustomPersistor();
+            createPlayersManager();
+            logger.info("Server successfully initialized");
+        } catch (Exception e) {
+            logger.fatal("Server initialization error");
+            throw new InitException(e);
+        } 
+    }
+    
+    /*
+     * Handles shutdown sequence
+     */
+    private void shutdown() {
+        logger.info("Server shutting down");
+        channel.shutdown();
+        dispatcher.shutdown();
+        logger.info("Shutdown sequence completed");
     }
 
     /*
@@ -107,11 +140,19 @@ public class Init {
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");
     }
+    
+    private void createChannel() {
+        logger.debug("Creating message channel");
+        Class<? extends MessageChannel> cl = config.getChannelClass();
+        channel = DI.createWith(cl, configModule);
+        channelModule = DI.objectModule(channel, MessageChannel.class);
+        logger.debug("Message channel created");
+    }
 
     private void createDispatcher() {
         logger.debug("Creating dispatcher");
         Class<? extends Dispatcher> cl = config.getDispatcherClass();
-        dispatcher = DI.createWith(cl, configModule);
+        dispatcher = DI.createWith(cl, configModule, channelModule);
         logger.debug("Dispatcher created");
     }
 
@@ -122,10 +163,11 @@ public class Init {
         logger.debug("Custom persistor created");
     }
 
-    private void createPersistence() {
-        logger.debug("Creating players persistence");
-        // throw new NotImplementedException();
-        logger.debug("Players persistence created");
+    private void createPlayersManager() {
+        logger.debug("Creating players manager");
+        Class<? extends PlayersManager> cl = config.getPlayerManagerClass();
+        playersManager = DI.createWith(cl, configModule, databaseModule);
+        logger.debug("Players manager created");
     }
 
 }

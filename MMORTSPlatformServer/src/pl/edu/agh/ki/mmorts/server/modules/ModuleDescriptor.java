@@ -1,10 +1,9 @@
-package pl.edu.agh.ki.mmorts.server.core;
+package pl.edu.agh.ki.mmorts.server.modules;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
  * Module configuration data class.
