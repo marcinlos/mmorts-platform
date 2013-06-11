@@ -10,6 +10,9 @@ import com.app.ioapp.dispatcher.Dispatcher;
 import com.app.ioapp.interfaces.IModule;
 import com.app.ioapp.view.MainView;
 
+/**
+ * A class responsible for initializing the environment.
+ */
 public class Initializer {
 	
 	private File configureFile;
@@ -22,24 +25,35 @@ public class Initializer {
 	private State state;
 	private Map<String,IModule> modules;
 	
+	/**
+	 * @param configure file 
+	 */
 	public Initializer(File configureFile) {
 		this.configureFile = configureFile;
 	}
 
-
+/**
+ * Initializes all classes
+ */
 	public void initialize() {
+
 		initializeModules();
+		this.dispatcher = new Dispatcher(modules);
+		this.loginModule = new LoginModule(dispatcher);
+		loginModule.logIn();
 		this.context = new Context();
 		this.state = new State();
-		this.dispatcher = new Dispatcher(modules);
 		this.synchronizer = new Synchronizer(dispatcher, context, state);
 		this.view = new MainView(modules, context);
-		this.loginModule = new LoginModule();
+		
 		synchronizer.synchronizeContext();
 		synchronizer.synchronizeState();
-		loginModule.logIn();
+		
 	}
 	
+	/**
+	 * initializes the modules according to configure file
+	 */
 	private void initializeModules(){
 		modules = new HashMap<String,IModule>();
 		// inicjalizacja na podstawie pliku konf.

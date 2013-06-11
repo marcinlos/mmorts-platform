@@ -7,6 +7,7 @@ import com.app.ioapp.interfaces.UIListener;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 public class MainActivity extends Activity implements UIListener {
@@ -17,6 +18,7 @@ public class MainActivity extends Activity implements UIListener {
 		setContentView(R.layout.activity_main);
 		
 		File configurationFile = null;         // trzeba go skads wziac
+		//Log.e(ID,"wiadomosc");
 		
 		Initializer initializer = new Initializer(configurationFile);
 		initializer.initialize();
