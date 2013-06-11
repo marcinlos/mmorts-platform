@@ -1,7 +1,12 @@
 package com.example;
 
+import java.util.Map.Entry;
+
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
+import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 
 /**
@@ -12,10 +17,18 @@ public class MathPersistor implements CustomPersistor {
 
     private static final Logger logger = Logger.getLogger(MathPersistor.class);
     
-    
-    
-    public MathPersistor() {
+    private Config config;
+
+    @Inject
+    public MathPersistor(Config config) {
         logger.debug("Initializing exemplary custom persistor");
+        logger.debug("Fun, we have the config: ");
+        for (Entry<String, String> e: config.getProperties().entrySet()) {
+            System.out.printf("%s = %s\n", e.getKey(), e.getValue());
+        }
     }
+    
+    
+    
 
 }

@@ -1,8 +1,8 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
-import org.apache.log4j.Logger;
+import javax.inject.Inject;
 
-import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import org.apache.log4j.Logger;
 
 /**
  * Implementation of {@linkplain PlayersManager}, providing CRUD operations
@@ -10,21 +10,17 @@ import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
  */
 public class PlayersPersistence implements PlayersManager {
 
+    private static final Logger logger = Logger.getLogger(PlayersPersistence.class); 
+    
     /** Players database access */
     private PlayersDAO players;
     
-    private static final Logger logger = Logger.getLogger(PlayersPersistence.class); 
-    
-    public PlayersPersistence() {
+    @Inject
+    public PlayersPersistence(PlayersDAO players) {
         logger.debug("Begin initialization...");
-        
+        this.players = players;
         
         logger.debug("Succesfully initialized");
     }
     
-    
-    void setPlayers(PlayersDAO players) {
-        this.players = players;
-    }
-
 }

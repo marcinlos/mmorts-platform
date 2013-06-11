@@ -1,31 +1,65 @@
 package pl.edu.agh.ki.mmorts.server.communication;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
+import pl.agh.edu.ki.mmorts.server.config.Config;
+import pl.agh.edu.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
- * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation, using
- * Ice.
+ * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
+ * using Ice.
  * 
  * @author los
  */
 public class IceDispatcher extends AbstractDispatcher {
-    
+
     private static final Logger logger = Logger.getLogger(IceDispatcher.class);
+
+    /** Name of the config property denoting ice communicator args */
+    public static final String ICE_ARGS = "sv.dispatcher.ice.args";
 
     /** Ice object */
     private Ice.Communicator ice;
-    
-    
-    public IceDispatcher(String[] args) {
+
+    private Config config;
+
+    /**
+     * Constructor used to inject configuration.
+     * 
+     * @param config
+     *            Injected configuration
+     */
+    @Inject
+    public IceDispatcher(Config config) {
         logger.debug("Begin initialization");
-        initIce(args);
+        this.config = config;
+        initIce(getArgs());
         logger.debug("Successfully initialized");
     }
 
-    
+    /**
+     * Builds Ice communicator arguments from the data in the configuration
+     */
+    private String[] getArgs() {
+        String argString = config.getString(ICE_ARGS);
+        if (argString != null) {
+            return argString.split("\\s+");
+        } else {
+            throw new MissingRequiredPropertiesException(ICE_ARGS);
+        }
+    }
+
+    /**
+     * Initializes Ice communicator.
+     * 
+     * @param args
+     *            Ice initialization arguments, same as usually given in the
+     *            command line
+     */
     private void initIce(String[] args) {
         logger.debug("Initializing Ice communicator");
         try {
@@ -42,8 +76,10 @@ public class IceDispatcher extends AbstractDispatcher {
             }
         }
     }
-    
 
+    /**
+     * Shuts down Ice communicator, logs potential errors
+     */
     private void shutdownIce() {
         logger.debug("Shutting down Ice communicator");
         try {
@@ -51,11 +87,14 @@ public class IceDispatcher extends AbstractDispatcher {
                 ice.shutdown();
             }
         } catch (Ice.LocalException e) {
-            logger.error("Error while shutting down Ice communicator", e);
+            logger.error("Ice error while shutting down Ice communicator", e);
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            logger.error("Unexpected error while shutting down Ice "
+                    + "communicator", e);
+            throw new RuntimeException(e);
         }
-        
     }
-
 
     /**
      * {@inheritDoc}
@@ -81,6 +120,48 @@ public class IceDispatcher extends AbstractDispatcher {
         logger.debug("Shutting down");
         shutdownIce();
         logger.debug("Done");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendTo(Message message, String address) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void send(Message mesage, String category) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerUnicastReceiver(Module module, String category) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Delegates to {@link Ice.Communicator#waitForShutdown()}.
+     */
+    @Override
+    public void run() {
+        logger.debug("Entered dispatcher main loop, processing requests");
+        try {
+            ice.waitForShutdown();
+            logger.debug("Left dispatcher main loop");
+        } catch (Exception e) {
+            logger.error("Dispatcher loop left abruptly", e);
+            throw new RuntimeException(e);
+        }
     }
 
 }

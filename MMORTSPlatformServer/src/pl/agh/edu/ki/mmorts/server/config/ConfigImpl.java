@@ -1,13 +1,18 @@
 package pl.agh.edu.ki.mmorts.server.config;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import pl.agh.edu.ki.mmorts.server.util.PropertiesAdapter;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
+import pl.edu.agh.ki.mmorts.server.data.PlayersDAO;
+import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 
 /**
  * Implementation of configuration interface, processes the properties at the
@@ -18,6 +23,7 @@ class ConfigImpl implements Config {
     private static final Logger logger = Logger.getLogger(ConfigImpl.class);
 
     private Properties properties;
+    private Map<String, String> propertiesAdapter;
 
     /** (Lazy) set of missing required properties */
     private Set<String> missing;
@@ -27,8 +33,14 @@ class ConfigImpl implements Config {
     /** Used dispatcher implementation class */
     private Class<? extends Dispatcher> dispatcherClass;
 
-    /** Used custom persistor */
+    /** Used custom persistor class */
     private Class<? extends CustomPersistor> customPersistorClass;
+
+    /** Used players data access object class */
+    private Class<? extends PlayersDAO> playersDaoClass;
+
+    /** Used players manager class */
+    private Class<? extends PlayersManager> playersManagerClass;
 
     /**
      * Creates new {@code Config} implementation.
@@ -40,6 +52,7 @@ class ConfigImpl implements Config {
      *             If some properties are missing
      */
     public ConfigImpl(Properties properties) {
+        this.properties = properties;
         process();
     }
 
@@ -59,13 +72,16 @@ class ConfigImpl implements Config {
     private void process() {
         logger.debug("Processing read configuration properties");
 
-        loadDispatcherClass();
+        loadPlayersDaoClass();
+        loadPlayersManagerClass();
         loadCustomPersistorClass();
+        loadDispatcherClass();
 
         // We have delayed the exception to gather all the missing values
         if (missing != null) {
             throw new MissingRequiredPropertiesException(missing);
         }
+        propertiesAdapter = new PropertiesAdapter(properties);
     }
 
     /*
@@ -77,7 +93,6 @@ class ConfigImpl implements Config {
             dispatcherClass = loadClass(DISPATCHER_CLASS, Dispatcher.class);
             if (dispatcherClass == null) {
                 addMissing(DISPATCHER_CLASS);
-            } else {
                 logger.fatal("Failed to load Dispatcher class (missing)");
             }
         } catch (Exception e) {
@@ -99,6 +114,39 @@ class ConfigImpl implements Config {
             }
         } catch (Exception e) {
             logger.fatal("Failed to load custom persistor class", e);
+        }
+    }
+
+    /*
+     * Retrieves a {@code Class} object for the specified players DAO class
+     */
+    private void loadPlayersDaoClass() {
+        logger.debug("Loading players DAO class");
+        try {
+            playersDaoClass = loadClass(PLAYERS_DAO_CLASS, PlayersDAO.class);
+            if (playersDaoClass == null) {
+                addMissing(PLAYERS_DAO_CLASS);
+                logger.fatal("Failed to load players DAO class (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load players DAO class", e);
+        }
+    }
+
+    /*
+     * Retrieves a {@code Class} object for the specified players manager class
+     */
+    private void loadPlayersManagerClass() {
+        logger.debug("Loading players manager class");
+        try {
+            playersManagerClass = loadClass(PLAYERS_MANAGER_CLASS,
+                    PlayersManager.class);
+            if (playersManagerClass == null) {
+                addMissing(PLAYERS_MANAGER_CLASS);
+                logger.fatal("Failed to load players manager class (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load players manager class", e);
         }
     }
 
@@ -158,6 +206,30 @@ class ConfigImpl implements Config {
     @Override
     public Class<? extends CustomPersistor> getCustomPersistorClass() {
         return customPersistorClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(propertiesAdapter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends PlayersDAO> getPlayersDaoClass() {
+        return playersDaoClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends PlayersManager> getPlayerManagerClass() {
+        return playersManagerClass;
     }
 
 }

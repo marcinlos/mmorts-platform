@@ -6,7 +6,8 @@ import java.util.Set;
 /**
  * Exception thrown when a vital, required configuration properties are missing
  * in the configuration file. Thrown when creating {@code Config}
- * implementation, having previously read all the configuration.
+ * implementation, having previously read all the configuration, or in the
+ * classes using {@link Config}.
  */
 public class MissingRequiredPropertiesException extends ConfigException {
 
@@ -22,11 +23,12 @@ public class MissingRequiredPropertiesException extends ConfigException {
         this.properties = new HashSet<String>();
         properties.add(property);
     }
-    
+
     /**
      * Creates a new exception from the set of missing properties
      * 
-     * @param properties Set of mising properties
+     * @param properties
+     *            Set of mising properties
      */
     public MissingRequiredPropertiesException(Set<String> properties) {
         this.properties = properties;
