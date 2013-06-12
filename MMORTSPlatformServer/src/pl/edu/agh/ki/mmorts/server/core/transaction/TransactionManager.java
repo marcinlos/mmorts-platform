@@ -17,6 +17,13 @@ public interface TransactionManager {
     void addListener(TransactionBeginListener listener);
     
     /**
+     * Unregisters a new transaction listener.
+     * 
+     * @param listener Listener to be unregistered
+     */
+    void removeListener(TransactionBeginListener listener);
+    
+    /**
      * @return Currently active transaction, or {@code null} if there is none.
      */
     Transaction getCurrent();

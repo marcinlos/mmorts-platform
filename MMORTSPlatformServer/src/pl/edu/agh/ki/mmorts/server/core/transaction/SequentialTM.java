@@ -33,6 +33,18 @@ public class SequentialTM {
     }
 
     /**
+     * @return New {@linkplain Transaction} implementation
+     */
+    public Transaction createTx() {
+        return new Transaction() {
+            @Override
+            public void addListener(TransactionListener listener) {
+                SequentialTM.this.addListener(listener);
+            }
+        };
+    }
+    
+    /**
      * Calls {@link TransactionListener#commit()} methods of all the listeners.
      * If some of them fails, the transaction is assumed to be unsuccessful, and
      * the remaining listeners are rolled back.
@@ -58,7 +70,7 @@ public class SequentialTM {
      * calls do not interrupt the loop. All the listeners are rolled back
      * regardless of individual failures.
      */
-    private void rollback() {
+    public void rollback() {
         while (!listeners.isEmpty()) {
             TransactionListener cb = listeners.poll();
             try {
