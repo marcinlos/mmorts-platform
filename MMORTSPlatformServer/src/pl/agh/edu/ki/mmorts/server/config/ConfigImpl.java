@@ -104,7 +104,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load Dispatcher class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load Dispatcher class", e);
+            logger.fatal("Failed to load Dispatcher class");
+            logger.fatal(e);
         }
     }
 
@@ -120,7 +121,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load message channel class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load message channel class", e);
+            logger.fatal("Failed to load message channel class");
+            logger.fatal(e);
         }
     }
 
@@ -138,7 +140,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load custom persistor interface (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load custom persistor interface", e);
+            logger.fatal("Failed to load custom persistor interface");
+            logger.fatal(e);
         }
     }
 
@@ -157,7 +160,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load custom persistor class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load custom persistor class", e);
+            logger.fatal("Failed to load custom persistor class");
+            logger.fatal(e);
         }
     }
 
@@ -173,7 +177,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load database class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load database class", e);
+            logger.fatal("Failed to load database class");
+            logger.fatal(e);
         }
     }
 
@@ -190,7 +195,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load players manager class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load players manager class", e);
+            logger.fatal("Failed to load players manager class");
+            logger.fatal(e);
         }
     }
 

@@ -13,13 +13,13 @@ public class ModuleDescriptor {
     public final String name;
 
     /** Unique unicast address of the moduleClass */
-    public final String unicastAddress;
+    public final Set<String> unicast;
 
     /**
      * Set of multicast group names (message categories) the moduleClass wishes
      * to subscribe
      */
-    public final Set<String> multicastGroups;
+    public final Set<String> multicast;
 
     /** Implementation of the moduleClass */
     public final Class<? extends Module> moduleClass;
@@ -27,11 +27,11 @@ public class ModuleDescriptor {
     /*
      * Used internally by the builder
      */
-    private ModuleDescriptor(String name, String unicastAddress,
+    private ModuleDescriptor(String name, Set<String> unicastAddresses,
             Set<String> multicastGroups, Class<? extends Module> module) {
         this.name = name;
-        this.unicastAddress = unicastAddress;
-        this.multicastGroups = multicastGroups;
+        this.unicast = unicastAddresses;
+        this.multicast = multicastGroups;
         this.moduleClass = module;
     }
 
@@ -53,6 +53,13 @@ public class ModuleDescriptor {
          * @return New moduleClass descriptor
          */
         ModuleDescriptor build();
+        
+        /**
+         * Add object's unicast address
+         * 
+         * @param address Unicast address to add
+         */
+        void addUnicast(String address);
     }
 
     /**
@@ -74,18 +81,24 @@ public class ModuleDescriptor {
         }
         return new Builder() {
 
-            private String unicast;
+            private Set<String> unicast = new HashSet<String>();
             private Set<String> multicast = new HashSet<String>();
 
             @Override
             public ModuleDescriptor build() {
                 Set<String> groups = Collections.unmodifiableSet(multicast);
-                return new ModuleDescriptor(name, unicast, groups, module);
+                Set<String> addresses = Collections.unmodifiableSet(unicast);
+                return new ModuleDescriptor(name, addresses, groups, module);
             }
 
             @Override
             public void addGroup(String group) {
                 multicast.add(group);
+            }
+
+            @Override
+            public void addUnicast(String address) {
+                unicast.add(address);
             }
         };
     }

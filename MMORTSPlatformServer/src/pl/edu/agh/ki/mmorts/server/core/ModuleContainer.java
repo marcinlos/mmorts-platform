@@ -57,12 +57,14 @@ public abstract class ModuleContainer implements Dispatcher {
             module.init();
             logger.debug("Adding to internal map structures");
             modules.put(desc.name, conf);
-            String address = desc.unicastAddress;
-            if (address != null) {
-                logger.debug("Module " + desc.name + " registered as " + address);
-                unicast.put(address, module);
+            for (String address : desc.unicast) {
+                if (address != null) {
+                    logger.debug("Module " + desc.name + " registered as "
+                            + address);
+                    unicast.put(address, module);
+                }
             }
-            for (String group : desc.multicastGroups) {
+            for (String group : desc.multicast) {
                 registerMulticast(group, module);
             }
         } catch (Exception e) {
@@ -82,8 +84,10 @@ public abstract class ModuleContainer implements Dispatcher {
 
     private void removeModule(String name) {
         ConfiguredModule conf = modules.remove(name);
-        unicast.remove(conf.descriptor.unicastAddress);
-        for (String group: conf.descriptor.multicastGroups) {
+        for (String address : conf.descriptor.unicast) {
+            unicast.remove(address);
+        }
+        for (String group : conf.descriptor.multicast) {
             multicast.get(group).remove(conf.module);
         }
     }
@@ -91,7 +95,7 @@ public abstract class ModuleContainer implements Dispatcher {
     private void phaseTwo() {
         logger.debug("Second phase of module initialization");
         Set<String> moduleNames = new HashSet<String>(modules.keySet());
-        for (String name: moduleNames) {
+        for (String name : moduleNames) {
             ConfiguredModule conf = modules.get(name);
             logger.debug("Calling started() on " + name);
             Module module = conf.module;

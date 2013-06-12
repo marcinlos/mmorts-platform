@@ -1,13 +1,6 @@
-
-[
-  {
-    "name": "LoginModule",
-    "class": "pl.edu.agh.ki.mmorts.server.modules.builtin.LoginModule",
-    "unicast": "login_module"
-    "groups": [
-      "some_group",
-      "other_gruop"
-    ]
-  }
-]
-
+[ {
+	"name" : "LoginModule",
+	"class" : "pl.edu.agh.ki.mmorts.server.modules.builtin.LoginModule",
+	"unicast" : [ "login_module" ],
+	"groups" : [ "some_group", "other_gruop" ]
+} ]

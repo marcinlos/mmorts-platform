@@ -162,14 +162,15 @@ public class Init {
                     logger.debug("Module " + desc.name + " created");
                     modules.put(desc.name, new ConfiguredModule(m, desc));
                 } catch (ModuleInitException e) {
-                    logger.error("Module " + desc.name + " creation failed");
+                    logger.error("Module " + desc.name + " creation failed", e);
                 }
             }
             // register with the dispatcher
             logger.debug("Registering modules with a dispatcher");
             dispatcher.registerModules(modules.values());
         } catch (ModuleConfigException e) {
-            logger.fatal("Error while readin module configuration", e);
+            logger.fatal("Error while readin module configuration");
+            logger.fatal(e);
             throw new InitException(e);
         }
     }
@@ -187,7 +188,6 @@ public class Init {
         }
         logger.debug("Persistors injected");
     }
-
 
     /**
      * Creates the module described by the {@code desc} and calls @OnInit
@@ -213,14 +213,22 @@ public class Init {
      */
     private void shutdown() {
         logger.info("Server shutting down");
-        logger.debug("Shutting down dispatcher");
-        callShutdown(dispatcher);
-        logger.debug("Shutting down communication channel");
-        callShutdown(channel);
-        logger.debug("Shutting down custom persistor");
-        callShutdown(customPersistor);
-        logger.debug("Shutting down players manager");
-        callShutdown(playersManager);
+        if (dispatcher != null) {
+            logger.debug("Shutting down dispatcher");
+            callShutdown(dispatcher);
+        }
+        if (channel != null) {
+            logger.debug("Shutting down communication channel");
+            callShutdown(channel);
+        }
+        if (customPersistor != null) {
+            logger.debug("Shutting down custom persistor");
+            callShutdown(customPersistor);
+        }
+        if (playersManager != null) {
+            logger.debug("Shutting down players manager");
+            callShutdown(playersManager);
+        }
         logger.info("Shutdown sequence completed");
     }
 
@@ -236,7 +244,8 @@ public class Init {
             configModule = DI.objectModule(config, Config.class);
             logger.debug("Configuration read");
         } catch (Exception e) {
-            logger.fatal("Failed to load configuration file (" + file + ")", e);
+            logger.fatal("Failed to load configuration file (" + file + ")");
+            logger.fatal(e);
             throw new ConfigException(e);
         }
     }
@@ -264,6 +273,7 @@ public class Init {
         Class<? extends Dispatcher> cl = config.getDispatcherClass();
         dispatcher = DI.createWith(cl, configModule, channelModule);
         callInit(dispatcher);
+        dispatcherModule = DI.objectModule(dispatcher, Gateway.class);
         logger.debug("Dispatcher created");
     }
 
