@@ -8,6 +8,7 @@ import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.communication.Message;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 
 /**
@@ -20,17 +21,20 @@ public class ThreadedDispatcher extends ModuleContainer implements
             .getLogger(ThreadedDispatcher.class);
 
     /** Configuration object */
+    @Inject
     private Config config;
 
     /** Message service */
-    private MessageChannel channel;
-
     @Inject
-    public ThreadedDispatcher(Config config, MessageChannel channel) {
+    private MessageChannel channel;
+    
+    private 
+    
+
+    @OnInit
+    void init() {
         logger.debug("Initializing");
-        this.config = config;
-        this.channel = channel;
-        this.channel.startReceiving(this);
+        channel.startReceiving(this);
     }
 
     /**
@@ -41,7 +45,6 @@ public class ThreadedDispatcher extends ModuleContainer implements
         logger.info("bum: " + message);
     }
 
-
     /**
      * Shutdown callback, notifies modules.
      */
@@ -49,7 +52,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     public void shutdown() {
         logger.debug("Shutting down the dispatcher");
         try {
-            // TODO: Shut down modules
+            shutdownModules();
             logger.debug("Dispatcher shat down");
         } catch (Exception e) {
             logger.error("Error while shutting down the communication channel");

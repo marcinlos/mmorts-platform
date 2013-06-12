@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -57,13 +58,11 @@ public abstract class ModuleContainer implements Dispatcher {
             module.init();
             logger.debug("Adding to internal map structures");
             modules.put(desc.name, conf);
+            // Register module with all its' unicast addresses
             for (String address : desc.unicast) {
-                if (address != null) {
-                    logger.debug("Module " + desc.name + " registered as "
-                            + address);
-                    unicast.put(address, module);
-                }
+                registerUnicast(address, conf);
             }
+            // Same for multicast groups
             for (String group : desc.multicast) {
                 registerMulticast(group, module);
             }
@@ -72,6 +71,32 @@ public abstract class ModuleContainer implements Dispatcher {
         }
     }
 
+    /**
+     * Registers module with a given unicast address. In case of a conflict
+     * (i.e. two modules share the unicast address) gives the priority to the
+     * new one and logs address and conflicting module names.
+     */
+    private void registerUnicast(String address, ConfiguredModule conf) {
+        ModuleDescriptor desc = conf.descriptor;
+        Module module = conf.module;
+        logger.debug("Module " + desc.name + " registered as " + address);
+        Module prev = unicast.put(address, module);
+        if (prev != null) {
+            for (Entry<String, ConfiguredModule> e : modules.entrySet()) {
+                if (e.getValue().module == module) {
+                    String msg = String.format("Unicast address conflict "
+                            + "(%s); %s has overriden %s", address, desc.name,
+                            e.getKey());
+                    logger.warn(msg);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Subscribes a module to a given multicast group.
+     */
     private void registerMulticast(String group, Module module) {
         logger.debug("Module " + module + " added to [" + group + "]");
         Set<Module> set = multicast.get(group);
@@ -82,6 +107,10 @@ public abstract class ModuleContainer implements Dispatcher {
         set.add(module);
     }
 
+    /**
+     * Removes the module from the internal structures. Used to rollback module
+     * registration in case of phase-two initialization failure.
+     */
     private void removeModule(String name) {
         ConfiguredModule conf = modules.remove(name);
         for (String address : conf.descriptor.unicast) {
@@ -92,6 +121,10 @@ public abstract class ModuleContainer implements Dispatcher {
         }
     }
 
+    /**
+     * Second phase of initialization - calling all the modules'
+     * {@code started()} methods.
+     */
     private void phaseTwo() {
         logger.debug("Second phase of module initialization");
         Set<String> moduleNames = new HashSet<String>(modules.keySet());
@@ -106,6 +139,22 @@ public abstract class ModuleContainer implements Dispatcher {
                 removeModule(name);
             }
         }
+    }
+
+    /**
+     * Shuts down all the modules, logging exceptions thrown in the process.
+     */
+    protected void shutdownModules() {
+        logger.debug("Shutting down modules");
+        for (ConfiguredModule conf : modules.values()) {
+            try {
+                conf.module.shutdown();
+            } catch (Exception e) {
+                String name = conf.descriptor.name;
+                logger.error("Error while shutting down module " + name, e);
+            }
+        }
+        logger.debug("Modules shat down");
     }
 
 }

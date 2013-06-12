@@ -3,6 +3,7 @@ package pl.edu.agh.ki.mmorts.server.core;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -24,8 +25,10 @@ import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleInitException;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * First class to be instantiated in {@link Main#main(String[])}. Responsible
@@ -38,6 +41,7 @@ import com.google.inject.Injector;
  * <li>Sets up {@linkplain Gateway}
  * <li>Creates & initializes modules, based on the configuration
  * <li>Initializes database connection, creates persistence interfaces</li>
+ * </ul>
  */
 public class Init {
 
@@ -45,6 +49,12 @@ public class Init {
 
     /** Configuration file location */
     private static final String CONFIG = "resources/server.properties";
+
+    /**
+     * To prevent double shutdown in case the shutdown hook would cause it
+     * without additional protection
+     */
+    private AtomicBoolean finished = new AtomicBoolean();
 
     /**
      * Dispatcher object created using the class specified in the configuration
@@ -109,11 +119,10 @@ public class Init {
      * and shutdown.
      */
     private void waitForShutdown() {
-        // TODO: Simple waiting for EOF in the input, change for fully-fledged
-        // interactive CLI?
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNext()) {
-            // empty
+            String line = scanner.nextLine();
+            logger.debug("Input line: " + line);
         }
     }
 
@@ -212,24 +221,28 @@ public class Init {
      * Handles shutdown sequence. Called at the end of the constructor.
      */
     private void shutdown() {
-        logger.info("Server shutting down");
-        if (dispatcher != null) {
-            logger.debug("Shutting down dispatcher");
-            callShutdown(dispatcher);
+        // Only if not already cleaned up once - could happen because of
+        // the shutdown hook
+        if (!finished.getAndSet(true)) {
+            logger.info("Server shutting down");
+            if (dispatcher != null) {
+                logger.debug("Shutting down dispatcher");
+                callShutdown(dispatcher);
+            }
+            if (channel != null) {
+                logger.debug("Shutting down communication channel");
+                callShutdown(channel);
+            }
+            if (customPersistor != null) {
+                logger.debug("Shutting down custom persistor");
+                callShutdown(customPersistor);
+            }
+            if (playersManager != null) {
+                logger.debug("Shutting down players manager");
+                callShutdown(playersManager);
+            }
+            logger.info("Shutdown sequence completed");
         }
-        if (channel != null) {
-            logger.debug("Shutting down communication channel");
-            callShutdown(channel);
-        }
-        if (customPersistor != null) {
-            logger.debug("Shutting down custom persistor");
-            callShutdown(customPersistor);
-        }
-        if (playersManager != null) {
-            logger.debug("Shutting down players manager");
-            callShutdown(playersManager);
-        }
-        logger.info("Shutdown sequence completed");
     }
 
     /**
@@ -241,7 +254,13 @@ public class Init {
         try {
             reader.loadFrom(file);
             config = reader.getConfig();
-            configModule = DI.objectModule(config, Config.class);
+            configModule = new AbstractModule() {
+                @Override
+                protected void configure() {
+                    install(DI.objectModule(config, Config.class));
+                    Names.bindProperties(binder(), config.getProperties());
+                }
+            };
             logger.debug("Configuration read");
         } catch (Exception e) {
             logger.fatal("Failed to load configuration file (" + file + ")");

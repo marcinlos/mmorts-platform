@@ -4,10 +4,12 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.agh.edu.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+
+import com.google.inject.name.Named;
 
 /**
  * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
@@ -22,21 +24,20 @@ public class IceChannel extends AbstractChannel {
     /** Name of the config property denoting ice communicator args */
     public static final String ICE_ARGS = "sv.dispatcher.ice.args";
 
+    /** Ice argument string */
+    @Inject
+    @Named(ICE_ARGS)
+    private String argString;
+
     /** Ice object */
     private Ice.Communicator ice;
 
-    private Config config;
-
     /**
-     * Constructor used to inject configuration.
-     * 
-     * @param config
-     *            Injected configuration
+     * Initialization method creating Ice infrastructure
      */
-    @Inject
-    public IceChannel(Config config) {
+    @OnInit
+    private void init() {
         logger.debug("Begin initialization");
-        this.config = config;
         initIce(getArgs());
         logger.debug("Successfully initialized");
     }
@@ -45,7 +46,6 @@ public class IceChannel extends AbstractChannel {
      * Builds Ice communicator arguments from the data in the configuration
      */
     private String[] getArgs() {
-        String argString = config.getString(ICE_ARGS);
         if (argString != null) {
             return argString.split("\\s+");
         } else {
@@ -106,7 +106,6 @@ public class IceChannel extends AbstractChannel {
         shutdownIce();
         logger.debug("Done");
     }
-
 
     /**
      * {@inheritDoc}

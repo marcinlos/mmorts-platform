@@ -23,7 +23,6 @@ public class PlayersPersistence implements PlayersManager {
     public PlayersPersistence(Database database) {
         logger.debug("Begin initialization...");
         this.database = database;
-        
         logger.debug("Succesfully initialized");
     }
     

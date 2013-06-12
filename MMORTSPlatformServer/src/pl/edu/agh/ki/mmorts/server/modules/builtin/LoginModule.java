@@ -1,7 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.modules.builtin;
 
-import javax.inject.Inject;
-
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
@@ -9,6 +7,8 @@ import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.Message;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
+
+import com.google.inject.Inject;
 
 /**
  * Module responsible for receiving login messages, authenticating players and
@@ -18,15 +18,16 @@ public class LoginModule implements Module {
     
     private static final Logger logger = Logger.getLogger(LoginModule.class);
     
-    @com.google.inject.Inject(optional = true)
+    @Inject(optional = true)
     private Config config;
     
     /** Need players manager for data retrieval */
-    @com.google.inject.Inject(optional = true)
+    @Inject(optional = true)
     private PlayersManager players;
     
-    @com.google.inject.Inject(optional = true)
+    @Inject(optional = true)
     private Gateway gateway;
+    
 
     public LoginModule(/*PlayersManager players, Gateway gateway*/) {
         logger.debug("Initializing");

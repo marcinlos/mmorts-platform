@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,10 +85,10 @@ public class ModuleConfigReader {
     private ModuleDescriptor makeDescriptor(ModuleData item) {
         Class<? extends Module> clazz = loadClass(item.clazz);
         ModuleDescriptor.Builder b = ModuleDescriptor.create(item.name, clazz);
-        for (String address: item.unicast) {
+        for (String address : item.unicast) {
             b.addUnicast(address);
         }
-        for (String group: item.groups) {
+        for (String group : item.groups) {
             b.addGroup(group);
         }
         return b.build();
