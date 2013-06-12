@@ -26,14 +26,5 @@ public interface MessageChannel {
      *            Message to be sent through the output channel
      */
     void sendMessage(Message message);
-
-    /**
-     * Destroys the message channel and frees its' resources.
-     */
-    void shutdown();
-
-    /**
-     * Enters channel's main loop, waiting for messages. Can be a simple sleep.
-     */
-    void receiveLoop();
+    
 }

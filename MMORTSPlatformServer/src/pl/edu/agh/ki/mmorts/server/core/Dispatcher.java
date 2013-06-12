@@ -6,8 +6,10 @@ import pl.edu.agh.ki.mmorts.server.modules.Module;
 /**
  * Interface of the dispatcher used by the {@linkplain Init} to initialize
  * modules.
+ * 
+ * <p>Initialization after constructor call is supported 
  */
-public interface Dispatcher extends Gateway, Runnable {
+public interface Dispatcher extends Gateway {
 
     /**
      * Register all the modules, i.e. iterate through all of them twice, calling
@@ -34,14 +36,4 @@ public interface Dispatcher extends Gateway, Runnable {
      */
     void registerUnicastReceiver(Module module, String category);
     
-    /**
-     * Begins communication/listening main loop.
-     */
-    void run();
-    
-    /**
-     * Releases resources (such as connections etc) held by this object.
-     */
-    void shutdown();
-
 }

@@ -1,6 +1,5 @@
 package pl.agh.edu.ki.mmorts.server.util;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import com.google.inject.AbstractModule;

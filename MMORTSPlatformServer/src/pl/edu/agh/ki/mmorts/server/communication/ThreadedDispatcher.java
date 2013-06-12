@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
@@ -56,24 +57,9 @@ public class ThreadedDispatcher implements Gateway, Dispatcher, MessageReceiver 
     }
 
     /**
-     * {@inheritDoc}
+     * Shutdown callback, notifies modules.
      */
-    @Override
-    public void run() {
-        logger.debug("Entering main loop");
-        try {
-        channel.receiveLoop();
-        logger.debug("Main loop ended");
-        } catch (Exception e) {
-            logger.fatal("Main loop ended abruptly", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    @OnShutdown
     public void shutdown() {
         logger.debug("Shutting down the dispatcher");
         try {

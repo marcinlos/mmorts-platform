@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.agh.edu.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 
 /**
  * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
@@ -83,7 +84,8 @@ public class IceChannel extends AbstractChannel {
         logger.debug("Shutting down Ice communicator");
         try {
             if (ice != null) {
-                ice.shutdown();
+                ice.destroy();
+                logger.debug("Ice communicator shut down");
             }
         } catch (Ice.LocalException e) {
             logger.error("Ice error while shutting down Ice communicator", e);
@@ -96,32 +98,15 @@ public class IceChannel extends AbstractChannel {
     }
 
     /**
-     * {@inheritDoc}
+     * Cleanup method
      */
-    @Override
+    @OnShutdown
     public void shutdown() {
         logger.debug("Shutting down");
         shutdownIce();
         logger.debug("Done");
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * <p>
-     * Delegates to {@link Ice.Communicator#waitForShutdown()}.
-     */
-    @Override
-    public void receiveLoop() {
-        logger.debug("Entered dispatcher main loop, processing requests");
-        try {
-            ice.waitForShutdown();
-            logger.debug("Left dispatcher main loop");
-        } catch (Exception e) {
-            logger.error("Dispatcher loop left abruptly", e);
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * {@inheritDoc}

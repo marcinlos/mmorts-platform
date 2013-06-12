@@ -1,7 +1,6 @@
 package pl.agh.edu.ki.mmorts.server.util.reflection;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,14 +72,25 @@ public class Methods {
         Class<?> clazz = target.getClass();
         try {
             for (Method method : annotated(clazz, annotation)) {
-                method.invoke(target, args);
+                invoke(target, method, args);
             }
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new InvocationException(e);
-        } catch (IllegalAccessException e) {
-            throw new InvocationException(e);
-        } catch (InvocationTargetException e) {
-            throw new InvocationException(e);
+        }
+    }
+
+    /*
+     * Helper function, invokes arbitrary method temporarily changing its'
+     * accesibility if necessary, and rolling it back after invocation.
+     */
+    private static void invoke(Object o, Method m, Object... args)
+            throws Exception {
+        boolean acc = m.isAccessible();
+        try {
+            m.setAccessible(true);
+            m.invoke(o, args);
+        } finally {
+            m.setAccessible(acc);
         }
     }
 
