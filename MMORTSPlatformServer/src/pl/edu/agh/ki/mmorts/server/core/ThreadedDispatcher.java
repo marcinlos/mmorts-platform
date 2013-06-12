@@ -1,20 +1,20 @@
-package pl.edu.agh.ki.mmorts.server.communication;
-
-import java.util.Arrays;
+package pl.edu.agh.ki.mmorts.server.core;
 
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
-import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import pl.edu.agh.ki.mmorts.server.communication.Message;
+import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
-import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
  * Default implementation of a message dispatcher.
  */
-public class ThreadedDispatcher implements Gateway, Dispatcher, MessageReceiver {
+public class ThreadedDispatcher extends ModuleContainer implements
+        MessageReceiver {
 
     private static final Logger logger = Logger
             .getLogger(ThreadedDispatcher.class);
@@ -30,31 +30,17 @@ public class ThreadedDispatcher implements Gateway, Dispatcher, MessageReceiver 
         logger.debug("Initializing");
         this.config = config;
         this.channel = channel;
-        channel.startReceiving(this);
+        this.channel.startReceiving(this);
     }
 
-    @Override
-    public void registerModules(Module... modules) {
-        registerModules(Arrays.asList(modules));
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void receive(Message message) {
-        // TODO Auto-generated method stub
-
+        logger.info("bum: " + message);
     }
 
-    @Override
-    public void registerModules(Iterable<? extends Module> modules) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void registerUnicastReceiver(Module module, String category) {
-        // TODO Auto-generated method stub
-
-    }
 
     /**
      * Shutdown callback, notifies modules.
@@ -71,12 +57,18 @@ public class ThreadedDispatcher implements Gateway, Dispatcher, MessageReceiver 
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sendTo(Message message, String address) {
         // TODO Auto-generated method stub
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void send(Message mesage, String category) {
         // TODO Auto-generated method stub

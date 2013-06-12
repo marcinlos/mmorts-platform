@@ -45,7 +45,7 @@ public class ModuleConfigReader {
      * @see #load(String)
      */
     public void load(InputStream stream) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     /**

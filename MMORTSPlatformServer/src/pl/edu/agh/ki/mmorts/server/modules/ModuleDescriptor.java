@@ -4,11 +4,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  * Module configuration data class.
  */
 public class ModuleDescriptor {
+
+    /** Name of the module */
+    public final String name;
 
     /** Unique unicast address of the moduleClass */
     public final String unicastAddress;
@@ -25,8 +27,9 @@ public class ModuleDescriptor {
     /*
      * Used internally by the builder
      */
-    private ModuleDescriptor(String unicastAddress,
+    private ModuleDescriptor(String name, String unicastAddress,
             Set<String> multicastGroups, Class<? extends Module> module) {
+        this.name = name;
         this.unicastAddress = unicastAddress;
         this.multicastGroups = multicastGroups;
         this.moduleClass = module;
@@ -56,23 +59,28 @@ public class ModuleDescriptor {
      * Creates a builder that can be used to create a {@code ModuleDescriptor}.
      * Address and implementation are arguments to ensure their presence.
      * 
-     * @param address
-     *            Unicast address of the moduleClass
+     * @param name
+     *            name of the module
      * @param moduleClass
      *            Module implementation class
      * @return {@linkplain Builder}
      */
-    public static Builder create(final String address,
+    public static Builder create(final String name,
             final Class<? extends Module> module) {
+        if (name == null) {
+            throw new NullPointerException("Module name cannot be null");
+        } else if (module == null) {
+            throw new NullPointerException("Module cannot be null");
+        }
         return new Builder() {
 
+            private String unicast;
             private Set<String> multicast = new HashSet<String>();
 
             @Override
             public ModuleDescriptor build() {
-                Set<String> immutableGroups = Collections
-                        .unmodifiableSet(multicast);
-                return new ModuleDescriptor(address, immutableGroups, module);
+                Set<String> groups = Collections.unmodifiableSet(multicast);
+                return new ModuleDescriptor(name, unicast, groups, module);
             }
 
             @Override
