@@ -1,8 +1,16 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+
+import com.google.inject.name.Named;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.communication.Message;
@@ -27,11 +35,29 @@ public class ThreadedDispatcher extends ModuleContainer implements
     /** Message service */
     @Inject
     private MessageChannel channel;
+
+    @Inject
+    @Named("sv.dispatcher.threads.init")
+    private int threadsInit;
+
+    @Inject
+    @Named("sv.dispatcher.threads.max")
+    private int threadsMax;
     
+    @Inject
+    @Named("sv.dispatcher.threads.keepalive")
+    private int keepalive;
+
+    /** Thread pool used to handle incoming messages */
+    private ExecutorService threadPool;
 
     @OnInit
     void init() {
         logger.debug("Initializing");
+
+        threadPool = new ThreadPoolExecutor(threadsInit, threadsMax, keepalive,
+                TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+
         channel.startReceiving(this);
     }
 
