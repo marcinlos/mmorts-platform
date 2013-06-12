@@ -3,7 +3,7 @@
 
 // 
 
-module MMORTS {
+module mmorts {
 
 
 
