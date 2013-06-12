@@ -28,8 +28,6 @@ public class ThreadedDispatcher extends ModuleContainer implements
     @Inject
     private MessageChannel channel;
     
-    private 
-    
 
     @OnInit
     void init() {
