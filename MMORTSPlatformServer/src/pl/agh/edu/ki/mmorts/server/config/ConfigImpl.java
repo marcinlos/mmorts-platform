@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import pl.agh.edu.ki.mmorts.server.util.PropertiesAdapter;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 
@@ -29,6 +30,9 @@ class ConfigImpl implements Config {
     private Set<String> missing;
 
     // Processed properties
+    
+    /** Used transaction manager implementation class */
+    private Class<? extends TransactionManager> tmClass;
 
     /** Used dispatcher implementation class */
     private Class<? extends Dispatcher> dispatcherClass;
@@ -78,6 +82,7 @@ class ConfigImpl implements Config {
     private void process() {
         logger.debug("Processing read configuration properties");
 
+        loadTransactionManagerClass();
         loadDatabaseClass();
         loadPlayersManagerClass();
         loadCustomPersistorInterface();
@@ -90,6 +95,24 @@ class ConfigImpl implements Config {
             throw new MissingRequiredPropertiesException(missing);
         }
         propertiesAdapter = new PropertiesAdapter(properties);
+    }
+
+    /*
+     * Retrieves a {@code Class} object for the specified transaction manager
+     * class
+     */
+    private void loadTransactionManagerClass() {
+        logger.debug("Loading transaction manager class");
+        try {
+            tmClass = loadClass(TM_CLASS, TransactionManager.class);
+            if (tmClass == null) {
+                addMissing(TM_CLASS);
+                logger.fatal("Failed to load transaction manager class (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load transaction manager class");
+            logger.fatal(e);
+        }
     }
 
     /*
@@ -241,6 +264,14 @@ class ConfigImpl implements Config {
     public String getString(String key) {
         return properties.getProperty(key);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends TransactionManager> getTransactionManagerClass() {
+        return tmClass;
+    }
 
     /**
      * {@inheritDoc}
@@ -257,7 +288,7 @@ class ConfigImpl implements Config {
     public Class<?> getCustomPersistorClass() {
         return customPersistorClass;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -297,6 +328,5 @@ class ConfigImpl implements Config {
     public Class<? extends MessageChannel> getChannelClass() {
         return channelClass;
     }
-
 
 }

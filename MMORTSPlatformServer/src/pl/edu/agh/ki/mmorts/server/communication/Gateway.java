@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.communication;
 
+import pl.edu.agh.ki.mmorts.server.modules.Continuation;
+
 /**
  * Dispatcher interface for use of the client modules. Allows sending messages
  * with both unicast and multicast target addresses.
@@ -35,4 +37,11 @@ public interface Gateway {
      */
     void send(Message mesage, String category);
 
+    /**
+     * Adds an item to the execution queue ofa transaction.
+     * 
+     * @param cont Action to execute
+     */
+    void later(Continuation cont);
+    
 }

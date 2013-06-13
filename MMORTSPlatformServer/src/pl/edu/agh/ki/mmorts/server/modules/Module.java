@@ -33,10 +33,12 @@ public interface Module {
      * @param message
      *            Message of interest (i.e. matching module's unicast address or
      *            one of its' multicast groups)
+     * @param context
+     *            Per-transaction general-purpose data store, intended as the
+     *            stash to pass arbitrary information between modules.
      */
-    void receive(Message message);
-    
-    
+    void receive(Message message, Context context);
+
     /**
      * Called during the server's shutdown sequence.
      */

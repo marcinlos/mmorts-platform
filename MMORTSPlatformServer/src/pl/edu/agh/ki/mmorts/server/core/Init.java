@@ -18,6 +18,7 @@ import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
@@ -55,6 +56,13 @@ public class Init {
      * without additional protection
      */
     private AtomicBoolean finished = new AtomicBoolean();
+
+    /**
+     * Transaction manager object created using the class specified in the
+     * configuration
+     */
+    private TransactionManager txManager;
+    private com.google.inject.Module txManagerModule;
 
     /**
      * Dispatcher object created using the class specified in the configuration
@@ -135,6 +143,7 @@ public class Init {
         try {
             registerShutdownHook();
             readConfig(CONFIG);
+            createTransactionManager();
             createDataSource();
             createChannel();
             createDispatcher();
@@ -209,7 +218,8 @@ public class Init {
     private Module createModule(ModuleDescriptor desc) {
         try {
             Class<? extends Module> cl = desc.moduleClass;
-            Module module = DI.createWith(cl, configModule, dispatcherModule);
+            Module module = DI.createWith(cl, configModule, dispatcherModule,
+                    txManagerModule);
             callInit(module);
             return module;
         } catch (Exception e) {
@@ -241,6 +251,14 @@ public class Init {
                 logger.debug("Shutting down players manager");
                 callShutdown(playersManager);
             }
+            if (database != null) {
+                logger.debug("Shutting down data source");
+                callShutdown(database);
+            }
+            if (txManager != null) {
+                logger.debug("Shutting down transaction manager");
+                callShutdown(txManager);
+            }
             logger.info("Shutdown sequence completed");
         }
     }
@@ -269,10 +287,20 @@ public class Init {
         }
     }
 
+    private void createTransactionManager() {
+        logger.debug("Creating transaction manager");
+        Class<? extends TransactionManager> cl = config
+                .getTransactionManagerClass();
+        txManager = DI.createWith(cl, configModule);
+        callInit(txManager);
+        txManagerModule = DI.objectModule(txManager, TransactionManager.class);
+        logger.debug("Transaction manager successfully initialized");
+    }
+
     private void createDataSource() {
         logger.debug("Creating database connection");
         Class<? extends Database> cl = config.getDatabaseClass();
-        database = DI.createWith(cl, configModule);
+        database = DI.createWith(cl, configModule, txManagerModule);
         callInit(database);
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");
@@ -290,7 +318,8 @@ public class Init {
     private void createDispatcher() {
         logger.debug("Creating dispatcher");
         Class<? extends Dispatcher> cl = config.getDispatcherClass();
-        dispatcher = DI.createWith(cl, configModule, channelModule);
+        dispatcher = DI.createWith(cl, configModule, channelModule,
+                txManagerModule);
         callInit(dispatcher);
         dispatcherModule = DI.objectModule(dispatcher, Gateway.class);
         logger.debug("Dispatcher created");
@@ -300,7 +329,8 @@ public class Init {
         logger.debug("Creating custom persistor");
         Class<?> ifcl = config.getCustomPersistorInterface();
         Class<?> cl = config.getCustomPersistorClass();
-        customPersistor = DI.createWith(cl, configModule, databaseModule);
+        customPersistor = DI.createWith(cl, configModule, databaseModule,
+                txManagerModule);
         // Create special module
         customPersistorModule = DI.objectModuleAnnotatedDynamic(
                 customPersistor, ifcl, CustomPersistor.class);
@@ -311,7 +341,8 @@ public class Init {
     private void createPlayersManager() {
         logger.debug("Creating players manager");
         Class<? extends PlayersManager> cl = config.getPlayerManagerClass();
-        playersManager = DI.createWith(cl, configModule, databaseModule);
+        playersManager = DI.createWith(cl, configModule, databaseModule,
+                txManagerModule);
         playersManagerModule = DI.objectModule(playersManager,
                 PlayersManager.class);
         callInit(playersManager);
