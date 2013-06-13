@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.Message;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
+import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 import com.google.inject.Inject;
@@ -27,6 +29,9 @@ public class LoginModule implements Module {
     
     @Inject(optional = true)
     private Gateway gateway;
+    
+    @Inject(optional = true)
+    private TransactionManager tm;
     
 
     public LoginModule(/*PlayersManager players, Gateway gateway*/) {
@@ -55,7 +60,7 @@ public class LoginModule implements Module {
      * {@inheritDoc}
      */
     @Override
-    public void receive(Message message) {
+    public void receive(Message message, Context ctx) {
         logger.debug("Message received");
         logger.debug(message);
     }

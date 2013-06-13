@@ -9,11 +9,15 @@ package pl.edu.agh.ki.mmorts.server.communication;
 public interface Message {
 
     /**
-     * @return Address (unicast address or multicast group identifier) of the
-     *         message target
+     * @return Address of the message target
      */
-    String getAddress();
+    Address getAddress();
 
+    /**
+     * @return Message delivery mode
+     */
+    Mode getMode();
+    
     /**
      * @return Messsage content, probably will change to something more useful
      */

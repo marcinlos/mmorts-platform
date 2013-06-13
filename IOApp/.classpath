@@ -5,7 +5,7 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="D:/Android/roboguice-master/roboguice/lib/guice-2.0-no_aop.jar"/>
-	<classpathentry kind="lib" path="D:/Android/roboguice-master/roboguice/lib/guice-2.0-src.jar"/>
+	<classpathentry kind="lib" path="C:/Users/as/workspaces/java/io/IOApp/libs/guice-2.0-no_aop.jar"/>
+	<classpathentry kind="lib" path="C:/Users/as/workspaces/java/io/IOApp/libs/guice-2.0-src.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

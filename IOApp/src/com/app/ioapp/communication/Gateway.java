@@ -34,5 +34,12 @@ public interface Gateway {
      *             at the target dispatcher
      */
     void send(Message message, String category);
+    
+        /**
+         * Called when a new message is to be delivered.
+         * 
+         * @param message Received message
+         */
+    void receive(Message message);
 
 }
