@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.app.ioapp.data.Context;
-import com.app.ioapp.interfaces.IModule;
 import com.app.ioapp.interfaces.UIListener;
+import com.app.ioapp.modules.Module;
 
 public class MainView {
 	
-	private Map<String,IModule> modules;
+	private Map<String,Module> modules;
 	private UIListener listener;
 	private Context context;
 	
-	public MainView(Map<String,IModule> modules, Context context){
+	public MainView(Map<String,Module> modules, Context context){
 		this.modules = modules;
 		this.context = context;
 	}
@@ -22,7 +22,7 @@ public class MainView {
 		listener = l;
 	}
 	
-	public void updateModules(Map<String,IModule> modules){       // bo te same moduly sa tez w innych miejscach
+	public void updateModules(Map<String,Module> modules){       // bo te same moduly sa tez w innych miejscach
 		this.modules = modules;;
 	}
 
@@ -30,6 +30,10 @@ public class MainView {
 	public void StuffHappened(Object wtf){
 		listener.stuffHappened(wtf);
 	}
+	
+	//public Object getModuleData(String moduleName){
+		
+	//}
 
 }
 

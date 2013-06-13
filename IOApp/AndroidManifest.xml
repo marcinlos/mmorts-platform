@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -21,6 +22,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.app.ioapp.GridActivity"
+            android:label="TEST" >
+        </activity>
+        <activity
+            android:name="com.app.ioapp.PlayAreaActivity"
+            android:label="@string/title_activity_play_area" >
         </activity>
     </application>
 

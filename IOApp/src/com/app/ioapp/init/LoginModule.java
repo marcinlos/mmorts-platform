@@ -1,7 +1,6 @@
 package com.app.ioapp.init;
 
-import com.app.ioapp.dispatcher.Dispatcher;
-import com.app.ioapp.exceptions.RegisterException;
+import com.app.ioapp.communication.Dispatcher;
 
 /**
  * Class responsible for registering, logging in and logging out
