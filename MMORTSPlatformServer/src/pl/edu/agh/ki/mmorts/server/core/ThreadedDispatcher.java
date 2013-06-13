@@ -40,7 +40,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     /** Message service */
     @Inject
     private MessageChannel channel;
-    
+
     /** Transaction manager */
     @Inject
     private TransactionManager tm;
@@ -59,9 +59,16 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
     /** Thread pool used to handle incoming messages */
     private ExecutorService threadPool;
-    
+
     /** Implementation of service locator */
     private ServiceLocator services = new ServiceLocatorDelgate();
+    
+
+    private class TransactionExecutor {
+        
+        
+        
+    }
 
     @OnInit
     void init() {
@@ -89,7 +96,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     public void receive(Message message, Response response) {
         String details = messageDetails(message);
         logger.debug("Message received: \n" + details);
-        
+
         // begin message transaction
         Context ctx = new Context();
         tm.begin();
@@ -101,17 +108,17 @@ public class ThreadedDispatcher extends ModuleContainer implements
             tm.rollback();
         }
     }
-
+    
     /**
      * Produces a stringized message representation
      */
     private static String messageDetails(Message message) {
         StringBuilder sb = new StringBuilder();
         sb.append("\tTarget: " + message.getAddress()).append('\n')
-          .append("\tSource: " + message.getSource()).append('\n');
+                .append("\tSource: " + message.getSource()).append('\n');
         return sb.toString();
     }
-    
+
     /**
      * Shutdown callback, notifies modules.
      */
@@ -166,38 +173,42 @@ public class ThreadedDispatcher extends ModuleContainer implements
     @Override
     public void later(Continuation cont) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /**
      * {@inheritDoc}
      * 
-     * <p>Delegates to the {@link ServiceLocatorDelgate}
+     * <p>
+     * Delegates to the {@link ServiceLocatorDelgate}
      */
     @Override
     public <T> void register(Class<? super T> service, T provider) {
+        logger.debug("Registering " + provider.getClass() + " as " + service);
         services.register(service, provider);
     }
 
     /**
      * {@inheritDoc}
      * 
-     * <p>Delegates to the {@link ServiceLocatorDelgate}
+     * <p>
+     * Delegates to the {@link ServiceLocatorDelgate}
      */
     @Override
     public <T> void registerIfAbsent(Class<? super T> service, T provider) {
+        logger.debug("Registering " + provider.getClass() + " as " + service);
         services.registerIfAbsent(service, provider);
     }
 
     /**
      * {@inheritDoc}
      * 
-     * <p>Delegates to the {@link ServiceLocatorDelgate}
+     * <p>
+     * Delegates to the {@link ServiceLocatorDelgate}
      */
     @Override
     public <T> T lookup(Class<T> service) {
         return services.lookup(service);
     }
-
 
 }

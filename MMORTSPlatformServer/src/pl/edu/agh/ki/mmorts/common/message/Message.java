@@ -25,6 +25,11 @@ public interface Message extends Serializable {
      * @return Conversation identifier (used e.g. for load balancing)
      */
     int getConversationId();
+    
+    /**
+     * @return Textual type identifier (e.g. "authenticate-request")
+     */
+    String getType();
 
     /**
      * @return Message delivery mode
