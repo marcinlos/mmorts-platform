@@ -20,7 +20,7 @@ public class MainActivity extends Activity implements UIListener {
 		File configurationFile = null;         // trzeba go skads wziac
 		//Log.e(ID,"wiadomosc");
 		
-		Initializer initializer = new Initializer(configurationFile);
+		Initializer initializer = new Initializer();
 		initializer.initialize();
 		
 		//activity który bêdzie tym listenerem dodatkowo odpali
