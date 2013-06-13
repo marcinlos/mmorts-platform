@@ -1,7 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -109,14 +111,20 @@ public class ThreadedDispatcher extends ModuleContainer implements
         private State state = State.NO_TRANS;
 
         /** Transaction stack */
-        Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
+        private Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
 
         /** True if rollback handlers are being executed */
         private boolean rollback = false;
 
         /** Current transaction context */
         private Context context;
-
+        
+        /** Collection of local notifications */
+        private List<Message> notifications = new ArrayList<Message>();
+        
+        /** Colletion of withheld response messages */
+        private List<Message> withheld = new ArrayList<Message>();
+        
         /** Run the transaction */
         public void run() throws Exception {
             state = State.IN_TRANS;
@@ -128,15 +136,23 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     cont.execute(context);
                 }
             } catch (Exception e) {
+                // Remove all the stored messages
+                clearMessageStore();
                 rollbackAll(e);
                 throw e;
             } finally {
                 state = State.POST_TRANS;
             }
         }
+        
+        /** Removes all the stored messages (local and responses) */
+        public void clearMessageStore() {
+            notifications.clear();
+            withheld.clear();
+        }
 
         /** Definitely finish the current transaction, clear state */
-        public void finished() {
+        public void clear() {
             state = State.NO_TRANS;
             context = null;
         }
@@ -275,7 +291,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     tm.rollback();
                 } finally {
                     // After commit/rollback reset the executor
-                    executor.get().finished();
+                    executor.get().clear();
                 }
             }
         });
@@ -337,9 +353,12 @@ public class ThreadedDispatcher extends ModuleContainer implements
         if (message.getAddress().type() == Destination.LOCAL) {
             if (!targetExistsLocally(message)) {
                 throw new TargetNotExistsException();
+            } else {
+                
             }
+        } else {
+            throw new IllegalArgumentException("Remote message in send()");
         }
-        // TODO: actually do something
     }
 
     /**

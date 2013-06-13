@@ -1,6 +1,10 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -101,7 +105,11 @@ public class Init {
     private Config config;
     private com.google.inject.Module configModule;
 
-    private Map<String, ConfiguredModule> modules = new HashMap<String, ConfiguredModule>();
+    /**
+     * Runtime information about the modules
+     */
+    private ModuleTable moduleTable;
+    private com.google.inject.Module moduleTableModule;
 
     /**
      * Creates the {@code Init} object and initializes the server.
@@ -172,25 +180,47 @@ public class Init {
             logger.info("Loaded module configuration");
             // initialize
             Map<String, ModuleDescriptor> loaded = confReader.getModules();
+            List<ConfiguredModule> modules = new ArrayList<ConfiguredModule>();
             logger.debug("Creating modules");
             for (ModuleDescriptor desc : loaded.values()) {
                 logger.debug("Creating module " + desc.name);
                 try {
                     Module m = createModule(desc);
                     logger.debug("Module " + desc.name + " created");
-                    modules.put(desc.name, new ConfiguredModule(m, desc));
+                    modules.add(new ConfiguredModule(m, desc));
                 } catch (ModuleInitException e) {
                     logger.error("Module " + desc.name + " creation failed", e);
                 }
             }
             // register with the dispatcher
             logger.debug("Registering modules with a dispatcher");
-            dispatcher.registerModules(modules.values());
+            dispatcher.registerModules(modules);
+            createModuleTable();
         } catch (ModuleConfigException e) {
             logger.fatal("Error while readin module configuration");
             logger.fatal(e);
             throw new InitException(e);
         }
+    }
+
+    /**
+     * Creates a module table and its' corresponding Guice module object.
+     */
+    private void createModuleTable() {
+        int n = dispatcher.getModules().size();
+        List<ModuleDescriptor> descs = new ArrayList<ModuleDescriptor>(n);
+        for (ConfiguredModule conf : dispatcher.getModules()) {
+            descs.add(conf.descriptor);
+        }
+        final Collection<ModuleDescriptor> modules = Collections
+                .unmodifiableCollection(descs);
+        moduleTable = new ModuleTable() {
+            @Override
+            public Collection<ModuleDescriptor> getModuleDescriptors() {
+                return modules;
+            }
+        };
+        moduleTableModule = DI.objectModule(moduleTable, ModuleTable.class);
     }
 
     /**
@@ -201,7 +231,7 @@ public class Init {
         logger.debug("Injecting persistors");
         Injector injector = Guice.createInjector(customPersistorModule,
                 playersManagerModule);
-        for (ConfiguredModule conf : modules.values()) {
+        for (ConfiguredModule conf : dispatcher.getModules()) {
             injector.injectMembers(conf.module);
         }
         logger.debug("Persistors injected");
@@ -300,7 +330,8 @@ public class Init {
     private void createDataSource() {
         logger.debug("Creating database connection");
         Class<? extends Database> cl = config.getDatabaseClass();
-        database = DI.createWith(cl, configModule, txManagerModule);
+        database = DI.createWith(cl, configModule, txManagerModule,
+                moduleTableModule);
         callInit(database);
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");

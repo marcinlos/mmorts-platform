@@ -7,7 +7,7 @@ public interface Transaction {
 
     /**
      * Adds a transaction listener receiving notification about transaction
-     * commit/rollback.
+     * commit/rollback. Listeners are notified in a LIFO order (stack).
      * 
      * @param listener
      *            Listener to add
