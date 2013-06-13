@@ -5,7 +5,6 @@ import java.util.List;
 import android.util.Log;
 
 import com.app.board.SpaceOccupiedException;
-import com.app.ioapp.interfaces.ITile;
 
 public class Board {
 	

@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.R;
-import com.app.ioapp.interfaces.ITile;
 import com.app.ioapp.modules.Board;
+import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
 
 import android.content.Context;

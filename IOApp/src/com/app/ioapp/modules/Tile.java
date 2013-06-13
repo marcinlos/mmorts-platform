@@ -1,6 +1,5 @@
 package com.app.ioapp.modules;
 
-import com.app.ioapp.interfaces.ITile;
 
 import android.graphics.Bitmap;
 

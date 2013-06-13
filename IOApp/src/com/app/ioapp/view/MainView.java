@@ -3,8 +3,8 @@ package com.app.ioapp.view;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.app.ioapp.UIListener;
 import com.app.ioapp.data.Context;
-import com.app.ioapp.interfaces.UIListener;
 import com.app.ioapp.modules.Module;
 
 public class MainView {

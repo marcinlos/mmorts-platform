@@ -7,9 +7,8 @@ import java.util.List;
 import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.init.Initializer;
-import com.app.ioapp.interfaces.ITile;
-import com.app.ioapp.interfaces.UIListener;
 import com.app.ioapp.modules.Board;
+import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
 
