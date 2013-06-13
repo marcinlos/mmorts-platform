@@ -3,8 +3,8 @@ package pl.edu.agh.ki.mmorts.server.modules.builtin;
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
-import pl.edu.agh.ki.mmorts.server.communication.Message;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 import pl.edu.agh.ki.mmorts.server.modules.Context;

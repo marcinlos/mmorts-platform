@@ -20,9 +20,9 @@ public abstract class ModuleContainer implements Dispatcher {
 
     public static final Logger logger = Logger.getLogger(ModuleContainer.class);
 
-    private Map<String, ConfiguredModule> modules = new HashMap<String, ConfiguredModule>();
-    private Map<String, Module> unicast = new HashMap<String, Module>();
-    private Map<String, Set<Module>> multicast = new HashMap<String, Set<Module>>();
+    protected Map<String, ConfiguredModule> modules = new HashMap<String, ConfiguredModule>();
+    protected Map<String, Module> unicast = new HashMap<String, Module>();
+    protected Map<String, Set<Module>> multicast = new HashMap<String, Set<Module>>();
 
     /**
      * {@inheritDoc}

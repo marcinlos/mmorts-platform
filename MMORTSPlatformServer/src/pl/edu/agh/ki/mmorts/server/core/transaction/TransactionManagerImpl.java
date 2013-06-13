@@ -18,7 +18,7 @@ public class TransactionManagerImpl implements TransactionManager {
      * List of global listeners. Should provide fast reads, otherwise it may be
      * a bottleneck. It is initialized with a {@linkplain CopyOnWriteArrayList}.
      */
-    private List<TransactionBeginListener> listeners;
+    private List<TransactionsBeginListener> listeners;
 
     /** Per-thread local transaction manager */
     private static final ThreadLocal<SequentialTM> localManager = new ThreadLocal<SequentialTM>() {
@@ -36,7 +36,7 @@ public class TransactionManagerImpl implements TransactionManager {
      */
     public TransactionManagerImpl() {
         logger.debug("Initializing");
-        listeners = new CopyOnWriteArrayList<TransactionBeginListener>();
+        listeners = new CopyOnWriteArrayList<TransactionsBeginListener>();
     }
     
     /**
@@ -50,7 +50,7 @@ public class TransactionManagerImpl implements TransactionManager {
      * {@inheritDoc}
      */
     @Override
-    public void addListener(TransactionBeginListener listener) {
+    public void addListener(TransactionsBeginListener listener) {
         logger.debug("Adding listener");
         listeners.add(listener);
     }
@@ -59,7 +59,7 @@ public class TransactionManagerImpl implements TransactionManager {
      * {@inheritDoc}
      */
     @Override
-    public void removeListener(TransactionBeginListener listener) {
+    public void removeListener(TransactionsBeginListener listener) {
         logger.debug("Removing listener");
         listeners.remove(listener);
     }
@@ -81,7 +81,7 @@ public class TransactionManagerImpl implements TransactionManager {
             Transaction t = getManager().createTx();
             transaction.set(t);
             // Notify all listeners
-            for (TransactionBeginListener listener : listeners) {
+            for (TransactionsBeginListener listener : listeners) {
                 listener.begin(t);
             }
             return t;

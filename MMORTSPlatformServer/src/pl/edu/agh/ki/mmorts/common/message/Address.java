@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.server.communication;
+package pl.edu.agh.ki.mmorts.common.message;
 
 /**
  * Structure representing the full address (

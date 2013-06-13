@@ -3,7 +3,7 @@ package pl.edu.agh.ki.mmorts.server.core.transaction;
 /**
  * Interface for transaction begin interceptor.
  */
-public interface TransactionBeginListener {
+public interface TransactionsBeginListener {
 
     /**
      * Called when a new transaction begins.

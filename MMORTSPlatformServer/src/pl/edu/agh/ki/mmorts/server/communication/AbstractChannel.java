@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.communication;
 
+import pl.edu.agh.ki.mmorts.common.message.Message;
+
 /**
  * Partial implementation, merely managing the message receiver.
  */
@@ -20,9 +22,12 @@ public abstract class AbstractChannel implements MessageChannel {
      * check for {@code null}!
      * 
      * @param message
+     *            Message to forward
+     * @param response
+     *            Response callback for this message
      */
-    public void forwardMessage(Message message) {
-        receiver.receive(message);
+    public void forwardMessage(Message message, Response response) {
+        receiver.receive(message, response);
     }
 
     /**
