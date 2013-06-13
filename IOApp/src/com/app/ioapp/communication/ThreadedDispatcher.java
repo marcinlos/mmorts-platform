@@ -3,16 +3,14 @@ package com.app.ioapp.communication;
 import java.util.Arrays;
 
 
-import com.app.ioapp.annotations.OnShutdown;
 import com.app.ioapp.config.Config;
 import com.app.ioapp.modules.Module;
-import com.google.inject.Inject;
 
 
 /**
  * Default implementation of a message dispatcher.
  */
-public class ThreadedDispatcher implements Gateway, Dispatcher {
+public class ThreadedDispatcher implements MessageReceiver, Dispatcher {
 
 
     /** Configuration object */
@@ -21,7 +19,6 @@ public class ThreadedDispatcher implements Gateway, Dispatcher {
     /** Message service */
     private MessageChannel channel;
 
-    @Inject
     public ThreadedDispatcher(Config config, MessageChannel channel) {
         this.config = config;
         this.channel = channel;
@@ -54,7 +51,6 @@ public class ThreadedDispatcher implements Gateway, Dispatcher {
     /**
      * Shutdown callback, notifies modules.
      */
-    @OnShutdown
     public void shutdown() {
         try {
             // TODO: Shut down modules
