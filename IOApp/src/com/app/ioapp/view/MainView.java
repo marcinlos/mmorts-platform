@@ -34,6 +34,14 @@ public class MainView {
 	//public Object getModuleData(String moduleName){
 		
 	//}
+	
+	/**
+	 * invoked by MenuManager when a button has been clicked.
+	 * @param menuNameClicked module it needs to be directed to
+	 */
+	public void handleMenuAction(String moduleName){
+		//TODO
+	}
 
 }
 
