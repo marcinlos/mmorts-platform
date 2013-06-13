@@ -3,9 +3,10 @@ package com.app.ioapp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.app.board.BoardView;
-import com.app.board.ITile;
-import com.app.board.Tile;
+import com.app.ioapp.customDroidViews.BoardView;
+import com.app.ioapp.interfaces.ITile;
+import com.app.ioapp.modules.Tile;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.graphics.BitmapFactory;

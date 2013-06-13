@@ -1,4 +1,4 @@
-package com.app.board;
+package com.app.ioapp.interfaces;
 
 import android.graphics.Bitmap;
 
