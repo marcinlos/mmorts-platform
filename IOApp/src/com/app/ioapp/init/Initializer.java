@@ -60,5 +60,9 @@ public class Initializer {
 		
 	}
 	
+	public MainView getView(){
+		return view;
+	}
+	
 
 }

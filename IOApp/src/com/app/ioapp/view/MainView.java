@@ -25,7 +25,7 @@ public class MainView {
 	public void updateModules(Map<String,Module> modules){       // bo te same moduly sa tez w innych miejscach
 		this.modules = modules;;
 	}
-
+	
 	
 	public void StuffHappened(Object wtf){
 		listener.stuffHappened(wtf);
