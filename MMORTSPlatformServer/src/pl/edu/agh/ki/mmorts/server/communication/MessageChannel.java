@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.communication;
 
+import pl.edu.agh.ki.mmorts.common.message.Message;
+
 /**
  * Interface representing messaging service. Provides the necessary input and
  * output capabilities, necessary for bidirectional communication.
@@ -26,5 +28,5 @@ public interface MessageChannel {
      *            Message to be sent through the output channel
      */
     void sendMessage(Message message);
-    
+
 }

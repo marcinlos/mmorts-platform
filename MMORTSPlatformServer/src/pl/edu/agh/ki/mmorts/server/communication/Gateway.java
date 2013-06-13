@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.communication;
 
+import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
 
 /**

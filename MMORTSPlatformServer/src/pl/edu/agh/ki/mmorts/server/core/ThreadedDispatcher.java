@@ -10,9 +10,10 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
-import pl.edu.agh.ki.mmorts.server.communication.Message;
+import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
+import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
@@ -85,7 +86,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@inheritDoc}
      */
     @Override
-    public void receive(Message message) {
+    public void receive(Message message, Response response) {
         String details = messageDetails(message);
         logger.debug("Message received: \n" + details);
         

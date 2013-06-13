@@ -1,6 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.modules;
 
-import pl.edu.agh.ki.mmorts.server.communication.Message;
+import pl.edu.agh.ki.mmorts.common.message.Message;
 
 /**
  * Interface of the moduleClass, basic unit of functionality.
