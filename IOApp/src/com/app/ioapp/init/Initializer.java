@@ -1,7 +1,13 @@
 package com.app.ioapp.init;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
+import java.util.Properties;
 
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.config.Config;
@@ -35,6 +41,12 @@ public class Initializer {
 	private String mail;
 	private String password;
 	
+    /** 
+     * Info file location
+     * This file stores information about players account: mail, password
+     */
+    private static final String info = "appInfo/info.properties";
+	
     /** Configuration file location */
     private static final String configFile = "resources/client.properties";
     
@@ -57,7 +69,7 @@ public class Initializer {
 	private Map<String,Module> modules;
 	
 	
-	public Initializer(String mail, String password, boolean alreadyRegistered) {
+	public Initializer(String mail, String password, boolean alreadyRegistered) throws ConfigException, IOException {
 		this.mail = mail;
 		this.password = password;
 		this.alreadyRegistered = alreadyRegistered;
@@ -77,8 +89,9 @@ public class Initializer {
  * Initializes all classes
  * Exceptions must be handled by phone application
  * @throws ConfigException
+ * @throws IOException 
  */
-	private void initialize() throws ConfigException{
+	private void initialize() throws ConfigException, IOException{
 			reader = new ConfigReader(configFile);
 			reader.configure();
 			config = reader.getConfig();
@@ -89,6 +102,11 @@ public class Initializer {
 				loginModule.logIn();
 			}
 			else {
+				FileOutputStream stream = new FileOutputStream(new File(info));
+				Properties ps = new Properties();
+				ps.setProperty("mail", mail);
+				ps.setProperty("password", password);
+				ps.store(stream, null);
 				loginModule.register(mail, password);
 			}
 			
