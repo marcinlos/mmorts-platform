@@ -21,17 +21,6 @@ public class MainActivity extends Activity implements UIListener {
 		Intent intent = new Intent(this, PlayAreaActivity.class);
     	startActivity(intent);
 		
-		
-<<<<<<< HEAD
-		
-=======
-		File configurationFile = null;         // trzeba go skads wziac
-		//Log.e(ID,"wiadomosc");
-		
-		Initializer initializer = new Initializer();
-		initializer.initialize();
->>>>>>> bf9b5fdec4d6af7af770bd09ded60d7ffa5eda04
-		
 		//activity który bêdzie tym listenerem dodatkowo odpali
 		// mainView.setListener(this)
 	}
@@ -41,7 +30,7 @@ public class MainActivity extends Activity implements UIListener {
 		//w tym miejscu jesteœmy pewni ¿e user widzi to co mu wyœwietliliœmy
 		//mo¿emy zacz¹æ ³adowaæ co potencjalnie mo¿e chwilê potrwaæ
 		if(hasFocus){
-			File configurationFile = null;         // trzeba go skads wziac
+			String configurationFile = "";         // trzeba go skads wziac
 			Initializer initializer = new Initializer(configurationFile);
 			initializer.initialize();
 		}
