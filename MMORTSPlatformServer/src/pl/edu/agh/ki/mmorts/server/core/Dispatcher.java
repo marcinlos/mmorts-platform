@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import java.util.Collection;
+
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
@@ -29,5 +31,10 @@ public interface Dispatcher extends Gateway {
      * @param modules Modules to initialize
      */
     void registerModules(Iterable<ConfiguredModule> modules);
+    
+    /**
+     * @return Immutable collection of module information
+     */
+    Collection<ConfiguredModule> getModules();
     
 }

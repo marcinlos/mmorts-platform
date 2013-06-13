@@ -1,5 +1,6 @@
 package com.app.ioapp.init;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -36,6 +37,10 @@ public class Checker {
 	 * @return true if exists
 	 */
 	public boolean checkIfAccountExists() {
+		File file = new File(info);
+		if (!file.exists()) {
+			return false;
+		}
 		try {
 			loader.load(info);
 		} catch (IOException e) {
