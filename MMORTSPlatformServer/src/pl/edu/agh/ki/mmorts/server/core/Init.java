@@ -24,7 +24,7 @@ import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.Database;
-import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
+import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
@@ -90,7 +90,7 @@ public class Init {
     /**
      * Players manager
      */
-    private PlayersManager playersManager;
+    private PlayersPersistor playersManager;
     private com.google.inject.Module playersManagerModule;
 
     /**
@@ -371,11 +371,11 @@ public class Init {
 
     private void createPlayersManager() {
         logger.debug("Creating players manager");
-        Class<? extends PlayersManager> cl = config.getPlayerManagerClass();
+        Class<? extends PlayersPersistor> cl = config.getPlayerManagerClass();
         playersManager = DI.createWith(cl, configModule, databaseModule,
                 txManagerModule);
         playersManagerModule = DI.objectModule(playersManager,
-                PlayersManager.class);
+                PlayersPersistor.class);
         callInit(playersManager);
         logger.debug("Players manager created");
     }

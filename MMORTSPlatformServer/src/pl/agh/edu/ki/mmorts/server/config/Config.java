@@ -6,7 +6,7 @@ import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.Database;
-import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
+import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 
 /**
  * Allows retrieval of configuration properties
@@ -83,7 +83,7 @@ public interface Config {
     /**
      * @return Implementation of players manager specified in the configuration
      */
-    Class<? extends PlayersManager> getPlayerManagerClass();
+    Class<? extends PlayersPersistor> getPlayerManagerClass();
 
     /**
      * @return Read-only map of all the available properties
