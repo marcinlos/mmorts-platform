@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.config;
+package pl.edu.agh.ki.mmorts.server.config;
 
 import java.io.BufferedInputStream;
 import java.io.File;

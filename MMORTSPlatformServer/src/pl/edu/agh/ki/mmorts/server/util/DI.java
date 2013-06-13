@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.util;
+package pl.edu.agh.ki.mmorts.server.util;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

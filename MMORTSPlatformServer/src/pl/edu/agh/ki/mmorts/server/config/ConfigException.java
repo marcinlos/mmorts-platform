@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.config;
+package pl.edu.agh.ki.mmorts.server.config;
 
 /**
  * Thrown when configuration processing encounters an error 

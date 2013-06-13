@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.util.reflection;
+package pl.edu.agh.ki.mmorts.server.util.reflection;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

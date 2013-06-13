@@ -1,6 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
-import pl.agh.edu.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 

@@ -11,14 +11,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.server.config.Config;
-import pl.agh.edu.ki.mmorts.server.config.ConfigException;
-import pl.agh.edu.ki.mmorts.server.config.ConfigReader;
-import pl.agh.edu.ki.mmorts.server.util.DI;
-import pl.agh.edu.ki.mmorts.server.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.config.ConfigException;
+import pl.edu.agh.ki.mmorts.server.config.ConfigReader;
 import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
@@ -29,6 +27,8 @@ import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleInitException;
+import pl.edu.agh.ki.mmorts.server.util.DI;
+import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;

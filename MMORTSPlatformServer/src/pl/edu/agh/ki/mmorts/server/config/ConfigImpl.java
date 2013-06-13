@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.config;
+package pl.edu.agh.ki.mmorts.server.config;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -8,12 +8,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.server.util.PropertiesAdapter;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
+import pl.edu.agh.ki.mmorts.server.util.PropertiesAdapter;
 
 /**
  * Implementation of configuration interface, processes the properties at the

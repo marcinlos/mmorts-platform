@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.util;
+package pl.edu.agh.ki.mmorts.server.util;
 
 import java.util.Collection;
 import java.util.Map;

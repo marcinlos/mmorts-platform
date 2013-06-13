@@ -1,4 +1,4 @@
-package pl.agh.edu.ki.mmorts.server.util.reflection;
+package pl.edu.agh.ki.mmorts.server.util.reflection;
 
 /**
  * Exception thrown to indicate failed reflective method invocation

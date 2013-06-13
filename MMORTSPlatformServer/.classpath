@@ -18,18 +18,7 @@
 	<classpathentry kind="lib" path="lib/apacheDerby/derby.war"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbyclient.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_cs.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_de_DE.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_es.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_fr.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_hu.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_it.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_ja_JP.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_ko_KR.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_pl.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_pt_BR.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_ru.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_zh_CN.jar"/>
-	<classpathentry kind="lib" path="lib/apacheDerby/derbyLocale_zh_TW.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbynet.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbyrun.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbytools.jar"/>

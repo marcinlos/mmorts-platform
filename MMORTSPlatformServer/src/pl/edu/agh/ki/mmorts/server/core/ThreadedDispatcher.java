@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.common.message.Address;
 import pl.edu.agh.ki.mmorts.common.message.Destination;
 import pl.edu.agh.ki.mmorts.common.message.Message;
@@ -24,6 +23,7 @@ import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.communication.TargetNotExistsException;
+import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
