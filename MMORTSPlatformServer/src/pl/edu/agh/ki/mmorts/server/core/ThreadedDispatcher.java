@@ -23,8 +23,6 @@ import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.communication.TargetNotExistsException;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
-import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionBeginListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
@@ -101,12 +99,16 @@ public class ThreadedDispatcher extends ModuleContainer implements
         private static final Logger logger = Logger
                 .getLogger(TransactionExecutor.class);
 
+        /** State of the transaction */
+        private State state = State.NO_TRANS;
+
         /** Transaction stack */
         Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
 
         private boolean rollback = false;
 
         public void run(Context ctx) {
+            state = State.IN_TRANS;
             while (!executionStack.isEmpty()) {
                 Continuation cont = executionStack.pop();
                 try {
@@ -117,6 +119,11 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     rollback = false;
                 }
             }
+            state = State.POST_TRANS;
+        }
+
+        public void finished() {
+            state = State.NO_TRANS;
         }
 
         private void rollbackAll(Throwable exc, Context ctx) {
@@ -170,6 +177,13 @@ public class ThreadedDispatcher extends ModuleContainer implements
         }
     }
 
+    /**
+     * @return Current transaction state
+     */
+    private State getState() {
+        return executor.get().state;
+    }
+
     @OnInit
     void init() {
         logger.debug("Initializing");
@@ -210,6 +224,9 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     logger.debug("Transaction rolled back due to an exception",
                             e);
                     tm.rollback();
+                } finally {
+                    // After commit/rollback reset the executor
+                    executor.get().finished();
                 }
 
             }
@@ -271,6 +288,11 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void sendDelayed(Message message) {
+        // Only during the transaction
+        if (getState() != State.IN_TRANS) {
+            throw new IllegalStateException("sendDelayed called outside "
+                    + "the transaction (" + getState() + ")");
+        }
         // if local address check if target exists
         if (message.getAddress().type() == Destination.LOCAL) {
             if (!targetExistsLocally(message)) {

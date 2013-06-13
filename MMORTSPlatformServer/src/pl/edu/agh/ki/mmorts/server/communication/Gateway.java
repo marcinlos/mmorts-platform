@@ -34,7 +34,8 @@ public interface Gateway extends ServiceLocator {
     void send(Message mesage);
 
     /**
-     * Sends a message at the successful commit of the current transaction.
+     * Sends a message at the successful commit of the current transaction. Can
+     * be called <b>only</b> during the transaction.
      * 
      * @param message
      *            Message to be sent at the end of transaction
