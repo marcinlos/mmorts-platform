@@ -107,7 +107,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
         private boolean rollback = false;
 
-        public void run(Context ctx) {
+        public void run(Context ctx) throws Exception {
             state = State.IN_TRANS;
             while (!executionStack.isEmpty()) {
                 Continuation cont = executionStack.pop();
@@ -117,6 +117,8 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     rollback = true;
                     rollbackAll(e, ctx);
                     rollback = false;
+                    state = State.POST_TRANS;
+                    throw e;
                 }
             }
             state = State.POST_TRANS;
@@ -316,8 +318,11 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void later(Continuation cont) {
-        // TODO Auto-generated method stub
-
+        if (getState() != State.IN_TRANS) {
+            throw new IllegalStateException("later() called outside the "
+                    + "transaction (" + getState() + ")");
+        }
+        executor.get().push(cont);
     }
 
     /**
