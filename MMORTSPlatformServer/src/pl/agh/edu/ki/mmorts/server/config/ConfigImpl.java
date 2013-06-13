@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import pl.agh.edu.ki.mmorts.server.util.PropertiesAdapter;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
-import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
 
@@ -34,8 +33,11 @@ class ConfigImpl implements Config {
     /** Used dispatcher implementation class */
     private Class<? extends Dispatcher> dispatcherClass;
 
+    /** Used custom persistor interface */
+    private Class<?> customPersistorInterface;
+
     /** Used custom persistor class */
-    private Class<? extends CustomPersistor> customPersistorClass;
+    private Class<?> customPersistorClass;
 
     /** Used database class */
     private Class<? extends Database> databaseClass;
@@ -78,6 +80,7 @@ class ConfigImpl implements Config {
 
         loadDatabaseClass();
         loadPlayersManagerClass();
+        loadCustomPersistorInterface();
         loadCustomPersistorClass();
         loadChannelClass();
         loadDispatcherClass();
@@ -101,7 +104,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load Dispatcher class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load Dispatcher class", e);
+            logger.fatal("Failed to load Dispatcher class");
+            logger.fatal(e);
         }
     }
 
@@ -117,24 +121,47 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load message channel class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load message channel class", e);
+            logger.fatal("Failed to load message channel class");
+            logger.fatal(e);
         }
     }
 
     /*
-     * Retrieves a {@code Class} object for the specified custom persistor class
+     * Retrieves a {@code Class} object for the specified custom persistor
+     * interface
+     */
+    private void loadCustomPersistorInterface() {
+        logger.debug("Loading custom persistor interface class");
+        try {
+            customPersistorInterface = loadClass(CUSTOM_PERSISTOR_INTERFACE,
+                    Object.class);
+            if (customPersistorInterface == null) {
+                addMissing(CUSTOM_PERSISTOR_INTERFACE);
+                logger.fatal("Failed to load custom persistor interface (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load custom persistor interface");
+            logger.fatal(e);
+        }
+    }
+
+    /*
+     * Retrieves a {@code Class} object for the specified custom persistor
+     * class. Checks whether the loaded class is indeed an implementation of the
+     * custom persistor interface.
      */
     private void loadCustomPersistorClass() {
         logger.debug("Loading CustomPersistor class");
         try {
             customPersistorClass = loadClass(CUSTOM_PERSISTOR_CLASS,
-                    CustomPersistor.class);
+                    customPersistorInterface);
             if (customPersistorClass == null) {
                 addMissing(CUSTOM_PERSISTOR_CLASS);
                 logger.fatal("Failed to load custom persistor class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load custom persistor class", e);
+            logger.fatal("Failed to load custom persistor class");
+            logger.fatal(e);
         }
     }
 
@@ -150,7 +177,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load database class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load database class", e);
+            logger.fatal("Failed to load database class");
+            logger.fatal(e);
         }
     }
 
@@ -167,7 +195,8 @@ class ConfigImpl implements Config {
                 logger.fatal("Failed to load players manager class (missing)");
             }
         } catch (Exception e) {
-            logger.fatal("Failed to load players manager class", e);
+            logger.fatal("Failed to load players manager class");
+            logger.fatal(e);
         }
     }
 
@@ -225,8 +254,16 @@ class ConfigImpl implements Config {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends CustomPersistor> getCustomPersistorClass() {
+    public Class<?> getCustomPersistorClass() {
         return customPersistorClass;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?> getCustomPersistorInterface() {
+        return customPersistorInterface;
     }
 
     /**
@@ -260,5 +297,6 @@ class ConfigImpl implements Config {
     public Class<? extends MessageChannel> getChannelClass() {
         return channelClass;
     }
+
 
 }

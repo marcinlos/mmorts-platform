@@ -5,15 +5,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Class for loading and parsing module configuration data from a JSON file.
@@ -27,6 +32,15 @@ public class ModuleConfigReader {
 
     /** Json parser */
     private Gson gson = new Gson();
+
+    /** Very simple data structure for parsing json */
+    class ModuleData {
+        @SerializedName("class")
+        String clazz;
+        String name;
+        String[] unicast;
+        String[] groups;
+    }
 
     /** Map of module descriptors */
     private Map<String, ModuleDescriptor> descriptors;
@@ -45,7 +59,65 @@ public class ModuleConfigReader {
      * @see #load(String)
      */
     public void load(InputStream stream) {
-        throw new NotImplementedException();
+        Reader reader = new InputStreamReader(stream);
+        try {
+            ModuleData[] data = gson.fromJson(reader, ModuleData[].class);
+            for (ModuleData item : data) {
+                try {
+                    logger.debug("Processing config of module " + item.name);
+                    ModuleDescriptor desc = makeDescriptor(item);
+                    addModule(desc);
+                } catch (Exception e) {
+                    logger.error("Error processing module " + item.name
+                            + " configuration", e);
+                }
+            }
+        } catch (JsonSyntaxException e) {
+            logger.error("Error while parsing JSON module configuration");
+            logger.error(e);
+            throw new ModuleConfigException(e);
+        }
+    }
+
+    /**
+     * Creates {@code ModuleDescriptor} from {@code ModuleData}
+     */
+    private ModuleDescriptor makeDescriptor(ModuleData item) {
+        Class<? extends Module> clazz = loadClass(item.clazz);
+        ModuleDescriptor.Builder b = ModuleDescriptor.create(item.name, clazz);
+        for (String address : item.unicast) {
+            b.addUnicast(address);
+        }
+        for (String group : item.groups) {
+            b.addGroup(group);
+        }
+        return b.build();
+    }
+
+    /**
+     * Tries to load {@code Module} implementation of a given name.
+     * 
+     * @throws ModuleConfigException
+     *             If there is a problem with the class
+     */
+    private Class<? extends Module> loadClass(String className) {
+        try {
+            Class<?> rawClass = Class.forName(className);
+            return rawClass.asSubclass(Module.class);
+        } catch (ClassNotFoundException e) {
+            logger.error("Class not found: " + className);
+            throw new ModuleConfigException(e);
+        } catch (ClassCastException e) {
+            logger.error("Class is not a Module: " + className);
+            throw new ModuleConfigException(e);
+        }
+    }
+
+    /**
+     * Adds module to the table
+     */
+    private void addModule(ModuleDescriptor desc) {
+        descriptors.put(desc.name, desc);
     }
 
     /**
