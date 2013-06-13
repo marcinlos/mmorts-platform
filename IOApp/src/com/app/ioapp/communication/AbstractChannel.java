@@ -6,17 +6,17 @@ package com.app.ioapp.communication;
 public abstract class AbstractChannel implements MessageChannel {
 
     /** Message receiver object */
-    private Gateway receiver;
+    private MessageReceiver receiver;
 
     /**
      * @return Previously set message receiver
      */
-    protected Gateway getReceiver() {
+    protected MessageReceiver getReceiver() {
         return receiver;
     }
 
     /**
-     * Forwards the message to the associated {@code MessageReceiver}. Does not
+     * Forwards the message to the associated {@code Gateway}. Does not
      * check for {@code null}!
      * 
      * @param message
@@ -29,7 +29,7 @@ public abstract class AbstractChannel implements MessageChannel {
      * {@inheritDoc}
      */
     @Override
-    public void startReceiving(Gateway receiver) {
+    public void startReceiving(MessageReceiver receiver) {
         if (receiver != null) {
             this.receiver = receiver;
         } else {

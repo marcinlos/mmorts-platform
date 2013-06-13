@@ -1,6 +1,8 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,6 +43,14 @@ public abstract class ModuleContainer implements Dispatcher {
             registerModule(conf);
         }
         phaseTwo();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ConfiguredModule> getModules() {
+        return Collections.unmodifiableCollection(modules.values());
     }
 
     /**

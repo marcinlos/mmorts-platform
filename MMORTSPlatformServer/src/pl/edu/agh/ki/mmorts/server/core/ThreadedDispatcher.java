@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.common.message.Address;
 import pl.edu.agh.ki.mmorts.common.message.Destination;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
@@ -27,6 +28,7 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
+import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 import com.google.inject.name.Named;
 
@@ -94,6 +96,10 @@ public class ThreadedDispatcher extends ModuleContainer implements
         }
     };
 
+    /**
+     * Helper class containing per-thread state necessary for conducting
+     * transactions.
+     */
     private static class TransactionExecutor {
 
         private static final Logger logger = Logger
@@ -105,40 +111,75 @@ public class ThreadedDispatcher extends ModuleContainer implements
         /** Transaction stack */
         Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
 
+        /** True if rollback handlers are being executed */
         private boolean rollback = false;
 
-        public void run(Context ctx) throws Exception {
+        /** Current transaction context */
+        private Context context;
+
+        /** Run the transaction */
+        public void run() throws Exception {
             state = State.IN_TRANS;
-            while (!executionStack.isEmpty()) {
-                Continuation cont = executionStack.pop();
-                try {
-                    cont.execute(ctx);
-                } catch (Exception e) {
-                    rollback = true;
-                    rollbackAll(e, ctx);
-                    rollback = false;
-                    state = State.POST_TRANS;
-                    throw e;
+            // context per transaction
+            context = new Context();
+            try {
+                while (!executionStack.isEmpty()) {
+                    Continuation cont = executionStack.pop();
+                    cont.execute(context);
                 }
+            } catch (Exception e) {
+                rollbackAll(e);
+                throw e;
+            } finally {
+                state = State.POST_TRANS;
             }
-            state = State.POST_TRANS;
         }
 
+        /** Definitely finish the current transaction, clear state */
         public void finished() {
             state = State.NO_TRANS;
+            context = null;
         }
 
-        private void rollbackAll(Throwable exc, Context ctx) {
+        /**
+         * @return Current transaction context
+         */
+        public Context getContext() {
+            return context;
+        }
+
+        /**
+         * @return {@code true} if the rollback is in progress
+         */
+        public boolean duringRollback() {
+            return rollback;
+        }
+
+        /**
+         * Informs all the remaining continuations about the failure.
+         * 
+         * @param exc
+         *            Exception that caused the failure
+         */
+        private void rollbackAll(Throwable exc) {
+            rollback = true;
             while (!executionStack.isEmpty()) {
                 Continuation cont = executionStack.pop();
                 try {
-                    cont.failure(exc, ctx);
+                    cont.failure(exc, context);
                 } catch (Exception e) {
                     logger.error("Exception in a failure handler", e);
                 }
             }
+            rollback = false;
         }
 
+        /**
+         * Pushes a continuation on the execution stack
+         * 
+         * @param cont
+         *            Continuation to push
+         */
         public void push(Continuation cont) {
             if (!rollback) {
                 executionStack.push(cont);
@@ -186,6 +227,13 @@ public class ThreadedDispatcher extends ModuleContainer implements
         return executor.get().state;
     }
 
+    /**
+     * @return {@code true} if a transaction is currently being executed
+     */
+    private boolean inTransaction() {
+        return getState() == State.IN_TRANS;
+    }
+
     @OnInit
     void init() {
         logger.debug("Initializing");
@@ -220,17 +268,15 @@ public class ThreadedDispatcher extends ModuleContainer implements
                 tm.begin();
                 try {
                     // realize transaction
-                    executor.get().run(new Context());
+                    executor.get().run();
                     tm.commit();
                 } catch (Exception e) {
-                    logger.debug("Transaction rolled back due to an exception",
-                            e);
+                    logger.debug("Transaction rolled back due to exception", e);
                     tm.rollback();
                 } finally {
                     // After commit/rollback reset the executor
                     executor.get().finished();
                 }
-
             }
         });
         logger.debug("Message submitted to the thread pool");
@@ -275,23 +321,42 @@ public class ThreadedDispatcher extends ModuleContainer implements
             logger.warn("Interrupted while awaiting thread pool termination");
         }
     }
+    
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void send(Message message) {
-        // TODO Auto-generated method stub
-
+     // Only during the transaction
+        if (!inTransaction()) {
+            throw new IllegalStateException("send() called outside "
+                    + "the transaction");
+        }
+        // if local address check if target exists
+        if (message.getAddress().type() == Destination.LOCAL) {
+            if (!targetExistsLocally(message)) {
+                throw new TargetNotExistsException();
+            }
+        }
+        // TODO: actually do something
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void sendDelayed(Message message) {
+    public void sendResponse(Message message) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendDelayed(final Message message) {
         // Only during the transaction
-        if (getState() != State.IN_TRANS) {
+        if (!inTransaction()) {
             throw new IllegalStateException("sendDelayed called outside "
                     + "the transaction (" + getState() + ")");
         }
@@ -301,16 +366,42 @@ public class ThreadedDispatcher extends ModuleContainer implements
                 throw new TargetNotExistsException();
             }
         }
+        // execute actual message dispatching after the transaction
+        // TODO: save it somewhere and execute in one transaction listener,
+        // maybe?
         tm.getCurrent().addListener(new TransactionListener() {
             @Override
             public void rollback() {
+                // empty
             }
 
             @Override
             public void commit() {
-                // TODO Auto-generated method stub
+                try {
+                    dispatchInThisThread(message);
+                } catch (Exception e) {
+                    logger.error("Error during message dispatching", e);
+                }
             }
         });
+    }
+
+    /**
+     * Dispatches the message in the current thread, all the way down to calling
+     * {@link Module#receive}.
+     */
+    private void dispatchInThisThread(Message message) {
+        Address addr = message.getAddress();
+        if (message.getMode() == Mode.UNICAST) {
+            Module module = modules.get(addr.internal).module;
+            module.receive(message, executor.get().getContext());
+        } else {
+            // Multicast
+            Iterable<Module> interested = multicast.get(addr);
+            for (Module module : interested) {
+                module.receive(message, executor.get().getContext());
+            }
+        }
     }
 
     /**

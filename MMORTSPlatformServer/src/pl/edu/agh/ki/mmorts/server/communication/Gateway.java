@@ -23,8 +23,8 @@ import pl.edu.agh.ki.mmorts.server.modules.Continuation;
 public interface Gateway extends ServiceLocator {
 
     /**
-     * Immediately sends a message. All the required data (whether it is
-     * local/remote, uni/multicast etc) is contained inside the {@code message}.
+     * Immediately sends a local message. All the required data (whether it is
+     * uni/multicast etc) is contained inside the {@code message}.
      * 
      * @param mesage
      *            Message to be sent
@@ -34,13 +34,22 @@ public interface Gateway extends ServiceLocator {
     void send(Message mesage);
 
     /**
-     * Sends a message at the successful commit of the current transaction. Can
-     * be called <b>only</b> during the transaction.
+     * Sends a local message at the successful commit of the current
+     * transaction. Can be called <b>only</b> during the transaction.
      * 
      * @param message
      *            Message to be sent at the end of transaction
      */
     void sendDelayed(Message message);
+
+    /**
+     * Sends a response to the client. They are witheld until the completion of
+     * transaction handlers. Can be called during the transaction or inside the
+     * transaction handlers. In the first case mess
+     * 
+     * @param message
+     */
+    void sendResponse(Message message);
 
     /**
      * Adds an item to the execution queue of a transaction.

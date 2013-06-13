@@ -1,10 +1,9 @@
 package com.app.ioapp.communication;
 
 /**
- * Abstract message, for now just a filler to make it compile. Can't remamber
+ * Abstract message, for now just a filler to make it compile. Can't remember
  * what it was supposed to contain.
  * 
- * @author los
  */
 public interface Message {
 
