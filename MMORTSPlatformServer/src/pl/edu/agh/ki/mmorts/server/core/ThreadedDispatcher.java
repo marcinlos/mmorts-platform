@@ -13,8 +13,12 @@ import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.communication.Message;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
 
 import com.google.inject.name.Named;
@@ -35,6 +39,10 @@ public class ThreadedDispatcher extends ModuleContainer implements
     /** Message service */
     @Inject
     private MessageChannel channel;
+    
+    /** Transaction manager */
+    @Inject
+    private TransactionManager tm;
 
     @Inject
     @Named("sv.dispatcher.threads.init")
@@ -50,6 +58,9 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
     /** Thread pool used to handle incoming messages */
     private ExecutorService threadPool;
+    
+    /** Implementation of service locator */
+    private ServiceLocator services = new ServiceLocatorDelgate();
 
     @OnInit
     void init() {
@@ -75,9 +86,31 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void receive(Message message) {
-        logger.info("bum: " + message);
+        String details = messageDetails(message);
+        logger.debug("Message received: \n" + details);
+        
+        // begin message transaction
+        Context ctx = new Context();
+        tm.begin();
+        try {
+            // realize transaction
+            tm.commit();
+        } catch (Exception e) {
+            logger.debug("Transaction rolled back due to an exception", e);
+            tm.rollback();
+        }
     }
 
+    /**
+     * Produces a stringized message representation
+     */
+    private static String messageDetails(Message message) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\tTarget: " + message.getAddress()).append('\n')
+          .append("\tSource: " + message.getSource()).append('\n');
+        return sb.toString();
+    }
+    
     /**
      * Shutdown callback, notifies modules.
      */
@@ -112,7 +145,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@inheritDoc}
      */
     @Override
-    public void sendTo(Message message, String address) {
+    public void send(Message message) {
         // TODO Auto-generated method stub
 
     }
@@ -121,7 +154,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@inheritDoc}
      */
     @Override
-    public void send(Message mesage, String category) {
+    public void sendDelayed(Message mesage) {
         // TODO Auto-generated method stub
 
     }
@@ -134,5 +167,36 @@ public class ThreadedDispatcher extends ModuleContainer implements
         // TODO Auto-generated method stub
         
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Delegates to the {@link ServiceLocatorDelgate}
+     */
+    @Override
+    public <T> void register(Class<? super T> service, T provider) {
+        services.register(service, provider);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Delegates to the {@link ServiceLocatorDelgate}
+     */
+    @Override
+    public <T> void registerIfAbsent(Class<? super T> service, T provider) {
+        services.registerIfAbsent(service, provider);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Delegates to the {@link ServiceLocatorDelgate}
+     */
+    @Override
+    public <T> T lookup(Class<T> service) {
+        return services.lookup(service);
+    }
+
 
 }

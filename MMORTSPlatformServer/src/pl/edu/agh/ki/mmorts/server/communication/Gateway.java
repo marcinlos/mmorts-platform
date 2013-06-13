@@ -6,42 +6,36 @@ import pl.edu.agh.ki.mmorts.server.modules.Continuation;
  * Dispatcher interface for use of the client modules. Allows sending messages
  * with both unicast and multicast target addresses.
  */
-public interface Gateway {
+public interface Gateway extends ServiceLocator {
 
     /**
-     * Sends a message to an unicast address.
-     * 
-     * @param message
-     *            Message to be delivered
-     * @param address
-     *            Unicast address of the message intended receiver
-     * 
-     * @throws NoReceiverException
-     *             If the address has no receiver at the target dispatcher
-     * @throws CommunicationException
-     *             If some other communication error occurs
-     */
-    void sendTo(Message message, String address);
-
-    /**
-     * Sends a message to a multicast group.
+     * Immediately sends a message. All the required data (whether it is
+     * local/remote, uni/multicast etc) is contained inside the {@code message}.
      * 
      * @param mesage
-     *            Message to be delivered to members of a multicast group
-     * @param category
-     *            Multicast address of the group to be delivered a message
-     * 
+     *            Message to be sent
      * @throws NoMulticastGroupException
      *             If the address does not identify existing, registered group
      *             at the target dispatcher
      */
-    void send(Message mesage, String category);
+    void send(Message mesage);
+
+    /**
+     * Sends a message at the successful commit of the current transaction.
+     * 
+     * @param message
+     *            Message to be sent at the end of transaction
+     */
+    void sendDelayed(Message message);
 
     /**
      * Adds an item to the execution queue ofa transaction.
      * 
-     * @param cont Action to execute
+     * @param cont
+     *            Action to execute
      */
     void later(Continuation cont);
     
+    
+
 }
