@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 /**
  * Default implementation of a message dispatcher.
  */
-public class ThreadedDispatcher implements Gateway, Dispatcher, MessageReceiver {
+public class ThreadedDispatcher implements Gateway, Dispatcher {
 
 
     /** Configuration object */

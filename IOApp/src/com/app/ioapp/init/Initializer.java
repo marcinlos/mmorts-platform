@@ -36,6 +36,7 @@ public class Initializer {
 	private State state;
 	private Map<String,Module> modules;
 	
+	
 	public Initializer(String configFile) {
 		this.configFile = configFile;
 	}

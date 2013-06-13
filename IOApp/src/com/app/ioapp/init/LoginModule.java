@@ -1,6 +1,6 @@
 package com.app.ioapp.init;
 
-import com.app.ioapp.communication.Dispatcher;
+import com.app.ioapp.communication.Gateway;
 
 /**
  * Class responsible for registering, logging in and logging out
@@ -8,10 +8,21 @@ import com.app.ioapp.communication.Dispatcher;
  */
 public class LoginModule {
 
-	private Dispatcher dispatcher;
-	private String userMail;         // identyfikator
+	/**
+	 * Dispatcher which enables communication with server
+	 */
+	private Gateway dispatcher;
+	/**
+	 * Mail identifies user
+	 */
+	private String userMail;
 	
-	public LoginModule(Dispatcher dispatcher) {
+	/**
+	 * Password is checked on server. It is actually  entered by user
+	 */
+	private String password;
+	
+	public LoginModule(Gateway dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 

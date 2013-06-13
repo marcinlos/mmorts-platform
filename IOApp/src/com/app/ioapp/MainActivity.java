@@ -1,6 +1,5 @@
 package com.app.ioapp;
 
-import java.io.File;
 
 import com.app.ioapp.init.Initializer;
 import com.app.ioapp.interfaces.UIListener;
@@ -12,6 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 
 public class MainActivity extends Activity implements UIListener {
+	
+	private static final String CONFIG_FILE = "resources/client.properties";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +31,7 @@ public class MainActivity extends Activity implements UIListener {
 		//w tym miejscu jesteœmy pewni ¿e user widzi to co mu wyœwietliliœmy
 		//mo¿emy zacz¹æ ³adowaæ co potencjalnie mo¿e chwilê potrwaæ
 		if(hasFocus){
-			String configurationFile = "";         // trzeba go skads wziac
-			Initializer initializer = new Initializer(configurationFile);
+			Initializer initializer = new Initializer(CONFIG_FILE);
 			initializer.initialize();
 		}
 	}
