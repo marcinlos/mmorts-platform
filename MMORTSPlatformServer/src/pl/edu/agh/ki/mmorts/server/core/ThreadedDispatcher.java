@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -10,14 +12,20 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import pl.agh.edu.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.common.message.Destination;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
 import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
+import pl.edu.agh.ki.mmorts.server.communication.TargetNotExistsException;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionBeginListener;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
@@ -62,12 +70,104 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
     /** Implementation of service locator */
     private ServiceLocator services = new ServiceLocatorDelgate();
-    
 
-    private class TransactionExecutor {
-        
-        
-        
+    /**
+     * Enum describing possible thread states.
+     */
+    private enum State {
+
+        /** No transaction is currently active */
+        NO_TRANS,
+
+        /** There is an active transaction */
+        IN_TRANS,
+
+        /** Transaction commit/rollback listeners are executing */
+        POST_TRANS
+    }
+
+    /**
+     * Thread-local transaction executor
+     */
+    private static final ThreadLocal<TransactionExecutor> executor = new ThreadLocal<TransactionExecutor>() {
+        @Override
+        protected TransactionExecutor initialValue() {
+            return new TransactionExecutor();
+        }
+    };
+
+    private static class TransactionExecutor {
+
+        private static final Logger logger = Logger
+                .getLogger(TransactionExecutor.class);
+
+        /** Transaction stack */
+        Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
+
+        private boolean rollback = false;
+
+        public void run(Context ctx) {
+            while (!executionStack.isEmpty()) {
+                Continuation cont = executionStack.pop();
+                try {
+                    cont.execute(ctx);
+                } catch (Exception e) {
+                    rollback = true;
+                    rollbackAll(e, ctx);
+                    rollback = false;
+                }
+            }
+        }
+
+        private void rollbackAll(Throwable exc, Context ctx) {
+            while (!executionStack.isEmpty()) {
+                Continuation cont = executionStack.pop();
+                try {
+                    cont.failure(exc, ctx);
+                } catch (Exception e) {
+                    logger.error("Exception in a failure handler", e);
+                }
+            }
+        }
+
+        public void push(Continuation cont) {
+            if (!rollback) {
+                executionStack.push(cont);
+            } else {
+                throw new IllegalStateException(
+                        "Cannot push continuation during rollback");
+            }
+        }
+    }
+
+    private class DeliverMessage implements Continuation {
+
+        private Message message;
+
+        public DeliverMessage(Message message) {
+            this.message = message;
+        }
+
+        @Override
+        public void execute(Context context) {
+
+        }
+
+        @Override
+        public void failure(Throwable e, Context context) {
+
+        }
+
+    }
+
+    private boolean targetExistsLocally(Message message) {
+        String addr = message.getAddress().internal;
+        if (message.getMode() == Mode.UNICAST) {
+            return unicast.containsKey(addr);
+        } else {
+            // Don't validate multicast
+            return true;
+        }
     }
 
     @OnInit
@@ -96,19 +196,27 @@ public class ThreadedDispatcher extends ModuleContainer implements
     public void receive(Message message, Response response) {
         String details = messageDetails(message);
         logger.debug("Message received: \n" + details);
+        // async execute
+        threadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                // begin message transaction
+                tm.begin();
+                try {
+                    // realize transaction
+                    executor.get().run(new Context());
+                    tm.commit();
+                } catch (Exception e) {
+                    logger.debug("Transaction rolled back due to an exception",
+                            e);
+                    tm.rollback();
+                }
 
-        // begin message transaction
-        Context ctx = new Context();
-        tm.begin();
-        try {
-            // realize transaction
-            tm.commit();
-        } catch (Exception e) {
-            logger.debug("Transaction rolled back due to an exception", e);
-            tm.rollback();
-        }
+            }
+        });
+        logger.debug("Message submitted to the thread pool");
     }
-    
+
     /**
      * Produces a stringized message representation
      */
@@ -162,9 +270,23 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@inheritDoc}
      */
     @Override
-    public void sendDelayed(Message mesage) {
-        // TODO Auto-generated method stub
+    public void sendDelayed(Message message) {
+        // if local address check if target exists
+        if (message.getAddress().type() == Destination.LOCAL) {
+            if (!targetExistsLocally(message)) {
+                throw new TargetNotExistsException();
+            }
+        }
+        tm.getCurrent().addListener(new TransactionListener() {
+            @Override
+            public void rollback() {
+            }
 
+            @Override
+            public void commit() {
+                // TODO Auto-generated method stub
+            }
+        });
     }
 
     /**

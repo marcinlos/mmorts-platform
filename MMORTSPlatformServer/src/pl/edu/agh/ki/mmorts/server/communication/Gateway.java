@@ -28,9 +28,8 @@ public interface Gateway extends ServiceLocator {
      * 
      * @param mesage
      *            Message to be sent
-     * @throws NoMulticastGroupException
-     *             If the address does not identify existing, registered group
-     *             at the target dispatcher
+     * @throws TargetNotExistsException
+     *             If the message target does not exists
      */
     void send(Message mesage);
 
