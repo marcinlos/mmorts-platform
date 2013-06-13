@@ -30,6 +30,10 @@ public class MainView {
 	public void StuffHappened(Object wtf){
 		listener.stuffHappened(wtf);
 	}
+	
+	//public Object getModuleData(String moduleName){
+		
+	//}
 
 }
 

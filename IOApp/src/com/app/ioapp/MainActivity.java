@@ -6,6 +6,7 @@ import com.app.ioapp.init.Initializer;
 import com.app.ioapp.interfaces.UIListener;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 
@@ -15,14 +16,26 @@ public class MainActivity extends Activity implements UIListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//pewnie do PlayArea pójdzie...pójdzie hmm...
+		Intent intent = new Intent(this, PlayAreaActivity.class);
+    	startActivity(intent);
 		
-		File configurationFile = null;         // trzeba go skads wziac
 		
-		Initializer initializer = new Initializer(configurationFile);
-		initializer.initialize();
+		
 		
 		//activity który bêdzie tym listenerem dodatkowo odpali
 		// mainView.setListener(this)
+	}
+	
+	@Override
+	public void onWindowFocusChanged (boolean hasFocus) {
+		//w tym miejscu jesteœmy pewni ¿e user widzi to co mu wyœwietliliœmy
+		//mo¿emy zacz¹æ ³adowaæ co potencjalnie mo¿e chwilê potrwaæ
+		if(hasFocus){
+			File configurationFile = null;         // trzeba go skads wziac
+			Initializer initializer = new Initializer(configurationFile);
+			initializer.initialize();
+		}
 	}
 
 	@Override
