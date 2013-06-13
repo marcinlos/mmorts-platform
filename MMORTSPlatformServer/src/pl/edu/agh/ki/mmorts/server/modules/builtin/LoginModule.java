@@ -6,7 +6,7 @@ import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
-import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
+import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
@@ -25,7 +25,7 @@ public class LoginModule implements Module {
     
     /** Need players manager for data retrieval */
     @Inject(optional = true)
-    private PlayersManager players;
+    private PlayersPersistor players;
     
     @Inject(optional = true)
     private Gateway gateway;

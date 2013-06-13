@@ -1,9 +1,35 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
 /**
- * Represents full set of data associated with particular player. Designed to be
- * implemented by the creator of the actual game to support custom data.
+ * Represents set of data associated with particular player. 
+ * Temporarily it's static but preferred way to implement in future
+ * is dynamic kind of map of property name and {@code Object}. Unfortunately
+ * there is no way to provide kind style of creating such an interface even
+ * with an ORM. 
  */
 public interface PlayerData {
 
+	
+	/**
+	 * Returns the name of represented player
+	 * 
+	 * @return name of representing player
+	 */
+	String getName();
+
+	/**
+	 * Returns the password hash of represented player's account
+	 * 
+	 * @return password hash of represented player's account
+	 */
+	String getPasswordHash();
+
+	/**
+	 * Returns the login of represented player's account. Login shouldn't be the same
+	 * as player name(for example one could have more players on one login)
+	 * 
+	 * @return login of represented player's account
+	 */
+	String getLogin();
+	
 }

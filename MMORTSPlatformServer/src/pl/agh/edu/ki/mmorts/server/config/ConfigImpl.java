@@ -13,7 +13,7 @@ import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.Database;
-import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
+import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 
 /**
  * Implementation of configuration interface, processes the properties at the
@@ -47,7 +47,7 @@ class ConfigImpl implements Config {
     private Class<? extends Database> databaseClass;
 
     /** Used players manager class */
-    private Class<? extends PlayersManager> playersManagerClass;
+    private Class<? extends PlayersPersistor> playersManagerClass;
 
     /** Used message channel class */
     private Class<? extends MessageChannel> channelClass;
@@ -212,7 +212,7 @@ class ConfigImpl implements Config {
         logger.debug("Loading players manager class");
         try {
             playersManagerClass = loadClass(PLAYERS_MANAGER_CLASS,
-                    PlayersManager.class);
+                    PlayersPersistor.class);
             if (playersManagerClass == null) {
                 addMissing(PLAYERS_MANAGER_CLASS);
                 logger.fatal("Failed to load players manager class (missing)");
@@ -317,7 +317,7 @@ class ConfigImpl implements Config {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends PlayersManager> getPlayerManagerClass() {
+    public Class<? extends PlayersPersistor> getPlayerManagerClass() {
         return playersManagerClass;
     }
 
