@@ -1,8 +1,8 @@
 package com.app.ioapp.init;
 
+import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.data.Context;
 import com.app.ioapp.data.State;
-import com.app.ioapp.dispatcher.Dispatcher;
 
 public class Synchronizer {
 	

@@ -8,6 +8,7 @@ import com.app.ioapp.interfaces.UIListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 public class MainActivity extends Activity implements UIListener {
@@ -21,7 +22,15 @@ public class MainActivity extends Activity implements UIListener {
     	startActivity(intent);
 		
 		
+<<<<<<< HEAD
 		
+=======
+		File configurationFile = null;         // trzeba go skads wziac
+		//Log.e(ID,"wiadomosc");
+		
+		Initializer initializer = new Initializer();
+		initializer.initialize();
+>>>>>>> bf9b5fdec4d6af7af770bd09ded60d7ffa5eda04
 		
 		//activity który bêdzie tym listenerem dodatkowo odpali
 		// mainView.setListener(this)
