@@ -16,7 +16,7 @@ public interface MessageChannel {
      *            Receiver to which all the incoming messages shall be delivered
      *            for further processing. Should be non-{@code null}.
      */
-    void startReceiving(MessageReceiver receiver);
+    void startReceiving(Gateway receiver);
 
     /**
      * Sends the message through the output channel. Provides the output

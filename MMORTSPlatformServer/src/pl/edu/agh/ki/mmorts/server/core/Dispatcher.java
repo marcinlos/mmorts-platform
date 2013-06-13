@@ -1,7 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
-import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 
 /**
@@ -19,7 +18,7 @@ public interface Dispatcher extends Gateway {
      * 
      * @param modules Modules to initialize
      */
-    void registerModules(ConfiguredModule... modules);
+    void registerModules(Module... modules);
 
     /**
      * Register all the modules, i.e. iterate through all of them twice, calling
@@ -28,6 +27,13 @@ public interface Dispatcher extends Gateway {
      * 
      * @param modules Modules to initialize
      */
-    void registerModules(Iterable<ConfiguredModule> modules);
+    void registerModules(Iterable<? extends Module> modules);
+    
+    /**
+     * Registers a moduleClass with its own unique unicast address. Other modules
+     * @param moduleClass
+     * @param category
+     */
+    void registerUnicastReceiver(Module module, String category);
     
 }
