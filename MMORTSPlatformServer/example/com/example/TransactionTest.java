@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionBeginListener;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionsBeginListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManagerImpl;
@@ -69,7 +69,7 @@ public class TransactionTest {
     }
     
     public void run() {
-        tm.addListener(new TransactionBeginListener() {
+        tm.addListener(new TransactionsBeginListener() {
             @Override
             public void begin(Transaction transaction) {
                 System.out.println("Begin");
