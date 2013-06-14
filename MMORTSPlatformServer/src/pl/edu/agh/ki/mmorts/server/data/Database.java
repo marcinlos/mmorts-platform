@@ -36,7 +36,6 @@ public interface Database {
 	 * 			collection of actually loaded modules
 	 * @see OnInit
 	 */
-	@OnInit
 	void init(ModuleTable loadedModules);
 	
 	/**
@@ -179,7 +178,6 @@ public interface Database {
 	 * @see OnShutdown
 	 */
 	
-	@OnShutdown
 	void shutdown();
 	
 }

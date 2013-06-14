@@ -7,7 +7,6 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
 
-import pl.edu.agh.ki.mmorts.server.data.utils.ConnectionCreator;
 
 /**
  * Class which provides simple connection pooling for custom databases. Class is
@@ -29,7 +28,7 @@ public class SimpleConnectionPool {
 	private BlockingQueue<Connection> connectionPool;
 
 	// TODO - to be injected!
-	private ConnectionCreator creator = new ConnectionCreator();
+	private ConnectionCreator creator = new DerbyConnectionCreator();
 
 	/**
 	 * Creates a connection with given size and using custom creator. However
