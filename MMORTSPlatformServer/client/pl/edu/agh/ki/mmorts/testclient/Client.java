@@ -7,9 +7,7 @@ import java.util.Scanner;
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
 import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
-import pl.edu.agh.ki.mmorts.common.message.Address;
 import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.common.message.Messages;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import Ice.ObjectPrx;
 
@@ -78,8 +76,7 @@ public class Client extends Ice.Application {
                 mode = Mode.MULTICAST;
             }
             String type = scanner.next();
-            Message msg = Messages.create(Address.remote(address, ""), null,
-                    66, type, mode, "Hello world");
+            Message msg = new Message(66, "ja", address, mode, type, "Siema");
             dispatcher.deliver(Translator.iceify(msg));
 
         } catch (NoSuchElementException e) {

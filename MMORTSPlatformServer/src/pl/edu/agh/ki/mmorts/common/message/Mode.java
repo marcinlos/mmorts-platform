@@ -9,6 +9,10 @@ public enum Mode {
     UNICAST,
     
     /** Multicast message */
-    MULTICAST
+    MULTICAST;
+    
+    public static Mode fromInt(int i) {
+        return values()[i]; 
+    }
     
 }

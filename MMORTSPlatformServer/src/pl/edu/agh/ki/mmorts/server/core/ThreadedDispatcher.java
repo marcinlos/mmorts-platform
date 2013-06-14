@@ -12,8 +12,6 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import pl.edu.agh.ki.mmorts.common.message.Address;
-import pl.edu.agh.ki.mmorts.common.message.Destination;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
@@ -227,8 +225,8 @@ public class ThreadedDispatcher extends ModuleContainer implements
     }
 
     private boolean targetExistsLocally(Message message) {
-        String addr = message.getAddress().internal;
-        if (message.getMode() == Mode.UNICAST) {
+        String addr = message.target;
+        if (message.mode == Mode.UNICAST) {
             return unicast.containsKey(addr);
         } else {
             // Don't validate multicast
@@ -371,12 +369,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
             throw new IllegalStateException("send() called outside "
                     + "the transaction");
         }
-        // if local address check if target exists
-        if (message.getAddress().type() == Destination.LOCAL) {
-            doSend(message);
-        } else {
-            throw new IllegalArgumentException("Remote message in send()");
-        }
+        doSend(message);
     }
 
     /**
@@ -409,11 +402,8 @@ public class ThreadedDispatcher extends ModuleContainer implements
             throw new IllegalStateException("sendDelayed called outside "
                     + "the transaction (" + getState() + ")");
         }
-        // if local address check if target exists
-        if (message.getAddress().type() == Destination.LOCAL) {
-            if (!targetExistsLocally(message)) {
-                throw new TargetNotExistsException();
-            }
+        if (!targetExistsLocally(message)) {
+            throw new TargetNotExistsException();
         }
         // execute actual message dispatching after the transaction
         // TODO: save it somewhere and execute in one transaction listener,
@@ -440,24 +430,24 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@link Module#receive}.
      */
     private void dispatchInThisThread(Message message) {
-        Address addr = message.getAddress();
-        if (message.getMode() == Mode.UNICAST) {
-            if (unicast.containsKey(addr.internal)) {
-                Module module = unicast.get(addr.internal);
+        String addr = message.target;
+        if (message.mode == Mode.UNICAST) {
+            if (unicast.containsKey(addr)) {
+                Module module = unicast.get(addr);
                 module.receive(message, executor.get().getContext());
             } else {
-                throw new TargetNotExistsException(addr.internal);
+                throw new TargetNotExistsException(addr);
             }
         } else {
             // Multicast
-            Iterable<Module> interested = multicast.get(addr.internal);
+            Iterable<Module> interested = multicast.get(addr);
             if (interested != null) {
                 for (Module module : interested) {
                     module.receive(message, executor.get().getContext());
                 }
             } else {
-                logger.warn("Message to nonexistant multicast group ["
-                        + addr.internal + "]");
+                logger.warn("Message to nonexistant multicast group [" + addr
+                        + "]");
             }
         }
     }
