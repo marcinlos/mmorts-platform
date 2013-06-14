@@ -32,13 +32,9 @@ public interface Database {
 	 * management.
 	 * 
 	 * 
-	 * @param loadedModules
-	 * 			collection of actually loaded modules
 	 * @see OnInit
 	 */
-	@OnInit
-	void init(ModuleTable loadedModules);
-	
+	void init();
 	/**
 	 * Adds player to database. Player name cannot be in database earlier
 	 * cause it raises database error.

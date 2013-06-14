@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.data.stub;
 
+import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.data.Database;
@@ -7,15 +8,6 @@ import pl.edu.agh.ki.mmorts.server.data.PlayerData;
 
 public class DummyDatabase implements Database {
 
-    public DummyDatabase() {
-        // TODO Auto-generated constructor stub
-    }
-
-    @Override
-    @OnInit
-    public void init() {
-        // TODO Auto-generated method stub
-    }
 
     @Override
     public void createPlayer(PlayerData player) throws IllegalArgumentException {
@@ -76,5 +68,14 @@ public class DummyDatabase implements Database {
         // TODO Auto-generated method stub
         
     }
+
+
+    @Override
+    @OnInit
+    public void init() {
+        // TODO Auto-generated method stub
+        
+    }
+
 
 }
