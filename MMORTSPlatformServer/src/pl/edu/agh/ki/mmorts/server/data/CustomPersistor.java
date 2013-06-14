@@ -1,8 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
-import pl.edu.agh.ki.mmorts.server.config.Config;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 
 /**
  * Representing CRUD operations on custom data from custom modules. General
