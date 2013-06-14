@@ -1,14 +1,25 @@
-package pl.edu.agh.ki.mmorts.server.communication;
+package pl.edu.agh.ki.mmorts.server.communication.ice;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
+import pl.agh.edu.ki.mmorts.AMD_Dispatcher_deliver;
+import pl.agh.edu.ki.mmorts.Response;
+import pl.agh.edu.ki.mmorts._DispatcherDisp;
+import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.server.communication.AbstractChannel;
+import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import Ice.Current;
+import Ice.Identity;
 
 import com.google.inject.name.Named;
 
@@ -19,6 +30,8 @@ import com.google.inject.name.Named;
  * @author los
  */
 public class IceChannel extends AbstractChannel {
+
+    private static final String ADAPTER_NAME = "MMORTSServer.Adapter.Name";
 
     private static final Logger logger = Logger.getLogger(IceChannel.class);
 
@@ -32,9 +45,12 @@ public class IceChannel extends AbstractChannel {
 
     /** Ice object */
     private Ice.Communicator ice;
-    
+
     /** Ice adapter */
     private Ice.ObjectAdapter adapter;
+    
+    /** Servant */
+    private DispatcherImpl impl = new DispatcherImpl();
 
     /**
      * Initialization method creating Ice infrastructure
@@ -69,9 +85,15 @@ public class IceChannel extends AbstractChannel {
         try {
             ice = Ice.Util.initialize(args);
             logger.debug("Ice communicator initialized");
-            //adapter = ice.createObjectAdapter(name)
-            
-            
+            String adapterName = getProperty(ADAPTER_NAME);
+            adapter = ice.createObjectAdapter(adapterName);
+            logger.debug("Ice adapter initialized (" + adapterName + ")");
+            Identity id = ice.stringToIdentity("dispatcher");
+            adapter.add(impl, id);
+            logger.debug("Servant added");
+            adapter.activate();
+            logger.debug("Adapter activated");
+
         } catch (Ice.LocalException e) {
             logger.fatal("Error while initializing Ice communicator", e);
             try {
@@ -81,6 +103,51 @@ public class IceChannel extends AbstractChannel {
             } catch (Exception e1) {
                 logger.fatal("Cannot shutdown ice after init failure", e1);
             }
+        }
+    }
+
+    /**
+     * Shortcut to ice communicator properties.
+     */
+    private String getProperty(String prop) {
+        return ice.getProperties().getProperty(prop);
+    }
+
+    /**
+     * Actual Ice object used to communicate with the client.
+     */
+    class DispatcherImpl extends _DispatcherDisp {
+
+        @Override
+        public void deliver_async(final AMD_Dispatcher_deliver __cb,
+                pl.agh.edu.ki.mmorts.Message msg, Current __current) {
+            forwardMessage(Translator.deiceify(msg), new Resp(__cb));
+        }
+    }
+
+    /**
+     * Implementation of the callback, translating message to Ice format and
+     * sending it as a response.
+     */
+    private class Resp implements
+            pl.edu.agh.ki.mmorts.server.communication.Response {
+
+        private final AMD_Dispatcher_deliver __cb;
+
+        private Resp(AMD_Dispatcher_deliver __cb) {
+            this.__cb = __cb;
+        }
+
+        @Override
+        public void send(Collection<Message> messages) {
+            pl.agh.edu.ki.mmorts.Message[] msgs = new pl.agh.edu.ki.mmorts.Message[messages
+                    .size()];
+            __cb.ice_response(new Response(msgs));
+        }
+
+        @Override
+        public void send(Message... messages) {
+            send(Arrays.asList(messages));
         }
     }
 
@@ -112,17 +179,6 @@ public class IceChannel extends AbstractChannel {
         logger.debug("Shutting down");
         shutdownIce();
         logger.debug("Done");
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * TODO: Establish some protocol and actually DO SOMETHING
-     */
-    @Override
-    public void sendMessage(Message message) {
-        logger.debug("Message sent: " + message);
-        // ????
     }
 
 }

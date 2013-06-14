@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.communication;
 
+import java.util.Collection;
+
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
 /**
@@ -30,6 +32,6 @@ public interface Response {
      * @throws AlreadyRespondedException
      *             When the method is invoked second time or more
      */
-    void send(Iterable<Message> messages);
+    void send(Collection<Message> messages);
 
 }
