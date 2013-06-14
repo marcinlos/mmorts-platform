@@ -35,7 +35,6 @@ public interface Database {
 	 * @see OnInit
 	 */
 	void init();
-	
 	/**
 	 * Adds player to database. Player name cannot be in database earlier
 	 * cause it raises database error.
@@ -176,6 +175,7 @@ public interface Database {
 	 * @see OnShutdown
 	 */
 	
+	@OnShutdown
 	void shutdown();
 	
 }

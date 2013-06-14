@@ -8,12 +8,6 @@ import pl.edu.agh.ki.mmorts.server.data.PlayerData;
 
 public class DummyDatabase implements Database {
 
-	@Override
-	@OnInit
-	public void init() {
-		// TODO Auto-generated method stub
-	}
-
 
     @Override
     public void createPlayer(PlayerData player) throws IllegalArgumentException {
@@ -74,5 +68,14 @@ public class DummyDatabase implements Database {
         // TODO Auto-generated method stub
         
     }
+
+
+    @Override
+    @OnInit
+    public void init() {
+        // TODO Auto-generated method stub
+        
+    }
+
 
 }
