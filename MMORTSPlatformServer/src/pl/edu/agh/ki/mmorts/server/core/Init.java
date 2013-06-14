@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
-import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.config.Config;
@@ -31,6 +30,7 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.server.util.DI;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
+import pl.edu.agh.ki.mmorts.testclient.Client;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
