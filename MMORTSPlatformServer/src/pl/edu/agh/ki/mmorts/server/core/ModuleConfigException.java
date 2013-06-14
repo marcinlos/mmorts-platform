@@ -1,6 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
-import pl.agh.edu.ki.mmorts.server.config.ConfigException;
+import pl.edu.agh.ki.mmorts.server.config.ConfigException;
 
 /**
  * Base class for exceptions caused by errors in module configuration file.

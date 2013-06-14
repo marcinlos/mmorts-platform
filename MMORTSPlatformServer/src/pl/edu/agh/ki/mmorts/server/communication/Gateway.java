@@ -19,6 +19,16 @@ import pl.edu.agh.ki.mmorts.server.modules.Continuation;
  * order to set up a continuation that is to be invoked after some sent
  * messsages are processed, it needs to be pushed before sending the messages.
  * In general, invocation order is the reverse of that of actions registration.
+ * 
+ * <p>
+ * As for the behaviour of messaging system in case of exceptions:
+ * <ul>
+ * <li>If an exception occurs inside the transaction, all the messages sent
+ * before it by {@link #sendDelayed} and {@link #sendResponse} are discarded.
+ * Any further response messages are delivered.
+ * <li>If an exception occurs inside the commit handler, all the messages are
+ * discarded - this situation is considered abnormal
+ * </ul>
  */
 public interface Gateway extends ServiceLocator {
 
@@ -34,7 +44,7 @@ public interface Gateway extends ServiceLocator {
     void send(Message mesage);
 
     /**
-     * Sends a local message at the successful commit of the current
+     * Sends a local message at the successful <b>commit</b> of the current
      * transaction. Can be called <b>only</b> during the transaction.
      * 
      * @param message
@@ -45,7 +55,8 @@ public interface Gateway extends ServiceLocator {
     /**
      * Sends a response to the client. They are witheld until the completion of
      * transaction handlers. Can be called during the transaction or inside the
-     * transaction handlers. In the first case mess
+     * transaction handlers. In the first case messages are treated as a part of
+     * the transaction, hence are not delivered if the transaction fails.
      * 
      * @param message
      */

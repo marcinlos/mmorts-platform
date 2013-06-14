@@ -3,19 +3,20 @@ package com.app.ioapp.config;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Class reading .properties files
+ * Class reading files with properties
  */
 public class PropertiesLoader {
-	
+	/**
+	 * Properties read from file
+	 */
 	private Properties properties = new Properties();
 
-/**
- * @return properties read from file
- */
+	/**
+	 * @return properties read from file
+	 */
 	 public Properties getProperties() {
 		return properties;
 	}
@@ -24,20 +25,15 @@ public class PropertiesLoader {
 	/**
      * Loads configuration from the file.
      * 
+     * @param inputStream
      * @throws IOException
      */
-    public void load(String file) throws IOException{
-        InputStream input = null;
+    public void load(FileInputStream inputStream) throws IOException {
         try {
-            input = new BufferedInputStream(new FileInputStream(file));
+           BufferedInputStream input = new BufferedInputStream(inputStream);
             properties.load(input);
         } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e1) {
-                }
-            }
+
         }
     }
 	

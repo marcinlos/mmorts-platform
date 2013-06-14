@@ -12,6 +12,9 @@ public class Config {
 	private Properties properties;
 	
 	
+	/**
+	 * @param properties
+	 */
 	public Config(Properties properties) {
 		this.properties = properties;
 	}

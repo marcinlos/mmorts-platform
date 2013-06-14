@@ -1,7 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.core.transaction;
 
 import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.Deque;
 
 import org.apache.log4j.Logger;
 
@@ -21,15 +21,16 @@ public class SequentialTM {
     private static final Logger logger = Logger.getLogger(SequentialTM.class);
 
     /** Listeners queue */
-    private Queue<TransactionListener> listeners = new ArrayDeque<TransactionListener>();
+    private Deque<TransactionListener> listeners = new ArrayDeque<TransactionListener>();
 
     /**
      * Adds a transaction listener.
      * 
-     * @param listener Listener to be registered
+     * @param listener
+     *            Listener to be registered
      */
     public void addListener(TransactionListener listener) {
-        listeners.add(listener);
+        listeners.push(listener);
     }
 
     /**
@@ -43,11 +44,12 @@ public class SequentialTM {
             }
         };
     }
-    
+
     /**
      * Calls {@link TransactionListener#commit()} methods of all the listeners.
      * If some of them fails, the transaction is assumed to be unsuccessful, and
-     * the remaining listeners are rolled back.
+     * the remaining listeners are rolled back. The exception that caused the
+     * failure is rethrown, wrapped in a {@code RuntimeException}.
      * 
      * <p>
      * After execution of this method, listeners queue will be empty.
@@ -55,12 +57,13 @@ public class SequentialTM {
     public void commit() {
         try {
             while (!listeners.isEmpty()) {
-                TransactionListener cb = listeners.poll();
+                TransactionListener cb = listeners.pop();
                 cb.commit();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Exception inside the commit callback", e);
             rollback();
+            throw new RuntimeException("Inside a commit handler", e);
         }
     }
 
@@ -72,7 +75,7 @@ public class SequentialTM {
      */
     public void rollback() {
         while (!listeners.isEmpty()) {
-            TransactionListener cb = listeners.poll();
+            TransactionListener cb = listeners.pop();
             try {
                 cb.rollback();
             } catch (Exception e) {

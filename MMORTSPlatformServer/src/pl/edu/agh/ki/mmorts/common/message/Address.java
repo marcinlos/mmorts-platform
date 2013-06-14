@@ -1,9 +1,11 @@
 package pl.edu.agh.ki.mmorts.common.message;
 
+import java.io.Serializable;
+
 /**
  * Structure representing the full address (
  */
-public final class Address {
+public final class Address implements Serializable {
 
     /** Internal (unicast or multicast module) address */
     public final String internal;
@@ -61,5 +63,20 @@ public final class Address {
      */
     public Destination type() {
         return isLocal() ? Destination.LOCAL : Destination.REMOTE;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Example of a format: Addr[login-module@server], Addr[buildings]
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Addr[");
+        sb.append(internal);
+        if (dispatcher != null) {
+            sb.append("@").append(dispatcher);
+        }
+        return sb.append("]").toString();
     }
 }

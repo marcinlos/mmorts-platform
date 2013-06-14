@@ -1,17 +1,17 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.common.message.Address;
 import pl.edu.agh.ki.mmorts.common.message.Destination;
 import pl.edu.agh.ki.mmorts.common.message.Message;
@@ -22,6 +22,7 @@ import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.communication.TargetNotExistsException;
+import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
@@ -109,7 +110,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
         private State state = State.NO_TRANS;
 
         /** Transaction stack */
-        Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
+        private Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
 
         /** True if rollback handlers are being executed */
         private boolean rollback = false;
@@ -117,26 +118,48 @@ public class ThreadedDispatcher extends ModuleContainer implements
         /** Current transaction context */
         private Context context;
 
+        /** Collection of local notifications */
+        private List<Message> notifications = new ArrayList<Message>();
+
+        /** Colletion of withheld response messages */
+        private List<Message> withheld = new ArrayList<Message>();
+
         /** Run the transaction */
         public void run() throws Exception {
             state = State.IN_TRANS;
             // context per transaction
             context = new Context();
             try {
-                while (!executionStack.isEmpty()) {
-                    Continuation cont = executionStack.pop();
-                    cont.execute(context);
-                }
-            } catch (Exception e) {
-                rollbackAll(e);
-                throw e;
+                runStack();
             } finally {
                 state = State.POST_TRANS;
             }
         }
 
+        /** Runs the execution stack, does not initate a transaction */
+        public void runStack() throws Exception {
+            try {
+                while (!executionStack.isEmpty()) {
+                    Continuation cont = executionStack.pop();
+                    cont.execute(context);
+                }
+            } catch (Exception e) {
+                // Remove all the stored messages
+                clearMessageStore();
+                rollbackAll(e);
+                throw e;
+            }
+        }
+
+        /** Removes all the stored messages (local and responses) */
+        public void clearMessageStore() {
+            notifications.clear();
+            withheld.clear();
+        }
+
         /** Definitely finish the current transaction, clear state */
-        public void finished() {
+        public void clear() {
+            clearMessageStore();
             state = State.NO_TRANS;
             context = null;
         }
@@ -146,13 +169,6 @@ public class ThreadedDispatcher extends ModuleContainer implements
          */
         public Context getContext() {
             return context;
-        }
-
-        /**
-         * @return {@code true} if the rollback is in progress
-         */
-        public boolean duringRollback() {
-            return rollback;
         }
 
         /**
@@ -200,12 +216,12 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
         @Override
         public void execute(Context context) {
-
+            dispatchInThisThread(message);
         }
 
         @Override
         public void failure(Throwable e, Context context) {
-
+            // empty
         }
 
     }
@@ -249,33 +265,44 @@ public class ThreadedDispatcher extends ModuleContainer implements
                 "Initializing the pool (init=%d, max=%d, keepalive=%d s)",
                 threadsInit, threadsMax, keepalive);
         logger.debug(msg);
-        threadPool = new ThreadPoolExecutor(threadsInit, threadsMax, keepalive,
-                TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        threadPool = /*
+                      * new ThreadPoolExecutor(threadsInit, threadsMax,
+                      * keepalive, TimeUnit.SECONDS, new
+                      * SynchronousQueue<Runnable>());
+                      */
+        Executors.newFixedThreadPool(10);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void receive(Message message, Response response) {
-        String details = messageDetails(message);
-        logger.debug("Message received: \n" + details);
+    public void receive(final Message message, final Response response) {
+        logger.debug("Message received: \n" + message);
         // async execute
         threadPool.execute(new Runnable() {
             @Override
             public void run() {
+                logger.debug("Begin message transaction");
                 // begin message transaction
                 tm.begin();
                 try {
+                    doSend(message);
                     // realize transaction
                     executor.get().run();
-                    tm.commit();
+                    try {
+                        tm.commit();
+                        runPostCommitStack(response);
+                    } catch (Exception e) {
+                        logger.error("Exception inside a commit handler", e);
+                        response.failed(e);
+                    }
                 } catch (Exception e) {
                     logger.debug("Transaction rolled back due to exception", e);
                     tm.rollback();
                 } finally {
                     // After commit/rollback reset the executor
-                    executor.get().finished();
+                    executor.get().clear();
                 }
             }
         });
@@ -283,13 +310,25 @@ public class ThreadedDispatcher extends ModuleContainer implements
     }
 
     /**
-     * Produces a stringized message representation
+     * Runs the "rest", sequence of messages and events generated by the
+     * transaction listeners, after the transaction has finished
      */
-    private static String messageDetails(Message message) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\tTarget: " + message.getAddress()).append('\n')
-                .append("\tSource: " + message.getSource()).append('\n');
-        return sb.toString();
+    private void runPostCommitStack(Response response) {
+        try {
+            for (Message message : executor.get().notifications) {
+                try {
+                    dispatchInThisThread(message);
+                } catch (Exception e) {
+                    logger.error("Exception while processing post-commit "
+                            + "notifications", e);
+                }
+            }
+            executor.get().runStack();
+            // finally send client messages
+            response.send(executor.get().withheld);
+        } catch (Exception e) {
+            logger.error("Exception during the post-commit phase", e);
+        }
     }
 
     /**
@@ -321,25 +360,34 @@ public class ThreadedDispatcher extends ModuleContainer implements
             logger.warn("Interrupted while awaiting thread pool termination");
         }
     }
-    
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void send(Message message) {
-     // Only during the transaction
+        // Only during the transaction
         if (!inTransaction()) {
             throw new IllegalStateException("send() called outside "
                     + "the transaction");
         }
         // if local address check if target exists
         if (message.getAddress().type() == Destination.LOCAL) {
-            if (!targetExistsLocally(message)) {
-                throw new TargetNotExistsException();
-            }
+            doSend(message);
+        } else {
+            throw new IllegalArgumentException("Remote message in send()");
         }
-        // TODO: actually do something
+    }
+
+    /**
+     * Bypasses state checing, used to push first message
+     * */
+    private void doSend(Message message) {
+        if (!targetExistsLocally(message)) {
+            throw new TargetNotExistsException();
+        } else {
+            executor.get().push(new DeliverMessage(message));
+        }
     }
 
     /**
@@ -347,7 +395,8 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void sendResponse(Message message) {
-        // TODO Auto-generated method stub
+        // TODO: some validation, maybe?
+        executor.get().withheld.add(message);
     }
 
     /**
@@ -393,13 +442,22 @@ public class ThreadedDispatcher extends ModuleContainer implements
     private void dispatchInThisThread(Message message) {
         Address addr = message.getAddress();
         if (message.getMode() == Mode.UNICAST) {
-            Module module = modules.get(addr.internal).module;
-            module.receive(message, executor.get().getContext());
+            if (unicast.containsKey(addr.internal)) {
+                Module module = unicast.get(addr.internal);
+                module.receive(message, executor.get().getContext());
+            } else {
+                throw new TargetNotExistsException(addr.internal);
+            }
         } else {
             // Multicast
-            Iterable<Module> interested = multicast.get(addr);
-            for (Module module : interested) {
-                module.receive(message, executor.get().getContext());
+            Iterable<Module> interested = multicast.get(addr.internal);
+            if (interested != null) {
+                for (Module module : interested) {
+                    module.receive(message, executor.get().getContext());
+                }
+            } else {
+                logger.warn("Message to nonexistant multicast group ["
+                        + addr.internal + "]");
             }
         }
     }

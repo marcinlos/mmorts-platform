@@ -1,30 +1,36 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
-import java.util.HashMap;
+import java.sql.Driver;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.server.config.Config;
-import pl.agh.edu.ki.mmorts.server.config.ConfigException;
-import pl.agh.edu.ki.mmorts.server.config.ConfigReader;
-import pl.agh.edu.ki.mmorts.server.util.DI;
-import pl.agh.edu.ki.mmorts.server.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.config.ConfigException;
+import pl.edu.agh.ki.mmorts.server.config.ConfigReader;
 import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.Database;
-import pl.edu.agh.ki.mmorts.server.data.PlayersManager;
+import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
+import pl.edu.agh.ki.mmorts.server.data.SimpleConnectionPool;
 import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleInitException;
+import pl.edu.agh.ki.mmorts.server.util.DI;
+import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -32,7 +38,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
- * First class to be instantiated in {@link Main#main(String[])}. Responsible
+ * First class to be instantiated in {@link Client#main(String[])}. Responsible
  * for the initialization of the whole server.
  * 
  * <p>
@@ -86,7 +92,7 @@ public class Init {
     /**
      * Players manager
      */
-    private PlayersManager playersManager;
+    private PlayersPersistor playersManager;
     private com.google.inject.Module playersManagerModule;
 
     /**
@@ -101,7 +107,11 @@ public class Init {
     private Config config;
     private com.google.inject.Module configModule;
 
-    private Map<String, ConfiguredModule> modules = new HashMap<String, ConfiguredModule>();
+    /**
+     * Runtime information about the modules
+     */
+    private ModuleTable moduleTable;
+    private com.google.inject.Module moduleTableModule;
 
     /**
      * Creates the {@code Init} object and initializes the server.
@@ -144,10 +154,10 @@ public class Init {
             registerShutdownHook();
             readConfig(CONFIG);
             createTransactionManager();
-            createDataSource();
             createChannel();
             createDispatcher();
             initModules();
+            createDataSource();
             createCustomPersistor();
             createPlayersManager();
             injectPersistors();
@@ -172,25 +182,47 @@ public class Init {
             logger.info("Loaded module configuration");
             // initialize
             Map<String, ModuleDescriptor> loaded = confReader.getModules();
+            List<ConfiguredModule> modules = new ArrayList<ConfiguredModule>();
             logger.debug("Creating modules");
             for (ModuleDescriptor desc : loaded.values()) {
                 logger.debug("Creating module " + desc.name);
                 try {
                     Module m = createModule(desc);
                     logger.debug("Module " + desc.name + " created");
-                    modules.put(desc.name, new ConfiguredModule(m, desc));
+                    modules.add(new ConfiguredModule(m, desc));
                 } catch (ModuleInitException e) {
                     logger.error("Module " + desc.name + " creation failed", e);
                 }
             }
             // register with the dispatcher
             logger.debug("Registering modules with a dispatcher");
-            dispatcher.registerModules(modules.values());
+            dispatcher.registerModules(modules);
+            createModuleTable();
         } catch (ModuleConfigException e) {
             logger.fatal("Error while readin module configuration");
             logger.fatal(e);
             throw new InitException(e);
         }
+    }
+
+    /**
+     * Creates a module table and its' corresponding Guice module object.
+     */
+    private void createModuleTable() {
+        int n = dispatcher.getModules().size();
+        List<ModuleDescriptor> descs = new ArrayList<ModuleDescriptor>(n);
+        for (ConfiguredModule conf : dispatcher.getModules()) {
+            descs.add(conf.descriptor);
+        }
+        final Collection<ModuleDescriptor> modules = Collections
+                .unmodifiableCollection(descs);
+        moduleTable = new ModuleTable() {
+            @Override
+            public Collection<ModuleDescriptor> getModuleDescriptors() {
+                return modules;
+            }
+        };
+        moduleTableModule = DI.objectModule(moduleTable, ModuleTable.class);
     }
 
     /**
@@ -201,7 +233,7 @@ public class Init {
         logger.debug("Injecting persistors");
         Injector injector = Guice.createInjector(customPersistorModule,
                 playersManagerModule);
-        for (ConfiguredModule conf : modules.values()) {
+        for (ConfiguredModule conf : dispatcher.getModules()) {
             injector.injectMembers(conf.module);
         }
         logger.debug("Persistors injected");
@@ -300,12 +332,21 @@ public class Init {
     private void createDataSource() {
         logger.debug("Creating database connection");
         Class<? extends Database> cl = config.getDatabaseClass();
-        database = DI.createWith(cl, configModule, txManagerModule);
+        database = DI.createWith(cl, configModule, txManagerModule,
+                moduleTableModule, new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(ConnectionCreator.class).to(
+                                config.getConnectionCreatorClass());
+                        bind(Driver.class).to(config.getJdbcDriverClass());
+                        bind(SimpleConnectionPool.class);
+                    }
+                });
         callInit(database);
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");
     }
-
+    
     private void createChannel() {
         logger.debug("Creating message channel");
         Class<? extends MessageChannel> cl = config.getChannelClass();
@@ -337,14 +378,14 @@ public class Init {
         callInit(customPersistor);
         logger.debug("Custom persistor created");
     }
-
+    
     private void createPlayersManager() {
         logger.debug("Creating players manager");
-        Class<? extends PlayersManager> cl = config.getPlayerManagerClass();
+        Class<? extends PlayersPersistor> cl = config.getPlayerManagerClass();
         playersManager = DI.createWith(cl, configModule, databaseModule,
                 txManagerModule);
         playersManagerModule = DI.objectModule(playersManager,
-                PlayersManager.class);
+                PlayersPersistor.class);
         callInit(playersManager);
         logger.debug("Players manager created");
     }

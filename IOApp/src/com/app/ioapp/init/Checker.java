@@ -1,6 +1,6 @@
 package com.app.ioapp.init;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -13,17 +13,22 @@ import com.app.ioapp.config.ReadingPropertiesException;
  *
  */
 public class Checker {
-	
-    /** 
-     * Info file location
-     * This file stores information about players account: mail, password
-     */
-    private static final String info = "appInfo/info.properties";
+	/**
+	 * Stream to read file with player's information
+	 */
+	private FileInputStream inputSream;
 	
 	/**
      * Reads properties from a file
      */
     private PropertiesLoader loader = new PropertiesLoader();
+    
+    /**
+     * @param inputStream
+     */
+    public Checker (FileInputStream inputStream) {
+    	this.inputSream = inputStream;
+    }
     
     /**
      * @return read properties
@@ -35,14 +40,11 @@ public class Checker {
 	/**
 	 * Checks if account exists which means info file contains correct user info
 	 * @return true if exists
+	 * @throws ReadingPropertiesException
 	 */
-	public boolean checkIfAccountExists() {
-		File file = new File(info);
-		if (!file.exists()) {
-			return false;
-		}
+	public boolean checkIfAccountExists() throws ReadingPropertiesException {
 		try {
-			loader.load(info);
+			loader.load(inputSream);
 		} catch (IOException e) {
 			throw new ReadingPropertiesException();
 		}
