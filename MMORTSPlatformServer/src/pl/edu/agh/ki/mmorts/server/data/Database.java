@@ -1,6 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
 import pl.edu.agh.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 
@@ -31,10 +32,13 @@ public interface Database {
 	 * Usually everything connected with schema validation and connections
 	 * management.
 	 * 
+	 * 
+	 * @param loadedModules
+	 * 			collection of actually loaded modules
 	 * @see OnInit
 	 */
 	@OnInit
-	void init(/*TODO!!!*/);
+	void init(ModuleTable loadedModules);
 	
 	/**
 	 * Adds player to database. Player name cannot be in database earlier
