@@ -379,10 +379,6 @@ public class Init {
         logger.debug("Custom persistor created");
     }
     
-    
-    
-
-
     private void createPlayersManager() {
         logger.debug("Creating players manager");
         Class<? extends PlayersPersistor> cl = config.getPlayerManagerClass();

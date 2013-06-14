@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 
+import pl.edu.agh.ki.mmorts.server.core.InitException;
 import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
@@ -61,11 +62,12 @@ public class DerbyDatabase implements Database {
 				}
 			} catch (NoConnectionException e) {
 				logger.fatal("Cannot create any, even starting, connection to DB!");
-				System.exit(1);
+				throw new InitException(e);
 			} catch (SQLException e) {
-				
-				e.printStackTrace();
-				System.exit(1);
+			    // X0Y32 is the error code of "table already exists"
+			    if (!e.getSQLState().equals("X0Y32")) {
+			        throw new InitException(e);
+			    }
 			}
 		logger.debug("Database init ended");
 	}

@@ -16,6 +16,7 @@ import pl.edu.agh.ki.mmorts.server.communication.AbstractChannel;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
+import pl.edu.agh.ki.mmorts.server.core.InitException;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import Ice.Current;
@@ -103,6 +104,7 @@ public class IceChannel extends AbstractChannel {
             } catch (Exception e1) {
                 logger.fatal("Cannot shutdown ice after init failure", e1);
             }
+            throw new InitException("Ice init failure", e);
         }
     }
 
