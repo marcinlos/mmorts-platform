@@ -5,6 +5,7 @@ import java.util.Map;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 
@@ -24,6 +25,9 @@ public interface Config {
 
     /** Implementation of the custom persistor */
     public static final String CUSTOM_PERSISTOR_CLASS = "sv.persistor.class";
+    
+    /** Implementation of Database */
+    public static final String CONNECTION_CREATOR_CLASS = "sv.database.creator.class";
 
     /** Implementation of Database */
     public static final String DATABASE_CLASS = "sv.database.class";
@@ -73,6 +77,11 @@ public interface Config {
      * @return Implementation of custom persistor specified in the configuration
      */
     Class<?> getCustomPersistorClass();
+    
+    /**
+     * @return Implementation of the connection creator
+     */
+    Class<? extends ConnectionCreator> getConnectionCreatorClass();
 
     /**
      * @return Implementation of players database access object specified in the

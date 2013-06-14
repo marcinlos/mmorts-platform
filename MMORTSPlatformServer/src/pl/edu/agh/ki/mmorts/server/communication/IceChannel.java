@@ -32,6 +32,9 @@ public class IceChannel extends AbstractChannel {
 
     /** Ice object */
     private Ice.Communicator ice;
+    
+    /** Ice adapter */
+    private Ice.ObjectAdapter adapter;
 
     /**
      * Initialization method creating Ice infrastructure
@@ -66,6 +69,9 @@ public class IceChannel extends AbstractChannel {
         try {
             ice = Ice.Util.initialize(args);
             logger.debug("Ice communicator initialized");
+            //adapter = ice.createObjectAdapter(name)
+            
+            
         } catch (Ice.LocalException e) {
             logger.fatal("Error while initializing Ice communicator", e);
             try {

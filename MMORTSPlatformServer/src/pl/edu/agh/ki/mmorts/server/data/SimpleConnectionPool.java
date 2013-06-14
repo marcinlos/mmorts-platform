@@ -13,8 +13,6 @@ import pl.edu.agh.ki.mmorts.server.core.Init;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 
-import com.google.inject.name.Named;
-
 
 
 /**
@@ -42,6 +40,8 @@ public class SimpleConnectionPool {
 
     @Inject
     private ConnectionCreator creator;
+    
+    public SimpleConnectionPool() { }
 
     /**
      * Creates a connection with given size and using custom creator. However

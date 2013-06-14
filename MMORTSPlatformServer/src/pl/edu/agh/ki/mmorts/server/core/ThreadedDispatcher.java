@@ -393,7 +393,8 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void sendResponse(Message message) {
-        // TODO Auto-generated method stub
+        // TODO: some validation, maybe?
+        executor.get().withheld.add(message);
     }
 
     /**
