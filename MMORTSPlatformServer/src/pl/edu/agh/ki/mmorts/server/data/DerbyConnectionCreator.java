@@ -1,27 +1,33 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 
 public class DerbyConnectionCreator implements ConnectionCreator {
 	private static final Logger logger = Logger
 			.getLogger(DerbyConnectionCreator.class);
 	
-	final static String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
-	final static String DB_NAME = "test";
-	final String connectionURL = "jdbc:derby:" + DB_NAME + ";create=true";
+	@Inject
+	@Named("db.url")
+	private String connectionURL;
 	
-	public DerbyConnectionCreator() {
-		logger.debug("Creating connection creator");
-		try {
-			Class.forName(DRIVER);
-		} catch (java.lang.ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	@Inject
+	Driver driver;
+	
+	
+	@OnInit
+	public void init(){
+		logger.debug("Connection creator intialized");
 	}
 	
 	/**
@@ -32,6 +38,7 @@ public class DerbyConnectionCreator implements ConnectionCreator {
 		logger.debug("Creating connection");
 		Connection conn = null;
 		conn = DriverManager.getConnection(connectionURL);
+		logger.debug("Connection created");
 		return conn;
 	}
 }

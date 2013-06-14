@@ -2,10 +2,20 @@ package pl.edu.agh.ki.mmorts.server.data;
 
 
 
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
 import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.data.utils.QueriesCreator;
+import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 
 
@@ -15,16 +25,51 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
  */
 public class DerbyDatabase implements Database {
 	
+	private static final Logger logger = Logger
+            .getLogger(DerbyDatabase.class);
+	
 	@Inject
 	TransactionManager tm;
 	
-	public static int MAX_POOL = 10;
+	@Inject
+	ModuleTable moduleTable;
+
+	@Inject
+	QueriesCreator queriesCreator;
 	
+	@Inject
+	SimpleConnectionPool connectionPool;
+	
+
+	
+	
+	
+	/**
+	 * Non transactional! Connection handled without transaction!
+	 * @see pl.edu.agh.ki.mmorts.server.data.Database#init()
+	 */
 	@Override
+	@OnInit
 	public void init() {
-		// TODO Auto-generated method stub
-		
+		logger.debug("Database init started");
+			connectionPool.init();
+			try {
+				Connection conn = connectionPool.getConnection();
+				conn.createStatement().execute(queriesCreator.getCreatePlayersTableQuery());
+				for(ModuleDescriptor desc : moduleTable.getModuleDescriptors()){
+					conn.createStatement().execute(queriesCreator.getCreateCustomTableQuery(desc.name));
+				}
+			} catch (NoConnectionException e) {
+				logger.fatal("Cannot create any, even starting, connection to DB!");
+				System.exit(1);
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+				System.exit(1);
+			}
+		logger.debug("Database init ended");
 	}
+
 
 	@Override
 	public void createPlayer(PlayerData player) throws IllegalArgumentException {
@@ -80,8 +125,10 @@ public class DerbyDatabase implements Database {
 	}
 
 	@Override
+	@OnShutdown
 	public void shutdown() {
-		// TODO Auto-generated method stub
+		logger.debug("Closing database");
+		logger.debug("Closing database ended");
 		
 	}
 

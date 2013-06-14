@@ -5,11 +5,17 @@ import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
-import pl.edu.agh.ki.mmorts.server.data.utils.ConnectionCreator;
+import pl.edu.agh.ki.mmorts.server.core.Init;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+
+
 
 /**
  * Class which provides simple connection pooling for custom databases. Class is
@@ -26,37 +32,31 @@ public class SimpleConnectionPool {
     private static final Logger logger = Logger
             .getLogger(SimpleConnectionPool.class);
 
-    private int maxPoolSize;
+    @Inject
+    @Named("db.maxConnections")
+    private int maxConnections;
+    
+    
     private int createdConnections;
     private BlockingQueue<Connection> connectionPool;
 
     @Inject
     private ConnectionCreator creator;
     
-    public SimpleConnectionPool() { }
-
     /**
      * Creates a connection with given size and using custom creator. However
      * creator has to provide JDBC Connection. It's worthy to note here, that
-     * creator's method of creating connections is going to be call {@code maxPoolSize}
+     * creator's method of creating connections is going to be call {@code maxConnections}
      * times.
      * 
      * @param maxPoolSize
      *          size of pool
      * @param creator
      *          creator of connection
-     */
-    //TODO - size going to be in configuration!
-    @Deprecated
-    public SimpleConnectionPool(int maxPoolSize, ConnectionCreator creator) {
-        /* Now it's ugly, it must be discussed */
-        if (creator != null) {
-            this.creator = creator;
-        }
-
+     */   
+    public void init(){
         logger.debug("Connection pool initialization started");
-        this.maxPoolSize = maxPoolSize;
-        connectionPool = new ArrayBlockingQueue<Connection>(maxPoolSize, true);
+        connectionPool = new ArrayBlockingQueue<Connection>(maxConnections, true);
         logger.debug("Connection pool initialization ended succesfully");
     }
 
@@ -73,18 +73,17 @@ public class SimpleConnectionPool {
      * @throws Exception
      *             //TODO!!
      */
-    public synchronized Connection getConnection() throws Exception {
+    public synchronized Connection getConnection() throws NoConnectionException{
         logger.debug("Getting connection");
-        if (createdConnections < maxPoolSize) {
+        if (createdConnections < maxConnections) {
             logger.debug("Adding new connection to pool");
             try {
                 connectionPool.add(creator.createConnection());
-                ++maxPoolSize;
+                ++maxConnections;
             } catch (SQLException e) {
 
                 if (createdConnections == 0) {
-                    // TODO - what t throw here
-                    throw new Exception();
+                    throw new NoConnectionException();
                 } else {
                     String warnMessage = String
                             .format("Cannot create connection. However, %d connections exists",
@@ -120,11 +119,11 @@ public class SimpleConnectionPool {
         }
     }
 
-    // TODO - onExit ann?
     /**
      * Releases all resource used by this class. Should be call while program
      * ends(or crashes)!
-     */
+     **/
+    @OnShutdown
     public void shutdown() {
         logger.debug("Shutting down connections pool");
         Connection conn = null;
