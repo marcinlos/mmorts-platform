@@ -9,6 +9,8 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.name.Named;
+
 import pl.edu.agh.ki.mmorts.server.core.Init;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
@@ -41,8 +43,6 @@ public class SimpleConnectionPool {
     @Inject
     private ConnectionCreator creator;
     
-    public SimpleConnectionPool() { }
-
     /**
      * Creates a connection with given size and using custom creator. However
      * creator has to provide JDBC Connection. It's worthy to note here, that
@@ -54,7 +54,6 @@ public class SimpleConnectionPool {
      * @param creator
      *          creator of connection
      */   
-    @OnInit
     public void init(){
         logger.debug("Connection pool initialization started");
         connectionPool = new ArrayBlockingQueue<Connection>(maxConnections, true);

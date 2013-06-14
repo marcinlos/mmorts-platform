@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -337,6 +338,7 @@ public class Init {
                     protected void configure() {
                         bind(ConnectionCreator.class).to(
                                 config.getConnectionCreatorClass());
+                        bind(Driver.class).to(config.getJdbcDriverClass());
                         bind(SimpleConnectionPool.class);
                     }
                 });
@@ -344,7 +346,7 @@ public class Init {
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");
     }
-
+    
     private void createChannel() {
         logger.debug("Creating message channel");
         Class<? extends MessageChannel> cl = config.getChannelClass();
@@ -376,6 +378,10 @@ public class Init {
         callInit(customPersistor);
         logger.debug("Custom persistor created");
     }
+    
+    
+    
+
 
     private void createPlayersManager() {
         logger.debug("Creating players manager");

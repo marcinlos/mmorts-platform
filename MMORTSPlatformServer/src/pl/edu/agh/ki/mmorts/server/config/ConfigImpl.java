@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.config;
 
+import java.sql.Driver;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,6 +56,9 @@ class ConfigImpl implements Config {
 
     /** Used message channel class */
     private Class<? extends MessageChannel> channelClass;
+    
+    /** Used JDBC driver class */
+    private Class<? extends Driver> jdbcDriverClass;
 
     /**
      * Creates new {@code Config} implementation.
@@ -94,6 +98,7 @@ class ConfigImpl implements Config {
         loadCustomPersistorClass();
         loadChannelClass();
         loadDispatcherClass();
+        loadJdbcDriverClass();
 
         // We have delayed the exception to gather all the missing values
         if (missing != null) {
@@ -245,6 +250,25 @@ class ConfigImpl implements Config {
             logger.fatal(e);
         }
     }
+    
+    /*
+     * Retrieves a {@code Class} object for the specified JDBC driver class
+     */
+    private void loadJdbcDriverClass() {
+        logger.debug("Loading JDBC driver class");
+        try {
+        	jdbcDriverClass = loadClass(DATABASE_DRIVER_CLASS,
+                    Driver.class);
+            if (jdbcDriverClass == null) {
+                addMissing(DATABASE_DRIVER_CLASS);
+                logger.fatal("Failed to load JDBC driver class (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load JDBC driver class");
+            logger.fatal(e);
+        }
+    }
+    
 
     /**
      * Generic class-loading facility.
@@ -359,5 +383,13 @@ class ConfigImpl implements Config {
     public Class<? extends MessageChannel> getChannelClass() {
         return channelClass;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public Class<? extends Driver> getJdbcDriverClass() {
+		return jdbcDriverClass;
+	}
 
 }

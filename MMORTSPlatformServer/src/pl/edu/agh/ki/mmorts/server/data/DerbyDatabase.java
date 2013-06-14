@@ -3,6 +3,7 @@ package pl.edu.agh.ki.mmorts.server.data;
 
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.utils.QueriesCreator;
+import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 
 
@@ -38,17 +40,25 @@ public class DerbyDatabase implements Database {
 	@Inject
 	SimpleConnectionPool connectionPool;
 	
+
+	
+	
+	
 	/**
-	 * Non transactional!
+	 * Non transactional! Connection handled without transaction!
 	 * @see pl.edu.agh.ki.mmorts.server.data.Database#init()
 	 */
 	@Override
 	@OnInit
 	public void init() {
 		logger.debug("Database init started");
+			connectionPool.init();
 			try {
 				Connection conn = connectionPool.getConnection();
 				conn.createStatement().execute(queriesCreator.getCreatePlayersTableQuery());
+				for(ModuleDescriptor desc : moduleTable.getModuleDescriptors()){
+					conn.createStatement().execute(queriesCreator.getCreateCustomTableQuery(desc.name));
+				}
 			} catch (NoConnectionException e) {
 				logger.fatal("Cannot create any, even starting, connection to DB!");
 				System.exit(1);
@@ -59,6 +69,7 @@ public class DerbyDatabase implements Database {
 			}
 		logger.debug("Database init ended");
 	}
+
 
 	@Override
 	public void createPlayer(PlayerData player) throws IllegalArgumentException {

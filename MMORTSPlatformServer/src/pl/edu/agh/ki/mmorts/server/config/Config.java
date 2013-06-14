@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.config;
 
+import java.sql.Driver;
 import java.util.Map;
 
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
@@ -40,6 +41,10 @@ public interface Config {
 
     /** Path of the module configuration file */
     public static final String MODULE_CONFIG_FILE = "sv.modules.config";
+    
+    /** Path of the module configuration file */
+    public static final String DATABASE_DRIVER_CLASS = "db.driver";
+    
 
     /**
      * Retrieves a string value of a property
@@ -93,6 +98,12 @@ public interface Config {
      * @return Implementation of players manager specified in the configuration
      */
     Class<? extends PlayersPersistor> getPlayerManagerClass();
+    
+    
+    /**
+     * @return Implementation of jdbc driver specified in the configuration
+     */
+    Class<? extends Driver> getJdbcDriverClass();
 
     /**
      * @return Read-only map of all the available properties
