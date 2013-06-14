@@ -36,7 +36,11 @@ public interface Database {
 	 * 			collection of actually loaded modules
 	 * @see OnInit
 	 */
-	@OnInit
+	//@OnInit
+    // Methods annotated with @OnInit are called with no arguments. If you
+    // want it to be an injection point, use @Inject. In that case, however,
+    // no order-of-injection guarantees are provided (even worse - fields are
+    // injected after the method inections
 	void init(ModuleTable loadedModules);
 	
 	/**

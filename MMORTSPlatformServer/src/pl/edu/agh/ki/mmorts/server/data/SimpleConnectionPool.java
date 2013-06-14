@@ -7,6 +7,9 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 import pl.edu.agh.ki.mmorts.server.data.utils.ConnectionCreator;
 
 /**
@@ -24,6 +27,8 @@ public class SimpleConnectionPool {
 	private static final Logger logger = Logger
 			.getLogger(SimpleConnectionPool.class);
 
+	@Inject
+	@Named("")
 	private int maxPoolSize;
 	private int createdConnections;
 	private BlockingQueue<Connection> connectionPool;
@@ -83,7 +88,7 @@ public class SimpleConnectionPool {
 					throw new Exception();
 				} else {
 					String warnMessage = String
-							.format("Cannot create connection. However, %d connections exists",
+							.format("Cannot create connection. However, %d connections exist",
 									createdConnections);
 					logger.warn(warnMessage, e);
 				}
@@ -94,6 +99,7 @@ public class SimpleConnectionPool {
 
 			return connectionPool.take();
 		} catch (InterruptedException e) {
+		    Thread.currentThread().interrupt();
 			// TODO - what here?
 			e.printStackTrace();
 		}
