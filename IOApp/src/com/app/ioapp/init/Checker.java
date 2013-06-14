@@ -2,6 +2,7 @@ package com.app.ioapp.init;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import com.app.ioapp.config.PropertiesLoader;

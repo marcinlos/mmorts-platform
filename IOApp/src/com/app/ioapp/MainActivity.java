@@ -1,9 +1,32 @@
 package com.app.ioapp;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.app.ioapp.config.ConfigException;
+import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.init.Initializer;
@@ -12,27 +35,10 @@ import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.FrameLayout.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 public class MainActivity extends Activity implements UIListener {
 	
 	private static final String ID = "MainActivity";
-	private static final String CONFIG_FILE = "resources/client.properties";
+	private static final String CONFIG_FILE = "client.properties";
 	private Initializer initializer;
 	private BoardView board;
 	private LinearLayout menu;
@@ -42,14 +48,67 @@ public class MainActivity extends Activity implements UIListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		initializer = new Initializer(CONFIG_FILE);
-		initializer.initialize();
+		
+		Intent intent = getIntent();
+		Properties p = null;
+		try{
+			Serializable o = intent.getSerializableExtra("java.util.Properties");
+			HashMap map = (HashMap)o; //somehow Properties serialize into HashMap O_o
+			p = new Properties();
+			p.put("mail", (String)map.get("mail"));
+			p.put("password", (String)map.get("password"));
+		}
+		catch(Exception e){
+			Log.e(ID,"Properties from intent can't be loaded :(",e);
+			endProgram();
+		}
+		
+		
+		String mail = p.getProperty("mail");
+		String pass = p.getProperty("password");
+		boolean fileExists = intent.getBooleanExtra("file_exists",false);
+		FileOutputStream fos = null;
+		FileInputStream fis = null;
+		try{
+			if(!fileExists){
+				 fos = openFileOutput(LoginActivity.loginFile,MODE_PRIVATE);
+			}
+			fis = openFileInput(LoginActivity.loginFile);
+		}
+		catch(FileNotFoundException e){
+			Log.e(ID,"Directory not existing or something... it's bad",e);
+			endProgram();
+		}
+		
+		
+		
+		
+		
+		try {
+			initializer = new Initializer(mail, pass, fileExists, fis, fos);
+		} catch (ConfigException e) {
+			Log.e(ID,"Initializer is bad",e);
+			endProgram();
+		} catch (IOException e) {
+			Log.e(ID,"Initializer is bad",e);
+			endProgram();
+		}
+		
+		InputStream i;
+		Properties config=null;
+		try {
+			i = getResources().getAssets().open(CONFIG_FILE);
+			config = StaticPropertiesLoader.load(i);
+			
+		} catch (IOException e) {
+			Log.e(ID,"config file error",e);
+		}
 		MainView v = initializer.getView();
 		manager = new MenuManager(this,v);
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		board = new BoardView(this);
-		board.setMap(new Board());
+		board.setMap(new Board(config));
 		layout.addView(board);
 		
 		//createMenu(mainLayout);
@@ -147,5 +206,10 @@ public class MainActivity extends Activity implements UIListener {
 	public void endMenu(View v){
 		setContentView(R.layout.activity_main);
 	}
+	
+	public void endProgram(){
+    	finish();
+    	System.exit(0);
+    }
 
 }

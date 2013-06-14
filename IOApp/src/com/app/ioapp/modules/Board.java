@@ -1,6 +1,7 @@
 package com.app.ioapp.modules;
 
 import java.util.List;
+import java.util.Properties;
 
 import android.util.Log;
 
@@ -9,11 +10,37 @@ import com.app.board.SpaceOccupiedException;
 public class Board {
 	
 	private final static String ID = "Board";
-	private int mapSize = 35;
-	private ITile[][] map = new Tile[mapSize][mapSize];
+	private Properties pr;
+	//private int mapSize = 35;
+	private int mapHeight = 25;
+	private int mapWidth = 25;
+	private ITile[][] map;
 	
 	public ITile[][] getMap(){
 		return map;
+	}
+	
+	public Board(Properties p){
+		pr = p;
+		if(p != null){
+			Integer tmp1 = Integer.valueOf((String) p.get("boardHeight"));
+			Integer tmp2 = Integer.valueOf((String) p.get("boardWidth"));
+			if(tmp1 != null)
+				mapHeight = tmp1;
+			if(tmp2 != null)
+				mapWidth = tmp2;
+		}
+		map = new Tile[mapWidth][mapHeight];
+	}
+	
+	public int getWidth(){
+		return mapWidth;
+	}
+	public int getHeight(){
+		return mapHeight;
+	}
+	public Properties getProperties(){
+		return pr;
 	}
 	
 	public void fillVirtual(List<ITile> tiles){

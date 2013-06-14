@@ -1,10 +1,14 @@
 package com.app.ioapp.customDroidViews;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.R;
+import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.modules.Board;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
@@ -23,14 +27,16 @@ public class BoardView extends View {
 	private static final String ID = "BoardView";
 	private ScaleGestureDetector detector;
 	private List<ITile> fields;
-	private static final int imageSize = 50;
-	private static final int mapSize = 25;
+	private int imageSize = 50;
+	//private int mapSize = 25;
+	private int mapWidth = 25;
+	private int mapHeight = 25;
 	private Board map;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
 	 */
-	private ITile[][] virtual_map = new Tile[mapSize][mapSize];
+	private ITile[][] virtual_map = new Tile[mapWidth][mapHeight];
 	
 
 	public BoardView(Context context) {
@@ -51,6 +57,15 @@ public class BoardView extends View {
 	
 	public void setMap(Board board){
 		this.map = board;
+		this.mapWidth = board.getWidth();
+		this.mapHeight = board.getHeight();
+		Properties p = board.getProperties();
+		if(p != null){
+			Integer tmp = Integer.valueOf((String) p.get("tileSize"));
+			if(tmp != null){
+				imageSize = tmp;
+			}
+		}
 	}
 	
 	/*
@@ -81,8 +96,8 @@ public class BoardView extends View {
 	private void refreshFields(){
 		virtual_map = map.getMap();
 		fields = new ArrayList<ITile>();
-		for(int i=0;i<mapSize;i++){
-			for(int j=0;j<mapSize;j++){
+		for(int i=0;i<mapWidth;i++){
+			for(int j=0;j<mapHeight;j++){
 				ITile tile = virtual_map[i][j];
 				if(tile != null && tile.isValid()){
 					if (tile.getBitmap() == null){
@@ -137,7 +152,7 @@ public class BoardView extends View {
 	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-	    setMeasuredDimension(mapSize*50, mapSize*50);
+	    setMeasuredDimension(mapWidth*imageSize, mapHeight*imageSize);
 	}
 
 	@Override
