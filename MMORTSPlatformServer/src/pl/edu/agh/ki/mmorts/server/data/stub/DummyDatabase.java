@@ -10,7 +10,7 @@ public class DummyDatabase implements Database {
 
 	@Override
 	@OnInit
-	public void init(ModuleTable loadedModules) {
+	public void init() {
 		// TODO Auto-generated method stub
 	}
 

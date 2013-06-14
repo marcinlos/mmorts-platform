@@ -21,7 +21,7 @@ public class DerbyDatabase implements Database {
 	public static int MAX_POOL = 10;
 	
 	@Override
-	public void init(ModuleTable loadedModules) {
+	public void init() {
 		// TODO Auto-generated method stub
 		
 	}
