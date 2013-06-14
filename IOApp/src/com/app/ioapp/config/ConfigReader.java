@@ -1,10 +1,7 @@
 package com.app.ioapp.config;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 
@@ -13,18 +10,29 @@ import java.util.Properties;
  *
  */
 public class ConfigReader {
-	
-	private String configFile;
+	/**
+	 * Stream to read from file
+	 */
+	private FileInputStream inputStream;
+	/**
+	 * {@code Config} created by {@code configure()}
+	 */
 	private Config config;
 	 /** String property map */
     private Properties properties = new Properties();
 	
+	/**
+	 * @return {@code Config}
+	 */
 	public Config getConfig() {
 		return config;
 	}
 
-	public ConfigReader(String configFile) {
-		this.configFile = configFile;
+	/**
+	 * @param inputStream
+	 */
+	public ConfigReader(FileInputStream inputStream) {
+		this.inputStream = inputStream;
 	}
 	
 	/**
@@ -34,7 +42,7 @@ public class ConfigReader {
 	public void configure() throws ConfigException{
 		try {
 			PropertiesLoader loader = new PropertiesLoader();
-			loader.load(configFile);
+			loader.load(inputStream);
 			properties = loader.getProperties();
 		} catch (IOException e) {
 			throw new ConfigException("IO exception");
