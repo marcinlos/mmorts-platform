@@ -20,5 +20,16 @@ public interface Response {
      *             When the method is invoked second time or more
      */
     void send(Message... messages);
+    
+    /**
+     * Sends a sequence of messages through the output channel to the source of
+     * the original message that initiated the communication.
+     * 
+     * @param messages
+     *            Messages to send as a response
+     * @throws AlreadyRespondedException
+     *             When the method is invoked second time or more
+     */
+    void send(Iterable<Message> messages);
 
 }

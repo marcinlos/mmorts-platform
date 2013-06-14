@@ -26,7 +26,8 @@ public class SequentialTM {
     /**
      * Adds a transaction listener.
      * 
-     * @param listener Listener to be registered
+     * @param listener
+     *            Listener to be registered
      */
     public void addListener(TransactionListener listener) {
         listeners.push(listener);
@@ -43,11 +44,12 @@ public class SequentialTM {
             }
         };
     }
-    
+
     /**
      * Calls {@link TransactionListener#commit()} methods of all the listeners.
      * If some of them fails, the transaction is assumed to be unsuccessful, and
-     * the remaining listeners are rolled back.
+     * the remaining listeners are rolled back. The exception that caused the
+     * failure is rethrown, wrapped in a {@code RuntimeException}.
      * 
      * <p>
      * After execution of this method, listeners queue will be empty.
@@ -58,9 +60,10 @@ public class SequentialTM {
                 TransactionListener cb = listeners.pop();
                 cb.commit();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Exception inside the commit callback", e);
             rollback();
+            throw new RuntimeException("Inside a commit handler", e);
         }
     }
 
