@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
-import pl.agh.edu.ki.mmorts.Message;
+import pl.edu.agh.ki.mmorts.Message;
 
 /**
  * Utility class to translate between Ice messages/responses and corresponding
@@ -35,7 +35,7 @@ public class Translator {
             objOut.writeObject(msg);
             return new Message(msg.getConversationId(), out.toByteArray());
         } catch (IOException e) {
-            throw new Error("Shouldn't happen");
+            throw new Error("Shouldn't happen", e);
         }
     }
 
@@ -57,7 +57,7 @@ public class Translator {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Invalid Message format", e);
         } catch (IOException e) {
-            throw new Error("Shouldn't happen");
+            throw new Error("Shouldn't happen", e);
         }
     }
 }

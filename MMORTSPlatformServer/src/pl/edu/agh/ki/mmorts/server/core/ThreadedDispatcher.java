@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -266,24 +265,29 @@ public class ThreadedDispatcher extends ModuleContainer implements
                 "Initializing the pool (init=%d, max=%d, keepalive=%d s)",
                 threadsInit, threadsMax, keepalive);
         logger.debug(msg);
-        threadPool = new ThreadPoolExecutor(threadsInit, threadsMax, keepalive,
-                TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        threadPool = /*
+                      * new ThreadPoolExecutor(threadsInit, threadsMax,
+                      * keepalive, TimeUnit.SECONDS, new
+                      * SynchronousQueue<Runnable>());
+                      */
+        Executors.newFixedThreadPool(10);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void receive(Message message, final Response response) {
-        String details = messageDetails(message);
-        logger.debug("Message received: \n" + details);
+    public void receive(final Message message, final Response response) {
+        logger.debug("Message received: \n" + message);
         // async execute
         threadPool.execute(new Runnable() {
             @Override
             public void run() {
+                logger.debug("Begin message transaction");
                 // begin message transaction
                 tm.begin();
                 try {
+                    doSend(message);
                     // realize transaction
                     executor.get().run();
                     try {
@@ -291,6 +295,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
                         runPostCommitStack(response);
                     } catch (Exception e) {
                         logger.error("Exception inside a commit handler", e);
+                        response.failed(e);
                     }
                 } catch (Exception e) {
                     logger.debug("Transaction rolled back due to exception", e);
@@ -324,16 +329,6 @@ public class ThreadedDispatcher extends ModuleContainer implements
         } catch (Exception e) {
             logger.error("Exception during the post-commit phase", e);
         }
-    }
-
-    /**
-     * Produces a stringized message representation
-     */
-    private static String messageDetails(Message message) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\tTarget: " + message.getAddress()).append('\n')
-                .append("\tSource: " + message.getSource()).append('\n');
-        return sb.toString();
     }
 
     /**
@@ -378,13 +373,20 @@ public class ThreadedDispatcher extends ModuleContainer implements
         }
         // if local address check if target exists
         if (message.getAddress().type() == Destination.LOCAL) {
-            if (!targetExistsLocally(message)) {
-                throw new TargetNotExistsException();
-            } else {
-                executor.get().push(new DeliverMessage(message));
-            }
+            doSend(message);
         } else {
             throw new IllegalArgumentException("Remote message in send()");
+        }
+    }
+
+    /**
+     * Bypasses state checing, used to push first message
+     * */
+    private void doSend(Message message) {
+        if (!targetExistsLocally(message)) {
+            throw new TargetNotExistsException();
+        } else {
+            executor.get().push(new DeliverMessage(message));
         }
     }
 
@@ -440,17 +442,22 @@ public class ThreadedDispatcher extends ModuleContainer implements
     private void dispatchInThisThread(Message message) {
         Address addr = message.getAddress();
         if (message.getMode() == Mode.UNICAST) {
-            if (modules.containsKey(addr.internal)) {
-                Module module = modules.get(addr.internal).module;
+            if (unicast.containsKey(addr.internal)) {
+                Module module = unicast.get(addr.internal);
                 module.receive(message, executor.get().getContext());
             } else {
                 throw new TargetNotExistsException(addr.internal);
             }
         } else {
             // Multicast
-            Iterable<Module> interested = multicast.get(addr);
-            for (Module module : interested) {
-                module.receive(message, executor.get().getContext());
+            Iterable<Module> interested = multicast.get(addr.internal);
+            if (interested != null) {
+                for (Module module : interested) {
+                    module.receive(message, executor.get().getContext());
+                }
+            } else {
+                logger.warn("Message to nonexistant multicast group ["
+                        + addr.internal + "]");
             }
         }
     }

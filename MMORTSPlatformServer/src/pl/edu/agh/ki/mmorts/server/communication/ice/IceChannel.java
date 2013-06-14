@@ -7,9 +7,9 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import pl.agh.edu.ki.mmorts.AMD_Dispatcher_deliver;
-import pl.agh.edu.ki.mmorts.Response;
-import pl.agh.edu.ki.mmorts._DispatcherDisp;
+import pl.edu.agh.ki.mmorts.AMD_Dispatcher_deliver;
+import pl.edu.agh.ki.mmorts.Response;
+import pl.edu.agh.ki.mmorts._DispatcherDisp;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.AbstractChannel;
@@ -31,7 +31,7 @@ import com.google.inject.name.Named;
  */
 public class IceChannel extends AbstractChannel {
 
-    private static final String ADAPTER_NAME = "MMORTSServer.Adapter.Name";
+    private static final String ADAPTER_NAME = "Adapter.Name";
 
     private static final Logger logger = Logger.getLogger(IceChannel.class);
 
@@ -88,7 +88,7 @@ public class IceChannel extends AbstractChannel {
             String adapterName = getProperty(ADAPTER_NAME);
             adapter = ice.createObjectAdapter(adapterName);
             logger.debug("Ice adapter initialized (" + adapterName + ")");
-            Identity id = ice.stringToIdentity("dispatcher");
+            Identity id = ice.stringToIdentity("Dispatcher");
             adapter.add(impl, id);
             logger.debug("Servant added");
             adapter.activate();
@@ -120,7 +120,7 @@ public class IceChannel extends AbstractChannel {
 
         @Override
         public void deliver_async(final AMD_Dispatcher_deliver __cb,
-                pl.agh.edu.ki.mmorts.Message msg, Current __current) {
+                pl.edu.agh.ki.mmorts.Message msg, Current __current) {
             forwardMessage(Translator.deiceify(msg), new Resp(__cb));
         }
     }
@@ -140,7 +140,7 @@ public class IceChannel extends AbstractChannel {
 
         @Override
         public void send(Collection<Message> messages) {
-            pl.agh.edu.ki.mmorts.Message[] msgs = new pl.agh.edu.ki.mmorts.Message[messages
+            pl.edu.agh.ki.mmorts.Message[] msgs = new pl.edu.agh.ki.mmorts.Message[messages
                     .size()];
             __cb.ice_response(new Response(msgs));
         }
@@ -148,6 +148,11 @@ public class IceChannel extends AbstractChannel {
         @Override
         public void send(Message... messages) {
             send(Arrays.asList(messages));
+        }
+
+        @Override
+        public void failed(Exception e) {
+            __cb.ice_exception(e);
         }
     }
 

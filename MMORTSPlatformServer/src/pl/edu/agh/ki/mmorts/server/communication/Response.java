@@ -22,7 +22,7 @@ public interface Response {
      *             When the method is invoked second time or more
      */
     void send(Message... messages);
-    
+
     /**
      * Sends a sequence of messages through the output channel to the source of
      * the original message that initiated the communication.
@@ -33,5 +33,13 @@ public interface Response {
      *             When the method is invoked second time or more
      */
     void send(Collection<Message> messages);
+
+    /**
+     * Sends an exception as a response.
+     * 
+     * @param e
+     *            Exception to be sent as a response
+     */
+    void failed(Exception e);
 
 }

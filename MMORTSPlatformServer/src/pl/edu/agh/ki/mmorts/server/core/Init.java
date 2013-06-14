@@ -37,7 +37,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
- * First class to be instantiated in {@link Main#main(String[])}. Responsible
+ * First class to be instantiated in {@link Client#main(String[])}. Responsible
  * for the initialization of the whole server.
  * 
  * <p>

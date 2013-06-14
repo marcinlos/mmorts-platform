@@ -1,9 +1,11 @@
 package pl.edu.agh.ki.mmorts.common.message;
 
+import java.io.Serializable;
+
 /**
  * Structure representing the full address (
  */
-public final class Address {
+public final class Address implements Serializable {
 
     /** Internal (unicast or multicast module) address */
     public final String internal;

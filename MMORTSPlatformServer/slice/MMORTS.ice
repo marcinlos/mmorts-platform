@@ -6,8 +6,8 @@
 // 
 
 module pl {
-module agh {
 module edu {
+module agh {
 module ki {
 module mmorts {
 
