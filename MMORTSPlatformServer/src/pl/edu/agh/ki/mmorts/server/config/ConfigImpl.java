@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.util.PropertiesAdapter;
@@ -30,7 +31,7 @@ class ConfigImpl implements Config {
     private Set<String> missing;
 
     // Processed properties
-    
+
     /** Used transaction manager implementation class */
     private Class<? extends TransactionManager> tmClass;
 
@@ -42,6 +43,9 @@ class ConfigImpl implements Config {
 
     /** Used custom persistor class */
     private Class<?> customPersistorClass;
+
+    /** Used connection creator class */
+    private Class<? extends ConnectionCreator> connectionCreatorClass;
 
     /** Used database class */
     private Class<? extends Database> databaseClass;
@@ -83,6 +87,7 @@ class ConfigImpl implements Config {
         logger.debug("Processing read configuration properties");
 
         loadTransactionManagerClass();
+        loadConnectionCreatorClass();
         loadDatabaseClass();
         loadPlayersManagerClass();
         loadCustomPersistorInterface();
@@ -206,6 +211,24 @@ class ConfigImpl implements Config {
     }
 
     /*
+     * Retrieves a {@code Class} object for the specified data source
+     */
+    private void loadConnectionCreatorClass() {
+        logger.debug("Loading connection creator class");
+        try {
+            connectionCreatorClass = loadClass(CONNECTION_CREATOR_CLASS,
+                    ConnectionCreator.class);
+            if (connectionCreatorClass == null) {
+                addMissing(CONNECTION_CREATOR_CLASS);
+                logger.fatal("Failed to load connection creator class (missing)");
+            }
+        } catch (Exception e) {
+            logger.fatal("Failed to load connection creator class");
+            logger.fatal(e);
+        }
+    }
+
+    /*
      * Retrieves a {@code Class} object for the specified players manager class
      */
     private void loadPlayersManagerClass() {
@@ -264,7 +287,7 @@ class ConfigImpl implements Config {
     public String getString(String key) {
         return properties.getProperty(key);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -303,6 +326,14 @@ class ConfigImpl implements Config {
     @Override
     public Map<String, String> getProperties() {
         return Collections.unmodifiableMap(propertiesAdapter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends ConnectionCreator> getConnectionCreatorClass() {
+        return connectionCreatorClass;
     }
 
     /**

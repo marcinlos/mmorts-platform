@@ -20,8 +20,10 @@ import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
+import pl.edu.agh.ki.mmorts.server.data.SimpleConnectionPool;
 import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
@@ -330,7 +332,14 @@ public class Init {
         logger.debug("Creating database connection");
         Class<? extends Database> cl = config.getDatabaseClass();
         database = DI.createWith(cl, configModule, txManagerModule,
-                moduleTableModule);
+                moduleTableModule, new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(ConnectionCreator.class).to(
+                                config.getConnectionCreatorClass());
+                        bind(SimpleConnectionPool.class);
+                    }
+                });
         callInit(database);
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");

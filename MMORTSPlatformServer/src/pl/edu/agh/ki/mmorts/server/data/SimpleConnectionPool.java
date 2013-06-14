@@ -7,6 +7,8 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Inject;
+
 import pl.edu.agh.ki.mmorts.server.data.utils.ConnectionCreator;
 
 /**
@@ -28,8 +30,10 @@ public class SimpleConnectionPool {
     private int createdConnections;
     private BlockingQueue<Connection> connectionPool;
 
-    // TODO - to be injected!
-    private ConnectionCreator creator = new ConnectionCreator();
+    @Inject
+    private ConnectionCreator creator;
+    
+    public SimpleConnectionPool() { }
 
     /**
      * Creates a connection with given size and using custom creator. However
