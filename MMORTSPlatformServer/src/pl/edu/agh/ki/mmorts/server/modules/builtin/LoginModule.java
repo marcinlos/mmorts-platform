@@ -86,14 +86,14 @@ public class LoginModule extends ModuleBase {
             @Override
             public void rollback() {
                 logger.debug("Rolled back :(");
-                Message response = message.makeResponse(":(", "Damn, failed");
+                Message response = message.response(":(", "Damn, failed");
                 sendResponse(response);
             }
 
             @Override
             public void commit() {
                 logger.debug("Commited \\o/");
-                Message response = message.makeResponse(":)", "Weeeeeeeeee");
+                Message response = message.response(":)", "Weeeeeeeeee");
                 sendResponse(response);
             }
         });
@@ -105,7 +105,7 @@ public class LoginModule extends ModuleBase {
                 int n = ctx.get("n", Integer.class);
                 logger.debug("Here goes " + n);
                 Random rand = new Random();
-                Message response = message.makeResponse(":|", "So far so good, " + n);
+                Message response = message.response(":|", "So far so good, " + n);
                 sendResponse(response);
                 if (rand.nextInt(10) == 7) {
                     throw new RuntimeException("Evul exception!");

@@ -52,10 +52,53 @@ public class Message implements Serializable {
     public <T> boolean carries(Class<T> clazz) {
         return clazz.isInstance(data);
     }
+    
+    /**
+     * @return {@code true} if the message is unicast
+     */
+    public boolean isUnicast() {
+        return mode == Mode.UNICAST;
+    }
+    
+    /**
+     * @return {@code true} if the message is multicast
+     */
+    public boolean isMulticast() {
+        return mode == Mode.MULTICAST;
+    }
 
     /**
      * Creates a unicast response for a message - with target as a srouce,
-     * source as a target, same conversation id.
+     * source as a target, same conversation id and {@code null} data. Original
+     * message must be unicast.
+     * 
+     * @param newRequest
+     *            Request string of the response
+     * @return New message conforming to a above specification
+     */
+    public Message response(String newRequest) {
+        return response(newRequest, null);
+    }
+
+    /**
+     * Creates a unicast response for a message with a specific source address,
+     * source as a target, same conversation id and {@code null} data.
+     * 
+     * @param src
+     *            Source of the response
+     * 
+     * @param newRequest
+     *            Request string of the response
+     * @return New message conforming to a above specification
+     */
+    public Message response(String src, String newRequest) {
+        return response(src, newRequest, null);
+    }
+
+    /**
+     * Creates a unicast response for a message - with target as a srouce,
+     * source as a target, same conversation id. Original message must be
+     * unicast.
      * 
      * @param newRequest
      *            Request string of the response
@@ -63,8 +106,28 @@ public class Message implements Serializable {
      *            Data carried in the response
      * @return New message conforming to a above specification
      */
-    public Message makeResponse(String newRequest, Object newData) {
+    public Message response(String newRequest, Object newData) {
+        if (mode != Mode.UNICAST) {
+            throw new IllegalArgumentException("Specify unicast address!");
+        }
         return new Message(convId, target, source, Mode.UNICAST, newRequest,
+                newData);
+    }
+
+    /**
+     * Creates a unicast response for a message with a specific source address,
+     * source as a target, same conversation id and {@code null} data.
+     * 
+     * @param src
+     *            Source of the response
+     * @param newRequest
+     *            Request string of the response
+     * @param newData
+     *            Data carried in the response
+     * @return New message conforming to a above specification
+     */
+    public Message response(String src, String newRequest, Object newData) {
+        return new Message(convId, src, source, Mode.UNICAST, newRequest,
                 newData);
     }
 
