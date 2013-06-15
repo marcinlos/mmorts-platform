@@ -97,11 +97,11 @@ public class Initializer {
 	}
 	
 	/**
-	 * Returns object with configuration
-	 * @return {@code Config} object
+	 * Returns map of modules
+	 * @return modules
 	 */
-	public Config getConfig() {
-		return config;
+	public Map<String, Module> getModules() {
+		return modules;
 	}
 
 	
@@ -130,6 +130,7 @@ public class Initializer {
 		
 	}
 	
+
 
 /**
  * Initializes all classes. Called after logging in
