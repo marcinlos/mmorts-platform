@@ -12,6 +12,7 @@ public class Tile implements ITile {
     private int y;
     private int size_x;
     private int size_y;
+    
     public Tile(Bitmap bit, int x, int y, int sx, int sy){
     	this.x = x;
     	this.y = y;

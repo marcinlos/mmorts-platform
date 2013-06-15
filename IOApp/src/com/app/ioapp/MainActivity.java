@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.security.auth.login.LoginException;
@@ -30,11 +31,14 @@ import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
+import com.app.ioapp.customDroidViews.MenuButton;
+import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.init.Initializer;
 import com.app.ioapp.init.LogInException;
 import com.app.ioapp.init.RegisterException;
 import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.ITile;
+import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
 
@@ -46,22 +50,22 @@ public class MainActivity extends Activity implements UIListener {
 	private InfrastructureModule board;
 	private BoardView boardView;
 	private LinearLayout menu;
-	private MenuManager manager;
-	private Properties boardConfig;
+	private Properties boardConfig; //debug only
+	private Map<String,Module> modules;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		initialize();
+		modules = initializer.getModules();
 		
 		
-		manager = new MenuManager(this);
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		boardView = new BoardView(this);
 		board = new InfrastructureModule(boardConfig);
-		board.setView(boardView);
+		boardView.setModuleImpl(board);
 		setupBoard();
 		
 		layout.addView(boardView);
@@ -72,6 +76,18 @@ public class MainActivity extends Activity implements UIListener {
 		menu.setOrientation(LinearLayout.VERTICAL);
 		menu.setBackgroundColor(Color.CYAN);
 		mainLayout.addView(menu);
+		try {
+			fillMenu();
+		} catch (ClassNotFoundException e) {
+			Log.e(ID,"No View with that name implemented - do it!",e);
+			endProgram();
+		} catch (InstantiationException e) {
+			Log.e(ID,"Can't instantiate your view? What?",e);
+			endProgram();
+		} catch (IllegalAccessException e) {
+			Log.e(ID,"Can't access your view? What?",e);
+			endProgram();
+		}
 		
 		
 		
@@ -166,28 +182,43 @@ public class MainActivity extends Activity implements UIListener {
 	}
 	
 	/**
-	 * see {@link #MenuManager.addButton}
-	 * @param name Text displayed by the button
-	 * @return ID of button created
+	 * Adds all the buttons needed to the menu. Used only after {@link modules} are filled.
+	 * See {@link 
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
 	 */
-	public int addMenuButton(String name){
-		Button b = new Button(this);
-		b.setText(name);
-		
-		OnClickListener ocl = new OnClickListener(){
-		    @Override
-		    public void onClick(View v){
-		        manager.onClick(v.getId());
-		    }
-		};
-		
-		b.setOnClickListener(ocl);
-		menu.addView(b);
-		menu.invalidate();
-		return b.getId();
+	private void fillMenu() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		for(String s : modules.keySet()){
+			Module m = modules.get(s);
+			Map<String,String> views = m.getMenus();
+			for(String text : views.keySet()){
+				AbstractModuleView t =(AbstractModuleView) Class.forName(views.get(text)).newInstance();
+				t.setModuleImpl(m);
+				MenuButton b = new MenuButton(this);
+				b.setView(t);
+				b.setText(text);
+				OnClickListener ocl = new OnClickListener(){
+				    @Override
+				    public void onClick(View v){
+				        if(v instanceof MenuButton){
+				        	MenuButton b = (MenuButton) v;
+				        	b.iWasClicked();
+				        }
+				        else{
+				        	Log.e(ID,"Button bahaving weirdly");
+				        }
+				    }
+				};
+				b.setOnClickListener(ocl);
+				menu.addView(b);
+				menu.invalidate();
+			}
+		}
 	}
 	
 	
+	//debug only method - example board created
 	private void setupBoard(){
 		Log.e(ID, "setupBoard - it's debug only procedure!");
 		List<ITile> tiles = new ArrayList<ITile>();
@@ -215,28 +246,15 @@ public class MainActivity extends Activity implements UIListener {
 		
 	}
 
-	/**
-	 *  {@inheritDoc}
-	 */
-	@Override
-	public void showMenuForModule(String name) {
+	
+	public void buttonWasClicked(MenuButton b){
+		View v = b.getView();
 		setContentView(R.layout.activity_menu);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.menu_layout);
 		TextView a = new TextView(this);
 		a.setText("menu here");
 		layout.addView(a);
-		if(name.equals("examplemodulename")){
-			//do stuff this module would need
-		}
-		else if(name.equals("anotherexamplemodulename")){
-			//do stuff
-		}
-		//...
-		else{
-			AdditionalViewA va = new AdditionalViewA(this);
-			layout.addView(va);
-		}
-		
+		layout.addView(v);
 		
 	}
 	

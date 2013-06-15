@@ -3,6 +3,7 @@ package com.app.ioapp.customDroidViews;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Timer;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -10,14 +11,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 
 import com.app.ioapp.R;
-import com.app.ioapp.modules.InfrastructureModule;
+import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.modules.ITile;
+import com.app.ioapp.modules.InfrastructureModule;
+import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.Tile;
 
-public class BoardView extends View{
+public class BoardView extends AbstractModuleView{
 
 	private static final String ID = "BoardView";
 	private List<ITile> fields;
@@ -35,24 +37,34 @@ public class BoardView extends View{
 
 	public BoardView(Context context) {
 		super(context);
-		Log.d(ID, "created1");
 	}
 
 	public BoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.setBackgroundColor(Color.GREEN);
-		Log.d(ID, "created2");
 	}
 
 	public BoardView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		Log.d(ID, "created3");
+		
 	}
 	
-	public void setMap(InfrastructureModule board){
+	private void addRefresher(){
+		Timer timer = new Timer();
+        timer.schedule(new ViewRefresher(this), 5, 400);
+	}
+	
+	@Override
+	public void setModuleImpl(Module module){
+		if(!(module instanceof InfrastructureModule)){
+			Log.e(ID,"Wrong module uset for init");
+			throw new ConfigException();
+		}
+		InfrastructureModule board = (InfrastructureModule) module;
 		this.map = board;
 		this.mapWidth = board.getWidth();
 		this.mapHeight = board.getHeight();
+		//TODO not sure if that's how it'll work
 		Properties p = board.getProperties();
 		if(p != null){
 			Integer tmp = Integer.valueOf((String) p.get("tileSize"));
@@ -60,8 +72,14 @@ public class BoardView extends View{
 				imageSize = tmp;
 			}
 		}
+		addRefresher();
 	}
 	
+	/**
+	 * need to write something that will call refresh from time to time
+	 */
+	
+	@Override
 	public void refresh(){
 		virtual_map = map.getMap();
 		fields = new ArrayList<ITile>();

@@ -1,5 +1,7 @@
 package com.app.ioapp.modules;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -20,5 +22,13 @@ public interface Module {
      * @param properties 
      */
     void setSynchronizedState(Properties properties);
+    
+    /**
+     * Called by (@link #MainActivity}. Used to get views connected with this module
+     * to dynamically create menu.
+     * @return text to place on the button as key, and name of the view class connected with said
+     * button as value
+     */
+    Map<String,String> getMenus();
 
 }

@@ -1,6 +1,9 @@
 package com.app.ioapp.modules;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import android.util.Log;
@@ -21,7 +24,6 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	private int mapHeight = 25;
 	private int mapWidth = 25;
 	private ITile[][] map;
-	private BoardView view;
 	
 	public ITile[][] getMap(){
 		return map;
@@ -40,10 +42,6 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 		map = new Tile[mapWidth][mapHeight];
 	}
 	
-	public void setView(BoardView v){
-		view = v;
-		view.setMap(this);
-	}
 	
 	public int getWidth(){
 		return mapWidth;
@@ -68,7 +66,6 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 		Log.d(ID, "Starting the setup");
 		fillVirtual(tiles);
 		
-		view.refresh();
 		Log.d(ID, "Ending the setup");
 	}
 	
@@ -123,7 +120,6 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 			t.setY(to_y);
 			addBuilding(t);
 		}
-		view.refresh();
 		
 	}
 	public void destroyBuilding(Tile t){
@@ -132,7 +128,6 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 				map[t.getX()+i-1][t.getY()+j-1] = null;
 			}
 		}
-		view.refresh();
 		
 	}
 	
@@ -158,7 +153,6 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 					
 			}
 		}
-		view.refresh();
 	}
 	public boolean isSpaceAvailable(int x, int y, int sx, int sy){
 		for(int i=sx; i>0;i--){
@@ -187,6 +181,13 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	public void setSynchronizedState(Properties properties) {
 		// TODO
 		
+	}
+
+	@Override
+	public Map<String,String> getMenus() {
+		Map<String,String> m = new HashMap<String,String>();
+		m.put("Board", "BoardView");
+		return m;
 	}
 	
 

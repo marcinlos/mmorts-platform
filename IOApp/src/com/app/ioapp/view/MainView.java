@@ -1,13 +1,8 @@
 package com.app.ioapp.view;
 
-import java.util.Map;
-
-import com.app.ioapp.UIListener;
-import com.app.ioapp.data.PlayersContext;
-import com.app.ioapp.modules.CommunicatingModule;
 
 public class MainView {
-	
+	/*
 	private Map<String,CommunicatingModule> modules;
 	private UIListener listener;
 	private PlayersContext context;
