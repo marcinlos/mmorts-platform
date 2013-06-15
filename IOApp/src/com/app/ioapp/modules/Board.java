@@ -6,6 +6,7 @@ import java.util.Properties;
 import android.util.Log;
 
 import com.app.board.SpaceOccupiedException;
+import com.app.ioapp.customDroidViews.BoardView;
 
 public class Board {
 	
@@ -15,12 +16,13 @@ public class Board {
 	private int mapHeight = 25;
 	private int mapWidth = 25;
 	private ITile[][] map;
+	private BoardView view;
 	
 	public ITile[][] getMap(){
 		return map;
 	}
 	
-	public Board(Properties p){
+	public Board(Properties p, BoardView v){
 		pr = p;
 		if(p != null){
 			Integer tmp1 = Integer.valueOf((String) p.get("boardHeight"));
@@ -31,6 +33,8 @@ public class Board {
 				mapWidth = tmp2;
 		}
 		map = new Tile[mapWidth][mapHeight];
+		view = v;
+		view.setMap(this);
 	}
 	
 	public int getWidth(){
@@ -43,7 +47,29 @@ public class Board {
 		return pr;
 	}
 	
-	public void fillVirtual(List<ITile> tiles){
+	/**
+	 * I'm assuming we only use {@link #BoardView.imageSize} px tiles
+	 * This method should be invoked once by init from server state
+	 * It is required to be a valid board or bad things might happen
+	 * @param tiles
+	 *            will contain either ID of image or a bitmap along with x and y
+	 *            coords and sizes (0,0 being top left corner and numbers rising
+	 *            towards SE) coordinates given for top left corner if size > 1
+	 */
+	public void setupFields(List<ITile> tiles) {
+		Log.d(ID, "Starting the setup");
+		fillVirtual(tiles);
+		
+		view.refresh();
+		Log.d(ID, "Ending the setup");
+	}
+	
+	/**
+	 * Used by the setup to put on virtual board representation tiles sent from server
+	 * and to fill spots that were left with blank fields.
+	 * @param tiles meaningfull tiles to add from server state of map, see {@link #setupFields(List)}
+	 */
+	private void fillVirtual(List<ITile> tiles){
 		for (ITile tile : tiles) {
 			int x = tile.getX();
 			int y = tile.getY();
@@ -89,6 +115,7 @@ public class Board {
 			t.setY(to_y);
 			addBuilding(t);
 		}
+		view.refresh();
 		
 	}
 	public void destroyBuilding(Tile t){
@@ -97,6 +124,7 @@ public class Board {
 				map[t.getX()+i-1][t.getY()+j-1] = null;
 			}
 		}
+		view.refresh();
 		
 	}
 	
@@ -122,6 +150,7 @@ public class Board {
 					
 			}
 		}
+		view.refresh();
 	}
 	public boolean isSpaceAvailable(int x, int y, int sx, int sy){
 		for(int i=sx; i>0;i--){

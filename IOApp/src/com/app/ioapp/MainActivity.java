@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -40,19 +39,52 @@ public class MainActivity extends Activity implements UIListener {
 	private static final String ID = "MainActivity";
 	private static final String CONFIG_FILE = "client.properties";
 	private Initializer initializer;
-	private BoardView board;
+	private Board board;
+	private BoardView boardView;
 	private LinearLayout menu;
 	private MenuManager manager;
+	private Properties boardConfig;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		initialize();
 		
+		
+		MainView v = initializer.getView();
+		manager = new MenuManager(this,v);
+		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+		boardView = new BoardView(this);
+		board = new Board(boardConfig, boardView);
+		setupBoard();
+		
+		layout.addView(boardView);
+		
+		//createMenu(mainLayout);
+		menu = new LinearLayout(this);
+		menu.setWeightSum(1);
+		menu.setOrientation(LinearLayout.VERTICAL);
+		menu.setBackgroundColor(Color.CYAN);
+		mainLayout.addView(menu);
+		
+		
+		
+		
+	}
+	
+	/**
+	 * receives intent that created this activity and reads it
+	 * creates Initializer properly (in compliance with {@link #Initializer} constructor)
+	 * creates {@link #boardConfig} from config file
+	 */
+	private void initialize(){
 		Intent intent = getIntent();
 		Properties p = null;
 		try{
-			Serializable o = intent.getSerializableExtra("java.util.Properties");
+			Serializable o = intent.getSerializableExtra(LoginActivity.PROPERTIES);
+			@SuppressWarnings("rawtypes")
 			HashMap map = (HashMap)o; //somehow Properties serialize into HashMap O_o
 			p = new Properties();
 			p.put("mail", (String)map.get("mail"));
@@ -66,7 +98,7 @@ public class MainActivity extends Activity implements UIListener {
 		
 		String mail = p.getProperty("mail");
 		String pass = p.getProperty("password");
-		boolean fileExists = intent.getBooleanExtra("file_exists",false);
+		boolean fileExists = intent.getBooleanExtra(LoginActivity.FILEEXISTS,false);
 		FileOutputStream fos = null;
 		FileInputStream fis = null;
 		try{
@@ -76,13 +108,9 @@ public class MainActivity extends Activity implements UIListener {
 			fis = openFileInput(LoginActivity.loginFile);
 		}
 		catch(FileNotFoundException e){
-			Log.e(ID,"Directory not existing or something... it's bad",e);
+			Log.e(ID,"Directory for apps internal files not existing or something... it's bad",e);
 			endProgram();
 		}
-		
-		
-		
-		
 		
 		try {
 			initializer = new Initializer(mail, pass, fileExists, fis, fos);
@@ -95,39 +123,21 @@ public class MainActivity extends Activity implements UIListener {
 		}
 		
 		InputStream i;
-		Properties config=null;
 		try {
 			i = getResources().getAssets().open(CONFIG_FILE);
-			config = StaticPropertiesLoader.load(i);
+			boardConfig = StaticPropertiesLoader.load(i);
 			
 		} catch (IOException e) {
 			Log.e(ID,"config file error",e);
 		}
-		MainView v = initializer.getView();
-		manager = new MenuManager(this,v);
-		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
-		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
-		board = new BoardView(this);
-		board.setMap(new Board(config));
-		layout.addView(board);
-		
-		//createMenu(mainLayout);
-		menu = new LinearLayout(this);
-		menu.setWeightSum(1);
-		menu.setOrientation(LinearLayout.VERTICAL);
-		menu.setBackgroundColor(Color.CYAN);
-		mainLayout.addView(menu);
-		
-		
-		setupBoard();
-		//pewnie do PlayArea pójdzie...pójdzie hmm...
-		
-		
-		//activity który bêdzie tym listenerem dodatkowo odpali
-		// mainView.setListener(this)
 	}
 	
-	public int addButton(String name){
+	/**
+	 * see {@link #MenuManager.addButton}
+	 * @param name Text displayed by the button
+	 * @return ID of button created
+	 */
+	public int addMenuButton(String name){
 		Button b = new Button(this);
 		b.setText(name);
 		
@@ -146,7 +156,7 @@ public class MainActivity extends Activity implements UIListener {
 	
 	
 	private void setupBoard(){
-		Log.e(ID, "setupBoard");
+		Log.e(ID, "setupBoard - it's debug only procedure!");
 		List<ITile> tiles = new ArrayList<ITile>();
 		Tile tile1 = new Tile("tile_fill",0,0,1,1);
 		tiles.add(tile1);
@@ -156,12 +166,11 @@ public class MainActivity extends Activity implements UIListener {
 		tiles.add(tile3);
 		
 		board.setupFields(tiles);
-		Log.e(ID, "setup done");
 	}
 	
 	@Override
 	public void onWindowFocusChanged (boolean hasFocus) {
-		board.invalidate();
+		boardView.invalidate();
 	}
 
 
@@ -178,7 +187,6 @@ public class MainActivity extends Activity implements UIListener {
 	 */
 	@Override
 	public void showMenuForModule(String name) {
-		// TODO Auto-generated method stub
 		setContentView(R.layout.activity_menu);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.menu_layout);
 		TextView a = new TextView(this);

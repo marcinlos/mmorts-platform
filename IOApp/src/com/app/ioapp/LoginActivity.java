@@ -21,6 +21,9 @@ import com.app.ioapp.init.Checker;
 
 /**
  * Activity which displays a login screen to the user
+ * Creates MainActivity with intent that has two Extras:
+ * Properties keyed LoginActivity.PROPERTIES instance with "mail" and "password" fields filled
+ * Boolean keyed LoginActivity.FILEEXISTS whether the info was read from existing file or not (true if file existed)
  */
 public class LoginActivity extends Activity {
 
@@ -29,11 +32,15 @@ public class LoginActivity extends Activity {
 	private String mPassword;
 	public static final String loginFile = "client.login";
 	private final static String ID = "LoginActivity";
+	public static final String PROPERTIES = "java.util.Properties";
+	public static final String FILEEXISTS = "file_exists";
 
 	// UI references.
 	private EditText mEmailView;
 	private EditText mPasswordView;
 
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,34 +50,9 @@ public class LoginActivity extends Activity {
 		File f = new File(dir, loginFile);
 		f.delete();*/ //uncomment this if you want to see how it goes before first login again
 		File file = getFileStreamPath(loginFile);
-		if(file.exists()){
-			FileInputStream loginconf=null;
-			try {
-				loginconf = openFileInput("client.login");
-			} catch (FileNotFoundException e) {
-				Log.e(ID,"SHOULD NOT HAPPEN",e);
-			}
-			Checker chk = new Checker(loginconf);
-			Properties p;
-			if(chk.checkIfAccountExists()){
-				Log.d(ID,"Got valid things from file, gonna start the program");
-				p = chk.getProperties();
-				Intent i = new Intent(this,MainActivity.class);
-				if(p == null){
-					Log.e(ID,"dupa");
-				}
-				i.putExtra("java.util.Properties", p);
-				i.putExtra("file_exists", true);
-				
-				startActivity(i);
-				finish();
-			}
-			else{
-				Log.e(ID,"File exists but has no properties? SHOULD NOT HAPPEN");
-				endProgram();
-			}
-		}
-		//file does not exist - someone messes with files and therefore is a di**, or first start of app
+		if(file.exists())
+			loginFromFile();
+		// so, file does not exist - first start of app
 		
 		
 		
@@ -101,6 +83,34 @@ public class LoginActivity extends Activity {
 					}
 				});
 	}
+	
+	private void loginFromFile(){
+		FileInputStream loginconf=null;
+		try {
+			loginconf = openFileInput("client.login");
+		} catch (FileNotFoundException e) {
+			Log.e(ID,"SHOULD NOT HAPPEN",e);
+		}
+		Checker chk = new Checker(loginconf);
+		Properties p;
+		if(chk.checkIfAccountExists()){
+			Log.d(ID,"Got valid things from file, gonna start the program");
+			p = chk.getProperties();
+			Intent i = new Intent(this,MainActivity.class);
+			if(p == null){
+				Log.e(ID,"dupa");
+			}
+			i.putExtra(PROPERTIES, p);
+			i.putExtra(FILEEXISTS, true);
+			
+			startActivity(i);
+			finish();
+		}
+		else{
+			Log.e(ID,"File exists but has no properties? SHOULD NOT HAPPEN");
+			endProgram();
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,7 +120,8 @@ public class LoginActivity extends Activity {
 	}
 
 	/**
-	 * Attempts to sign in or register the account specified by the login form.
+	 * Attempts to log in with data filled into forms, starts MainActivity with that data
+	 * put into intent extra.
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
@@ -159,10 +170,8 @@ public class LoginActivity extends Activity {
 			p.put("mail", mEmail);
 			p.put("password", mPassword);
 			Intent i = new Intent(this,MainActivity.class);
-			i.putExtra("java.util.Properties", p);
-			i.putExtra("file_exists", false);
-			Properties test =(Properties) i.getSerializableExtra("java.util.Properties");
-			Log.e(ID,"test sie scastowal");
+			i.putExtra(PROPERTIES, p);
+			i.putExtra(FILEEXISTS, false);
 			startActivity(i);
 			finish();
 		}
