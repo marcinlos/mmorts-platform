@@ -11,7 +11,7 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
 import java.util.Random;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
@@ -20,6 +20,7 @@ import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * Module responsible for receiving login messages, authenticating players and
@@ -27,12 +28,18 @@ import com.google.inject.Inject;
  */
 public class LoginModule extends ModuleBase {
 
-    @Inject(optional = true)
-    private Config config;
-
     /** Need players manager for data retrieval */
     @Inject(optional = true)
     private PlayersPersistor players;
+
+    @Inject(optional = true)
+    @Named("login.number")
+    private int number;
+
+    @OnInit
+    private void meh() {
+        descriptor().config.get("datatype", Class.class);
+    }
 
     /**
      * {@inheritDoc}
@@ -52,35 +59,37 @@ public class LoginModule extends ModuleBase {
                     logger().debug("3 != 3");
                 }
             }));
-            
+
             transaction().addListener(new TransactionListener() {
                 @Override
                 public void rollback() {
                     logger().debug("Rolled back :(");
                     outputResponse(message, "info-fail", (Object) ":(");
                 }
-    
+
                 @Override
                 public void commit() {
                     logger().debug("Commited \\o/");
-                    outputResponse(message, "info-success", (Object) "Weeeeee :D");
+                    outputResponse(message, "info-success",
+                            (Object) "Weeeeee :D");
                 }
             });
-    
+
             ctx.put("n", 1);
-            Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))
-            ._do(seq(new Cont() {
-                public void execute(Control c) {
-                    int n = ctx.get("n", Integer.class);
-                    logger().debug("Here goes " + n);
-                    Random rand = new Random();
-                    outputResponse(message, ":|", (Object) ("So far so good, " + n));
-                    if (rand.nextInt(10) == 7) {
-                        throw new RuntimeException("Evul exception!");
-                    }
-                    send("inc_mod", "increment", (Object) "n");
-                }
-            }));
+            Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))._do(
+                    seq(new Cont() {
+                        public void execute(Control c) {
+                            int n = ctx.get("n", Integer.class);
+                            logger().debug("Here goes " + n);
+                            Random rand = new Random();
+                            outputResponse(message, ":|",
+                                    (Object) ("So far so good, " + n));
+                            if (rand.nextInt(10) == 7) {
+                                throw new RuntimeException("Evul exception!");
+                            }
+                            send("inc_mod", "increment", (Object) "n");
+                        }
+                    }));
             call(c);
         }
     }

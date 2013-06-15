@@ -247,13 +247,19 @@ public class Init {
      *            Descriptor of the module to create
      * @return Created module
      */
-    private Module createModule(ModuleDescriptor desc) {
+    private Module createModule(final ModuleDescriptor desc) {
         try {
             Class<? extends Module> cl = desc.moduleClass;
             // Inject config, dispatcher, tx manager and individual module
             // configuration
+            com.google.inject.Module props = new AbstractModule() {
+                @Override
+                protected void configure() {
+                    Names.bindProperties(binder(), desc.config.asMap());
+                }
+            };
             Module module = DI.createWith(cl, configModule, dispatcherModule,
-                    txManagerModule,
+                    txManagerModule, props,
                     DI.objectModule(desc, ModuleDescriptor.class));
             callInit(module);
             return module;

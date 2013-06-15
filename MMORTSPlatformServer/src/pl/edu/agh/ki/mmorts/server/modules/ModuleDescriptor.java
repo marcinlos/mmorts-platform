@@ -1,8 +1,12 @@
 package pl.edu.agh.ki.mmorts.server.modules;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import pl.edu.agh.ki.mmorts.server.util.PropertyMap;
 
 /**
  * Module configuration data class.
@@ -24,21 +28,27 @@ public class ModuleDescriptor {
     /** Implementation of the moduleClass */
     public final Class<? extends Module> moduleClass;
 
+    /** Configuration of a module */
+    public final PropertyMap config;
+
     /*
      * Used internally by the builder
      */
     private ModuleDescriptor(String name, Set<String> unicastAddresses,
-            Set<String> multicastGroups, Class<? extends Module> module) {
+            Set<String> multicastGroups, Class<? extends Module> module,
+            PropertyMap config) {
         this.name = name;
         this.unicast = unicastAddresses;
         this.multicast = multicastGroups;
         this.moduleClass = module;
+        this.config = config;
     }
 
     /**
      * Builder interface to safely create moduleClass descriptors.
      */
     public static interface Builder {
+
         /**
          * Add new multicast group.
          * 
@@ -53,13 +63,24 @@ public class ModuleDescriptor {
          * @return New moduleClass descriptor
          */
         ModuleDescriptor build();
-        
+
         /**
          * Add object's unicast address
          * 
-         * @param address Unicast address to add
+         * @param address
+         *            Unicast address to add
          */
         void addUnicast(String address);
+
+        /**
+         * Add configuration parameter
+         * 
+         * @param name
+         *            Property name
+         * @param value
+         *            Property value
+         */
+        void addProperty(String name, String value);
     }
 
     /**
@@ -83,12 +104,15 @@ public class ModuleDescriptor {
 
             private Set<String> unicast = new HashSet<String>();
             private Set<String> multicast = new HashSet<String>();
+            private Map<String, String> props = new HashMap<String, String>();
 
             @Override
             public ModuleDescriptor build() {
                 Set<String> groups = Collections.unmodifiableSet(multicast);
                 Set<String> addresses = Collections.unmodifiableSet(unicast);
-                return new ModuleDescriptor(name, addresses, groups, module);
+                PropertyMap map = new PropertyMap(props);
+                return new ModuleDescriptor(name, addresses, groups, module,
+                        map);
             }
 
             @Override
@@ -99,6 +123,11 @@ public class ModuleDescriptor {
             @Override
             public void addUnicast(String address) {
                 unicast.add(address);
+            }
+
+            @Override
+            public void addProperty(String name, String value) {
+                props.put(name, value);
             }
         };
     }
