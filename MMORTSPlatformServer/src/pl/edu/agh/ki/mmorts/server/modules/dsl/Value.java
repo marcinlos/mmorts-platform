@@ -4,6 +4,6 @@ public interface Value<T> {
 
     T compute();
     
-    Condition is(Predicate<T> pred);
+    Condition is(Predicate<? super T> pred);
     
 }

@@ -9,7 +9,7 @@ public class NotPred<T> implements Predicate<T> {
     }
 
     @Override
-    public boolean satisfied(Value<T> entity) {
+    public boolean satisfied(Value<? extends T> entity) {
         return ! pred.satisfied(entity);
     }
 

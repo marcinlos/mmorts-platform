@@ -9,7 +9,7 @@ public class EqualTo<T> implements Predicate<T> {
     }
 
     @Override
-    public boolean satisfied(Value<T> entity) {
+    public boolean satisfied(Value<? extends T> entity) {
         return value.compute().equals(entity.compute());
     }
 
