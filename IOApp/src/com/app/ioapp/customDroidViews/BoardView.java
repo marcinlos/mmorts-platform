@@ -31,6 +31,7 @@ public class BoardView extends AbstractModuleView{
 	private int mapHeight = 25;
 	private InfrastructureModule map;
 	private Map<String,Bitmap> cache;
+	private boolean refresh_in_progress;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
@@ -121,14 +122,18 @@ public class BoardView extends AbstractModuleView{
 
 	@Override
 	public void onDraw(Canvas canvas) {
+		if(map.stateChanged()){
+			map.stateReceived();
+			refresh();
+		}
 		super.onDraw(canvas);
 		Log.d(ID, "Drawing stuff");
-		canvas.save();
+		//canvas.save();
 		if (fields != null) {
 			Log.d(ID, "Drawing what needs to be drawn");
 			drawBasicElements(canvas, fields);
 		}
-		canvas.restore();
+		//canvas.restore();
 	}
 
 	private void drawBasicElements(Canvas canvas, List<ITile> elements) {
