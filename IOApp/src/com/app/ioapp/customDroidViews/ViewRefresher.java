@@ -14,6 +14,6 @@ public class ViewRefresher extends TimerTask {
 
     @Override
     public void run() {
-        view.refresh();
+        view.postInvalidate();
     }
 }

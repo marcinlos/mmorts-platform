@@ -23,10 +23,19 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	//private int mapSize = 35;
 	private int mapHeight = 25;
 	private int mapWidth = 25;
+	private boolean stateChanged = false;
 	private ITile[][] map;
 	
 	public ITile[][] getMap(){
 		return map;
+	}
+	@Override
+	public boolean stateChanged(){
+		return stateChanged;
+	}
+	@Override
+	public void stateReceived(){
+		stateChanged = false;
 	}
 	
 	public InfrastructureModule(Properties p){
@@ -65,7 +74,7 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	public void setupFields(List<ITile> tiles) {
 		Log.d(ID, "Starting the setup");
 		fillVirtual(tiles);
-		
+		stateChanged=true;
 		Log.d(ID, "Ending the setup");
 	}
 	
@@ -120,6 +129,7 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 			t.setY(to_y);
 			addBuilding(t);
 		}
+		stateChanged=true;
 		
 	}
 	public void destroyBuilding(Tile t){
@@ -128,6 +138,7 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 				map[t.getX()+i-1][t.getY()+j-1] = null;
 			}
 		}
+		stateChanged=true;
 		
 	}
 	
@@ -153,6 +164,7 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 					
 			}
 		}
+		stateChanged=true;
 	}
 	public boolean isSpaceAvailable(int x, int y, int sx, int sy){
 		for(int i=sx; i>0;i--){
