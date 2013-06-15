@@ -1,6 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.data.utils;
 
 import java.sql.Blob;
+import java.sql.Statement;
 
 /**
  * @author drew
@@ -14,6 +15,7 @@ public class QueriesCreator {
 	public static final String PLAYER_LOGIN_COL = "player_login";
 	public static final String PLAYER_PASS_COL = "player_password";
 
+	
 	/**
 	 * 
 	 * 
@@ -24,7 +26,7 @@ public class QueriesCreator {
 		moduleName = prepareModuleName(moduleName);
 		return String.format("CREATE TABLE %s " + " (" + PLAYER_NAME_COL
 				+ " VARCHAR(255) NOT NULL, " + PLAYER_CUST_DATA_COL
-				+ " BLOB(1M), PRIMARY KEY(player_name))", moduleName);
+				+ " VARCHAR(4096), PRIMARY KEY(player_name))", moduleName);
 	}
 
 	public String getCreatePlayersTableQuery() {
@@ -68,40 +70,25 @@ public class QueriesCreator {
 	public String getSelectCustomDataQuery(String moduleName, String playerName) {
 		moduleName = prepareModuleName(moduleName);
 		return String.format("SELECT * FROM " + moduleName + " WHERE "
-				+ PLAYER_NAME_COL + " = " + playerName);
+				+ PLAYER_NAME_COL + " = '" + playerName + "'");
 	}
 
-	/**
-	 * BLOB:/
-	 * 
-	 * @param playerName
-	 * @param moduleName
-	 * @return
-	 */
-	public String getUpdateCustomDataQuery(String playerName, String moduleName) {
+	public String getUpdateCustomDataQuery(String playerName, String moduleName, String data) {
 		moduleName = prepareModuleName(moduleName);
 		return String.format("UPDATE " + moduleName + " SET "
-				+ PLAYER_CUST_DATA_COL + " = ? WHERE " + PLAYER_NAME_COL
-				+ " = " + playerName);
+				+ PLAYER_CUST_DATA_COL + " ='" +data+ "' WHERE " + PLAYER_NAME_COL
+				+ " = '" + playerName + "'");
 	}
 
-	/**
-	 * BLOB:/
-	 * 
-	 * @param playerName
-	 * @param moduleName
-	 * @return
-	 */
-	public String getInsertCustomDataQuery(String playerName, String moduleName) {
+	public String getInsertCustomDataQuery(String playerName, String moduleName, String data) {
 		moduleName = prepareModuleName(moduleName);
 		return String.format("INSERT INTO " + moduleName + " VALUES ("
-				+ PLAYER_NAME_COL + " = " + playerName + PLAYER_CUST_DATA_COL
-				+ " = ?");
+				+ "'" + playerName + "' " + " '"+ data + "')");
 	}
 
 	public String getDeleteCustomDataQuery(String playerName, String moduleName) {
 		return String.format("DELETE FROM " + moduleName + " WHERE "
-				+ PLAYER_NAME_COL + " = " + playerName);
+				+ PLAYER_NAME_COL + " = '" + playerName + "'");
 	}
 
 	private String prepareModuleName(String moduleName) {
