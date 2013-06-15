@@ -1,9 +1,12 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
+import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
@@ -16,6 +19,7 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.utils.QueriesCreator;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 /**
@@ -31,6 +35,8 @@ public class DerbyDatabase implements Database {
 
 	@Inject
 	private ModuleTable moduleTable;
+	
+	private  HashMap<String, Class<?>> namesObjectMap;
 
 	@Inject
 	private QueriesCreator queriesCreator;
@@ -53,6 +59,8 @@ public class DerbyDatabase implements Database {
 		}
 	};
 
+	private Gson gson = new Gson();
+	
 	private Connection initConnection() throws NoConnectionException {
 		logger.debug("Initializing connection");
 		final Connection conn = connectionPool.getConnection();
@@ -98,6 +106,14 @@ public class DerbyDatabase implements Database {
 	private void connectionReturn() {
 		connectionPool.returnConnection(perThreadConn.get());
 	}
+	
+	
+	private Class<?> getModuleDataClass(ModuleDescriptor d){
+		return Object.class;
+	}
+	
+	
+	
 
 	/**
 	 * Non transactional! Connection handled without transaction!
@@ -108,6 +124,12 @@ public class DerbyDatabase implements Database {
 	@OnInit
 	public void init() {
 		logger.debug("Database init started");
+		
+		namesObjectMap = new HashMap<String, Class<?>>();
+		for(ModuleDescriptor desc : moduleTable.getModuleDescriptors()){
+			namesObjectMap.put(desc.name, getModuleDataClass(desc));
+		}
+		
 		connectionPool.init();
 		Connection conn = null;
 		try {
@@ -147,10 +169,13 @@ public class DerbyDatabase implements Database {
 			stm.execute(queriesCreator.getInsertPlayerQuery(playerName,
 					playerLogin, playerPassword));
 		} catch (SQLException e) {
+			
+			//23505 is error number of violating constraints(here PK)
 			if (e.getSQLState().equals("23505")) {
 				throw new IllegalArgumentException();
 			}
 			e.printStackTrace();
+			//TODO
 		} finally {
 			if (stm != null) {
 				try {
@@ -207,7 +232,6 @@ public class DerbyDatabase implements Database {
 		logger.debug("Updating player with name: " + name);
 		Statement stm = null;
 		try {
-			String playerName = player.getName();
 			String playerLogin = player.getLogin();
 			String playerPassword = player.getPasswordHash();
 			stm = perThreadConn.get().createStatement();
@@ -260,31 +284,135 @@ public class DerbyDatabase implements Database {
 
 	}
 
+	
 	@Override
 	public void createBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+		logger.debug(String.format("Creating to player %s in module %s", moduleName, playerName));
+		Statement stm = null;
+		try{
+			String sqlString = queriesCreator.getInsertCustomDataQuery(playerName, moduleName, serialize(o));
+			stm = perThreadConn.get().createStatement();
+			stm.execute(sqlString);
+		} catch (SQLException e) {
+			logger.warn("Cannot create custom binding");
+			if (e.getSQLState().equals("23505")) {
+				throw new IllegalArgumentException();
+			}
+			e.printStackTrace();
+			//TODO
+		} finally {
+			if (stm != null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		
+	}
 
+	
+
+	private Object deserialize(String moduleName, String stringData) {
+		return gson.fromJson(stringData, namesObjectMap.get(moduleName));
+	}
+	
+	private String serialize(Object o) {
+		return gson.toJson(o);
 	}
 
 	@Override
 	public Object receiveBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug(String.format("Receving data of player %s in module %s", moduleName, playerName));
+		Statement stm = null;
+		Object deserialized = null;
+		try{
+			String sqlString = queriesCreator.getSelectCustomDataQuery(playerName, moduleName);
+			stm = perThreadConn.get().createStatement();
+			ResultSet rs = stm.executeQuery(sqlString);
+			while(rs.next()){
+				String stringData = rs.getString(QueriesCreator.PLAYER_CUST_DATA_COL);
+				deserialized = deserialize(moduleName, stringData);
+			}
+		} catch (SQLException e) {
+			logger.warn("Cannot receive data");
+			e.printStackTrace();
+			//TODO
+		} finally {
+			if (stm != null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			}
+		}
+		if(deserialized==null){
+			throw new IllegalArgumentException();
+		}
+		return deserialized;
+	}
+
+
+	@Override
+	public void updateBinding(String moduleName, String playerName, Object o)
+			throws IllegalArgumentException {
+		logger.debug(String.format("Updating data of player %s in module %s", moduleName, playerName));
+		Statement stm = null;
+		try {
+			stm = perThreadConn.get().createStatement();
+			stm.executeUpdate(queriesCreator.getUpdateCustomDataQuery(playerName, moduleName, serialize(o)));
+			if (stm.getUpdateCount() == 0) {
+				throw new IllegalArgumentException();
+			}
+		} catch (SQLException e) {
+			logger.warn("Cannot update data!");
+			e.printStackTrace();
+			//TODO
+		} finally {
+			if (stm != null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 
 	@Override
-	public void updateBinding(String modulename, String playerName, Object o)
+	public void deleteBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteBinding(String modulename, String playerName)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+		logger.debug(String.format("Deleting binding of player %s in module %s", moduleName, playerName));
+		Statement stm = null;
+		try {
+			stm = perThreadConn.get().createStatement();
+			stm.executeUpdate(queriesCreator.getDeleteCustomDataQuery(playerName, moduleName);
+			if (stm.getUpdateCount() == 0) {
+				throw new IllegalArgumentException();
+			}
+		} catch (SQLException e) {
+			logger.warn("Cannot delete binding!");
+			e.printStackTrace();
+			//TODO
+		} finally {
+			if (stm != null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			}
+		}
 
 	}
 
