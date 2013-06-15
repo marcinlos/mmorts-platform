@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.R;
-import com.app.ioapp.modules.Board;
+import com.app.ioapp.modules.Infrastruture;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
 
@@ -26,7 +26,7 @@ public class BoardView extends View {
 	//private int mapSize = 25;
 	private int mapWidth = 25;
 	private int mapHeight = 25;
-	private Board map;
+	private Infrastruture map;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
@@ -50,7 +50,7 @@ public class BoardView extends View {
 		Log.d(ID, "created3");
 	}
 	
-	public void setMap(Board board){
+	public void setMap(Infrastruture board){
 		this.map = board;
 		this.mapWidth = board.getWidth();
 		this.mapHeight = board.getHeight();

@@ -8,7 +8,7 @@ import android.util.Log;
 import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.customDroidViews.BoardView;
 
-public class Board {
+public class Infrastruture {
 	
 	private final static String ID = "Board";
 	private Properties pr;
@@ -22,7 +22,7 @@ public class Board {
 		return map;
 	}
 	
-	public Board(Properties p, BoardView v){
+	public Infrastruture(Properties p){
 		pr = p;
 		if(p != null){
 			Integer tmp1 = Integer.valueOf((String) p.get("boardHeight"));
@@ -33,6 +33,9 @@ public class Board {
 				mapWidth = tmp2;
 		}
 		map = new Tile[mapWidth][mapHeight];
+	}
+	
+	public void setView(BoardView v){
 		view = v;
 		view.setMap(this);
 	}
