@@ -1,5 +1,7 @@
 package com.app.ioapp.init;
 
+import android.util.Log;
+
 import com.app.ioapp.communication.Dispatcher;
 
 /**
@@ -8,6 +10,7 @@ import com.app.ioapp.communication.Dispatcher;
  */
 public class LoginModule {
 
+	private static final String ID = "LoginModule";
 	/**
 	 * Dispatcher which enables communication with server
 	 */
@@ -22,23 +25,45 @@ public class LoginModule {
 	 */
 	private String password;
 	
+	/**
+	 * @param dispatcher
+	 * @param userMail
+	 * @param password
+	 */
 	public LoginModule(Dispatcher dispatcher, String userMail, String password) {
 		this.dispatcher = dispatcher;
 		this.userMail = userMail;
 		this.password = password;
 	}
 
+	/**
+	 * Registers player in system
+	 * @param mail
+	 * @param password
+	 * @throws RegisterException
+	 */
 	public void register(String mail, String password) throws RegisterException{
+		Log.e(ID,"Registering user");
 		//dispatcher.send(message, category);
 		// cos tam
 		this.userMail = mail;
 		this.password = password;
 	}
 	
-	public void logIn() {
+	/**
+	 * Responsible for logging in
+	 * @throws LogInException
+	 */
+	public void logIn() throws LogInException{
+		Log.e(ID,"Logging in user");
 	}
 	
-	public void logOut() {
+	/**
+	 * Responsible for logging out
+	 * @throws LogOutException
+	 */
+	public void logOut() throws LogOutException{
+		Log.e(ID,"Logging out user");
 	}
 	
 

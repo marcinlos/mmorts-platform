@@ -1,7 +1,9 @@
 package com.app.ioapp.init;
 
+import android.util.Log;
+
 import com.app.ioapp.communication.Gateway;
-import com.app.ioapp.data.Context;
+import com.app.ioapp.data.PlayersContext;
 import com.app.ioapp.data.State;
 
 /**
@@ -11,6 +13,8 @@ import com.app.ioapp.data.State;
  */
 public class Synchronizer {
 	
+	public static final String ID = "Synchronizer";
+	
 	/**
 	 * Dispatcher which enables communication with server
 	 */
@@ -18,13 +22,18 @@ public class Synchronizer {
 	/**
 	 * Reference to context. It will be changed by method {@code synchronizeContext()}
 	 */
-	private Context context;
+	private PlayersContext context;
 	/**
 	 * Reference to state. It will be changed by method {@code synchronizeState()}
 	 */
 	private State state;
 	
-	public Synchronizer(Gateway dispatcher, Context context, State state) {
+	/**
+	 * @param dispatcher
+	 * @param context
+	 * @param state
+	 */
+	public Synchronizer(Gateway dispatcher, PlayersContext context, State state) {
 		this.dispatcher = dispatcher;
 		this.context = context;
 		this.state = state;
@@ -34,12 +43,14 @@ public class Synchronizer {
 	 * Synchronizes state with server.
 	 */
 	public void synchronizeState() {
+		Log.e(ID, "Synchronizing state started");
 	}
 	
 	/**
 	 * Synchronizes context with server.
 	 */
 	public void synchronizeContext() {
+		Log.e(ID, "Synchronizing context started");
 	}
 
 }

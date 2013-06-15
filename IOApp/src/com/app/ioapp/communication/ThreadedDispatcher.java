@@ -2,7 +2,6 @@ package com.app.ioapp.communication;
 
 import java.util.Arrays;
 
-
 import com.app.ioapp.config.Config;
 import com.app.ioapp.modules.Module;
 

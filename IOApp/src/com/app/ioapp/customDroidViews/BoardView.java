@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.R;
 import com.app.ioapp.modules.Board;
 import com.app.ioapp.modules.ITile;

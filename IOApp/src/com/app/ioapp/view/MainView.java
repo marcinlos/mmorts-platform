@@ -1,19 +1,18 @@
 package com.app.ioapp.view;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.app.ioapp.UIListener;
-import com.app.ioapp.data.Context;
+import com.app.ioapp.data.PlayersContext;
 import com.app.ioapp.modules.Module;
 
 public class MainView {
 	
 	private Map<String,Module> modules;
 	private UIListener listener;
-	private Context context;
+	private PlayersContext context;
 	
-	public MainView(Map<String,Module> modules, Context context){
+	public MainView(Map<String,Module> modules, PlayersContext context){
 		this.modules = modules;
 		this.context = context;
 	}
@@ -23,7 +22,7 @@ public class MainView {
 	}
 	
 	public void updateModules(Map<String,Module> modules){       // bo te same moduly sa tez w innych miejscach
-		this.modules = modules;;
+		this.modules = modules;
 	}
 	
 	
