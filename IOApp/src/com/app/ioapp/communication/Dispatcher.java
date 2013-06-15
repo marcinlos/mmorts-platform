@@ -1,6 +1,6 @@
 package com.app.ioapp.communication;
 
-import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.CommunicatingModule;
 
 
 /**
@@ -13,27 +13,27 @@ public interface Dispatcher extends Gateway {
 
     /**
      * Register all the modules, i.e. iterate through all of them twice, calling
-     * {@linkplain Module#init()} in the first traversal, and
-     * {@linkplain Module#started()} in the second.
+     * {@linkplain CommunicatingModule#init()} in the first traversal, and
+     * {@linkplain CommunicatingModule#started()} in the second.
      * 
      * @param modules Modules to initialize
      */
-    void registerModules(Module... modules);
+    void registerModules(CommunicatingModule... modules);
 
     /**
      * Register all the modules, i.e. iterate through all of them twice, calling
-     * {@linkplain Module#init()} in the first traversal, and
-     * {@linkplain Module#started()} in the second.
+     * {@linkplain CommunicatingModule#init()} in the first traversal, and
+     * {@linkplain CommunicatingModule#started()} in the second.
      * 
      * @param modules Modules to initialize
      */
-    void registerModules(Iterable<? extends Module> modules);
+    void registerModules(Iterable<? extends CommunicatingModule> modules);
     
     /**
      * Registers a moduleClass with its own unique unicast address. Other modules
      * @param moduleClass
      * @param category
      */
-    void registerUnicastReceiver(Module module, String category);
+    void registerUnicastReceiver(CommunicatingModule module, String category);
     
 }

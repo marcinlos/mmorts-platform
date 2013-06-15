@@ -1,45 +1,24 @@
 package com.app.ioapp.modules;
 
-import com.app.ioapp.communication.Message;
-
+import java.util.Properties;
 
 /**
- * Interface of the moduleClass, basic unit of functionality.
- * 
- * <p>
- * Modules are message-based request handlers, reacting on messages delivered by
- * the dispatcher.
- * 
- * Interface of the moduleClass used during initialization process.
+ * This interface represents logic of a module without communication. Communication is in 
+ * {@code CommunicatingModule}
+ *
  */
 public interface Module {
-
     /**
      * Called in the first phase of moduleClass initialization, before the
      * communication environment is fully operational.
+     * @param properties 
      */
-    void init();
-
-    /**
-     * Called in the second phase of moduleClass initialization. The
-     * communication environment is fully operational, it is valid to
-     * communicate with other modules inside this method.
-     */
-    void started();
-
-    /**
-     * Called when a relevant message (uni/multicast) has been delivered to the
-     * dispatcher.
-     * 
-     * @param message
-     *            Message of interest (i.e. matching module's unicast address or
-     *            one of its' multicast groups)
-     */
-    void receive(Message message);
-    
+    void init(Properties properties);
     
     /**
-     * Called during the server's shutdown sequence.
+     * Called by {@code Synchronizer after getting state from server
+     * @param properties 
      */
-    void shutdown();
+    void setSynchronizedState(Properties properties);
+
 }

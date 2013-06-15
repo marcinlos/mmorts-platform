@@ -13,11 +13,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.app.ioapp.R;
-import com.app.ioapp.modules.Infrastruture;
+import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
 
-public class BoardView extends View {
+public class BoardView extends View{
 
 	private static final String ID = "BoardView";
 	private List<ITile> fields;
@@ -25,7 +25,7 @@ public class BoardView extends View {
 	//private int mapSize = 25;
 	private int mapWidth = 25;
 	private int mapHeight = 25;
-	private Infrastruture map;
+	private InfrastructureModule map;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
@@ -49,7 +49,7 @@ public class BoardView extends View {
 		Log.d(ID, "created3");
 	}
 	
-	public void setMap(Infrastruture board){
+	public void setMap(InfrastructureModule board){
 		this.map = board;
 		this.mapWidth = board.getWidth();
 		this.mapHeight = board.getHeight();

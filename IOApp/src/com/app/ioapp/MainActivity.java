@@ -29,7 +29,7 @@ import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.init.Initializer;
-import com.app.ioapp.modules.Infrastruture;
+import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements UIListener {
 	private static final String ID = "MainActivity";
 	private static final String CONFIG_FILE = "client.properties";
 	private Initializer initializer;
-	private Infrastruture board;
+	private InfrastructureModule board;
 	private BoardView boardView;
 	private LinearLayout menu;
 	private MenuManager manager;
@@ -57,7 +57,7 @@ public class MainActivity extends Activity implements UIListener {
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		boardView = new BoardView(this);
-		board = new Infrastruture(boardConfig);
+		board = new InfrastructureModule(boardConfig);
 		board.setView(boardView);
 		setupBoard();
 		

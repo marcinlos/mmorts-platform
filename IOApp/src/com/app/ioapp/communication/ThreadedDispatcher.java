@@ -3,7 +3,7 @@ package com.app.ioapp.communication;
 import java.util.Arrays;
 
 import com.app.ioapp.config.Config;
-import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.CommunicatingModule;
 
 
 /**
@@ -25,7 +25,7 @@ public class ThreadedDispatcher implements MessageReceiver, Dispatcher {
     }
 
     @Override
-    public void registerModules(Module... modules) {
+    public void registerModules(CommunicatingModule... modules) {
         registerModules(Arrays.asList(modules));
     }
 
@@ -36,13 +36,13 @@ public class ThreadedDispatcher implements MessageReceiver, Dispatcher {
     }
 
     @Override
-    public void registerModules(Iterable<? extends Module> modules) {
+    public void registerModules(Iterable<? extends CommunicatingModule> modules) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void registerUnicastReceiver(Module module, String category) {
+    public void registerUnicastReceiver(CommunicatingModule module, String category) {
         // TODO Auto-generated method stub
 
     }

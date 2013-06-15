@@ -3,6 +3,8 @@ package com.app.ioapp.init;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import android.util.Log;
@@ -11,8 +13,7 @@ import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.ConfigReader;
-import com.app.ioapp.data.PlayersContext;
-import com.app.ioapp.data.State;
+import com.app.ioapp.modules.Module;
 
 /**
  * A class responsible for the initialization of the environment.
@@ -41,6 +42,8 @@ public class Initializer {
 	 * Player's password
 	 */
 	private String password;
+	
+	private Map<String, Module> modules;
     
     /**
      * Stores properties read from  configuration file
@@ -63,15 +66,6 @@ public class Initializer {
      * Dispatcher object
      */
 	private Dispatcher dispatcher;
-
-	/**
-	 * Stores information
-	 */
-	private PlayersContext context;
-	/**
-	 * Stores information which changes frequently
-	 */
-	private State state;
 	
 	/**
 	 * Stream to read configuration from file
@@ -97,8 +91,9 @@ public class Initializer {
 		this.alreadyRegistered = alreadyRegistered;
 		this.configInput = configInput;
 		this.infoOutput = infoOutput;
+		this.modules = new HashMap<String, Module>();
 		
-		//this.dispatcher = new ThreadedDispatcher(config);   //must be initialized before logIn()
+		//this.dispatcher = new ThreadedDispatcher(config, modules);   //must be initialized before logIn()
 	}
 	
 	/**
@@ -147,12 +142,13 @@ public class Initializer {
 			reader = new ConfigReader(configInput);
 			reader.configure();
 			config = reader.getConfig();
+			for (String moduleName : modules.keySet()) {
+				(modules.get(moduleName)).init(config.getModuleProperties(moduleName));
+			}
+			//dispatcher.registerModules(modules);
 			
-			this.context = new PlayersContext();
-			this.state = new State();
-			this.synchronizer = new Synchronizer(dispatcher, context, state);
+			this.synchronizer = new Synchronizer(dispatcher, modules);
 			
-			synchronizer.synchronizeContext();
 			synchronizer.synchronizeState();
 		
 	}
