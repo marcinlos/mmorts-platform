@@ -27,8 +27,6 @@ import com.google.inject.name.Named;
 /**
  * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
  * using Ice.
- * 
- * @author los
  */
 public class IceChannel extends AbstractChannel {
 
@@ -49,7 +47,7 @@ public class IceChannel extends AbstractChannel {
 
     /** Ice adapter */
     private Ice.ObjectAdapter adapter;
-    
+
     /** Servant */
     private DispatcherImpl impl = new DispatcherImpl();
 
@@ -144,6 +142,10 @@ public class IceChannel extends AbstractChannel {
         public void send(Collection<Message> messages) {
             pl.edu.agh.ki.mmorts.Message[] msgs = new pl.edu.agh.ki.mmorts.Message[messages
                     .size()];
+            int i = 0;
+            for (Message msg : messages) {
+                msgs[i++] = Translator.iceify(msg);
+            }
             __cb.ice_response(new Response(msgs));
         }
 

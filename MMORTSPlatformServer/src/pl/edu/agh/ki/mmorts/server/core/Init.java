@@ -250,8 +250,11 @@ public class Init {
     private Module createModule(ModuleDescriptor desc) {
         try {
             Class<? extends Module> cl = desc.moduleClass;
+            // Inject config, dispatcher, tx manager and individual module
+            // configuration
             Module module = DI.createWith(cl, configModule, dispatcherModule,
-                    txManagerModule);
+                    txManagerModule,
+                    DI.objectModule(desc, ModuleDescriptor.class));
             callInit(module);
             return module;
         } catch (Exception e) {
@@ -346,7 +349,7 @@ public class Init {
         databaseModule = DI.objectModule(database, Database.class);
         logger.debug("Database connection successfully initialized");
     }
-    
+
     private void createChannel() {
         logger.debug("Creating message channel");
         Class<? extends MessageChannel> cl = config.getChannelClass();
@@ -378,7 +381,7 @@ public class Init {
         callInit(customPersistor);
         logger.debug("Custom persistor created");
     }
-    
+
     private void createPlayersManager() {
         logger.debug("Creating players manager");
         Class<? extends PlayersPersistor> cl = config.getPlayerManagerClass();

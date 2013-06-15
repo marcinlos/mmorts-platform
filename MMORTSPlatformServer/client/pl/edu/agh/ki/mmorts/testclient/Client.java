@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
 import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
+import pl.edu.agh.ki.mmorts.Response;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
@@ -77,7 +78,12 @@ public class Client extends Ice.Application {
             }
             String type = scanner.next();
             Message msg = new Message(66, "ja", address, mode, type, "Siema");
-            dispatcher.deliver(Translator.iceify(msg));
+            Response resp = dispatcher.deliver(Translator.iceify(msg));
+            System.out.println("Response:");
+            for (pl.edu.agh.ki.mmorts.Message iceMsg: resp.messages) {
+                Message message = Translator.deiceify(iceMsg);
+                System.out.println("* + " + message);
+            }
 
         } catch (NoSuchElementException e) {
             System.err.println("usage: msg address (U|M) type");

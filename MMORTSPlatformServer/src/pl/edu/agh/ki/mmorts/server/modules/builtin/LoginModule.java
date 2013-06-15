@@ -7,12 +7,14 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.map;
 import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.neq;
 import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.seq;
 import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.with;
+
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
@@ -66,19 +68,11 @@ public class LoginModule extends ModuleBase {
      * {@inheritDoc}
      */
     @Override
-    public void receive(Message message, final Context ctx) {
+    public void receive(final Message message, final Context ctx) {
         logger.debug("Message received");
         logger.debug(message);
-        /*
-         * gateway.later(new ContChain(gateway, new ContAdapter() {
-         * 
-         * @Override public void execute(Context context) {
-         * logger.debug("First time sth!"); } }, new ContAdapter() {
-         * 
-         * @Override public void execute(Context context) {
-         * logger.debug("Another time!"); } }));
-         */
-        with(control, _if(val(3).is(eq(3))).then(new Cont() {
+
+        call(_if(val(3).is(eq(3))).then(new Cont() {
             public void execute(Control c) {
                 logger.debug("3 == 3");
             }
@@ -87,6 +81,22 @@ public class LoginModule extends ModuleBase {
                 logger.debug("3 != 3");
             }
         }));
+        
+        tm.getCurrent().addListener(new TransactionListener() {
+            @Override
+            public void rollback() {
+                logger.debug("Rolled back :(");
+                Message response = message.makeResponse(":(", "Damn, failed");
+                sendResponse(response);
+            }
+
+            @Override
+            public void commit() {
+                logger.debug("Commited \\o/");
+                Message response = message.makeResponse(":)", "Weeeeeeeeee");
+                sendResponse(response);
+            }
+        });
 
         ctx.put("n", 1);
         Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))
@@ -94,10 +104,16 @@ public class LoginModule extends ModuleBase {
             public void execute(Control c) {
                 int n = ctx.get("n", Integer.class);
                 logger.debug("Here goes " + n);
+                Random rand = new Random();
+                Message response = message.makeResponse(":|", "So far so good, " + n);
+                sendResponse(response);
+                if (rand.nextInt(10) == 7) {
+                    throw new RuntimeException("Evul exception!");
+                }
                 ctx.put("n", n + 1);
             }
         }));
-        with(control, c);
+        call(c);
     }
 
     /**
