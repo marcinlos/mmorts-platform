@@ -1,8 +1,8 @@
 package com.app.ioapp.config;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -28,7 +28,7 @@ public class PropertiesLoader {
      * @param inputStream
      * @throws IOException
      */
-    public void load(FileInputStream inputStream) throws IOException {
+    public void load(InputStream inputStream) throws IOException {
         try {
            BufferedInputStream input = new BufferedInputStream(inputStream);
             properties.load(input);

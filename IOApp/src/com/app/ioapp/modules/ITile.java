@@ -1,4 +1,4 @@
-package com.app.ioapp.interfaces;
+package com.app.ioapp.modules;
 
 import android.graphics.Bitmap;
 
