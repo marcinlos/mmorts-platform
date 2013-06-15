@@ -54,8 +54,51 @@ public class Message implements Serializable {
     }
 
     /**
+     * @return {@code true} if the message is unicast
+     */
+    public boolean isUnicast() {
+        return mode == Mode.UNICAST;
+    }
+
+    /**
+     * @return {@code true} if the message is multicast
+     */
+    public boolean isMulticast() {
+        return mode == Mode.MULTICAST;
+    }
+
+    /**
      * Creates a unicast response for a message - with target as a srouce,
-     * source as a target, same conversation id.
+     * source as a target, same conversation id and {@code null} data. Original
+     * message must be unicast.
+     * 
+     * @param newRequest
+     *            Request string of the response
+     * @return New message conforming to a above specification
+     */
+    public Message response(String newRequest) {
+        return response(newRequest, null);
+    }
+
+    /**
+     * Creates a unicast response for a message with a specific source address,
+     * source as a target, same conversation id and {@code null} data.
+     * 
+     * @param src
+     *            Source of the response
+     * 
+     * @param newRequest
+     *            Request string of the response
+     * @return New message conforming to a above specification
+     */
+    public Message response(String src, String newRequest) {
+        return response(src, newRequest, null);
+    }
+
+    /**
+     * Creates a unicast response for a message - with target as a srouce,
+     * source as a target, same conversation id. Original message must be
+     * unicast.
      * 
      * @param newRequest
      *            Request string of the response
@@ -63,8 +106,28 @@ public class Message implements Serializable {
      *            Data carried in the response
      * @return New message conforming to a above specification
      */
-    public Message makeResponse(String newRequest, Object newData) {
+    public Message response(String newRequest, Object newData) {
+        if (mode != Mode.UNICAST) {
+            throw new IllegalArgumentException("Specify unicast address!");
+        }
         return new Message(convId, target, source, Mode.UNICAST, newRequest,
+                newData);
+    }
+
+    /**
+     * Creates a unicast response for a message with a specific source address,
+     * source as a target, same conversation id and {@code null} data.
+     * 
+     * @param src
+     *            Source of the response
+     * @param newRequest
+     *            Request string of the response
+     * @param newData
+     *            Data carried in the response
+     * @return New message conforming to a above specification
+     */
+    public Message response(String src, String newRequest, Object newData) {
+        return new Message(convId, src, source, Mode.UNICAST, newRequest,
                 newData);
     }
 
@@ -75,7 +138,16 @@ public class Message implements Serializable {
     public Message(int convId, String source, String target, Mode mode,
             String request, Object data) {
         if (target == null) {
-            throw new NullPointerException("Target address may not be null");
+            throw new IllegalArgumentException("Target address may not be null");
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("Source address may not be null");
+        }
+        if (request == null) {
+            throw new IllegalArgumentException("Request may not be null");
+        }
+        if (mode == null) {
+            throw new IllegalArgumentException("Mode may not be null");
         }
         this.convId = convId;
         this.source = source;
@@ -84,17 +156,22 @@ public class Message implements Serializable {
         this.request = request;
         this.data = data;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Msg[");
-        return sb.append("id=").append(convId).append(", ").append(source)
-                .append(" -> ").append(target).append(" (").append(mode)
-                .append(")").append(", content=[").append(data).append("]")
-                .append("]").toString();
+        sb.append("id=").append(convId).append(", ");
+        sb.append(source).append(" -> ").append(target);
+        sb.append(" (").append(mode).append("), ");
+        sb.append("req=").append(request);
+        if (data != null) {
+            sb.append(", content=[").append(data).append("]");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
 }

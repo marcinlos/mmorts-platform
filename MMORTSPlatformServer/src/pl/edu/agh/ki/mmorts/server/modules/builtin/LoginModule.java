@@ -7,13 +7,12 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.map;
 import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.neq;
 import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.seq;
 import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.with;
 
-import org.apache.log4j.Logger;
+import java.util.Random;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.config.Config;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
@@ -28,8 +27,6 @@ import com.google.inject.Inject;
  */
 public class LoginModule extends ModuleBase {
 
-    private static final Logger logger = Logger.getLogger(LoginModule.class);
-
     @Inject(optional = true)
     private Config config;
 
@@ -37,75 +34,55 @@ public class LoginModule extends ModuleBase {
     @Inject(optional = true)
     private PlayersPersistor players;
 
-    @Inject(optional = true)
-    private TransactionManager tm;
-
-    public LoginModule(/* PlayersManager players, Gateway gateway */) {
-        logger.debug("Initializing");
-        // this.players = players;
-        // this.gateway = gateway;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init() {
-        // empty
-    }
+    public void receive(final Message message, final Context ctx) {
+        logger().debug("Message received");
+        logger().debug(message);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void started() {
-        // empty
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void receive(Message message, final Context ctx) {
-        logger.debug("Message received");
-        logger.debug(message);
-        /*
-         * gateway.later(new ContChain(gateway, new ContAdapter() {
-         * 
-         * @Override public void execute(Context context) {
-         * logger.debug("First time sth!"); } }, new ContAdapter() {
-         * 
-         * @Override public void execute(Context context) {
-         * logger.debug("Another time!"); } }));
-         */
-        with(control, _if(val(3).is(eq(3))).then(new Cont() {
-            public void execute(Control c) {
-                logger.debug("3 == 3");
-            }
-        })._else(new Cont() {
-            public void execute(Control c) {
-                logger.debug("3 != 3");
-            }
-        }));
-
-        ctx.put("n", 1);
-        Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))
-        ._do(seq(new Cont() {
-            public void execute(Control c) {
-                int n = ctx.get("n", Integer.class);
-                logger.debug("Here goes " + n);
-                ctx.put("n", n + 1);
-            }
-        }));
-        with(control, c);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void shutdown() {
-        logger.debug("Shutting down");
+        if (message.request.equals("auth")) {
+            call(_if(val(3).is(eq(3))).then(new Cont() {
+                public void execute(Control c) {
+                    logger().debug("3 == 3");
+                }
+            })._else(new Cont() {
+                public void execute(Control c) {
+                    logger().debug("3 != 3");
+                }
+            }));
+            
+            transaction().addListener(new TransactionListener() {
+                @Override
+                public void rollback() {
+                    logger().debug("Rolled back :(");
+                    outputResponse(message, "info-fail", (Object) ":(");
+                }
+    
+                @Override
+                public void commit() {
+                    logger().debug("Commited \\o/");
+                    outputResponse(message, "info-success", (Object) "Weeeeee :D");
+                }
+            });
+    
+            ctx.put("n", 1);
+            Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))
+            ._do(seq(new Cont() {
+                public void execute(Control c) {
+                    int n = ctx.get("n", Integer.class);
+                    logger().debug("Here goes " + n);
+                    Random rand = new Random();
+                    outputResponse(message, ":|", (Object) ("So far so good, " + n));
+                    if (rand.nextInt(10) == 7) {
+                        throw new RuntimeException("Evul exception!");
+                    }
+                    send("inc_mod", "increment", (Object) "n");
+                }
+            }));
+            call(c);
+        }
     }
 
 }

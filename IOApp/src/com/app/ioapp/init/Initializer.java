@@ -84,9 +84,9 @@ public class Initializer {
 	/**
 	 * @param mail
 	 * @param password
-	 * @param alreadyRegistered
-	 * @param configInput
-	 * @param infoOutput
+	 * @param alreadyRegistered true if player has been registered (a file with mail and password exists and is correct) 
+	 * @param configInput to read configuration from file
+	 * @param infoOutput to write players info to file if he has not been registered yet. If he has, it is {@code null}
 	 * @throws ConfigException
 	 * @throws IOException
 	 */
