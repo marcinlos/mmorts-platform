@@ -111,7 +111,7 @@ public interface Database {
 	
 	/**
 	 * Receives object bound to player name for given module.
-	 * Player name must be bound in this module in database.
+	 * If player name wasnt't bound in this module in database earlier return null.
 	 * 
 	 * <p>
 	 * Yes, it <b>is</b> the same as {@link CustomPersistor} now! Read {@link CustomPersistor}
@@ -124,14 +124,13 @@ public interface Database {
 	 * @param playerName
 	 * 			indicates player to which object is bound
 	 * @return
-	 * 			Valid Java object bound with player name in given module
-	 * @throws IllegalArgumentException
-	 * 			thrown when player name is not bound in this module
+	 * 			Valid Java object bound with player name in given module or null
 	 */
-	Object receiveBinding(String moduleName, String playerName) throws IllegalArgumentException;
+	Object receiveBinding(String moduleName, String playerName);
+	
 	/**
 	 * Updates object bound to player name for given module.
-	 * Player name must be bound in this module in database earlier.
+	 * Player name must be bound in this module in database.
 	 *
 	 * 
 	 * 
