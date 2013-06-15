@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import javax.security.auth.login.LoginException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -29,6 +31,8 @@ import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.init.Initializer;
+import com.app.ioapp.init.LogInException;
+import com.app.ioapp.init.RegisterException;
 import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.Tile;
@@ -52,8 +56,7 @@ public class MainActivity extends Activity implements UIListener {
 		initialize();
 		
 		
-		MainView v = initializer.getView();
-		manager = new MenuManager(this,v);
+		manager = new MenuManager(this);
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		boardView = new BoardView(this);
@@ -101,11 +104,10 @@ public class MainActivity extends Activity implements UIListener {
 		String pass = p.getProperty("password");
 		boolean fileExists = intent.getBooleanExtra(LoginActivity.FILEEXISTS,false);
 		FileOutputStream fos = null;
-		FileInputStream fis = null;
-		InputStream i;
+		InputStream i=null;
 		try {
 			i = getResources().getAssets().open(CONFIG_FILE);
-			boardConfig = StaticPropertiesLoader.load(i);
+			boardConfig = StaticPropertiesLoader.load(i); //debug only action
 			
 		} catch (IOException e) {
 			Log.e(ID,"config file error",e);
@@ -114,7 +116,6 @@ public class MainActivity extends Activity implements UIListener {
 			if(!fileExists){
 				 fos = openFileOutput(LoginActivity.loginFile,MODE_PRIVATE);
 			}
-			fis = openFileInput(LoginActivity.loginFile);
 		}
 		catch(FileNotFoundException e){
 			Log.e(ID,"Directory for apps internal files not existing or something... it's bad",e);
@@ -126,8 +127,38 @@ public class MainActivity extends Activity implements UIListener {
 		} catch (ConfigException e) {
 			Log.e(ID,"Initializer is bad",e);
 			endProgram();
+		}
+		try{
+			initializer.logIn();
+		}
+		catch(RegisterException e){
+			//email belonging to someone who is already a player or something
+			//this should lead to re-inserting email and password
+			//we leave that to UI developers
+			Log.e(ID,"Register unsuccesfull",e);
+			endProgram();
+		}
+		catch (LogInException e) {
+			// someone messed up their file with logging info
+			//or lack of internet connection
+			//exit program or something
+			Log.e(ID,"Login unsuccesfull",e);
+			endProgram();
 		} catch (IOException e) {
-			Log.e(ID,"Initializer is bad",e);
+			// Someone messed up with file
+			Log.e(ID,"Login info file messed or somethin",e);
+			endProgram();
+		}
+		
+		try {
+			initializer.initialize();
+		} catch (ConfigException e) {
+			// couldn't read config file to initialize, inform user to reinstall or something
+			Log.e(ID,"Initializer can't initialize - config wrong",e);
+			endProgram();
+		} catch (IOException e) {
+			// something bad happened to config file, reinstall
+			Log.e(ID,"Initializer can't initialize, IOExc?",e);
 			endProgram();
 		}
 		
