@@ -2,9 +2,12 @@ package pl.edu.agh.ki.mmorts.server.modules;
 
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Messages;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
+import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
@@ -19,20 +22,31 @@ import com.google.inject.Inject;
  * module developement.
  */
 public abstract class ModuleBase implements Module {
+    
+    /** Global immutable configuration */
+    @Inject(optional = true)
+    private Config config;
 
+    /** Communication gateway and flow control */
     @Inject(optional = true)
     private Gateway gateway;
 
+    /** Module-specific configuration */
     @Inject(optional = true)
     private ModuleDescriptor descriptor;
 
+    /** Transaction manager */
     @Inject(optional = true)
     private TransactionManager tm;
+    
+    /** Logger for the <b>derived</b> class */
+    private final Logger logger = Logger.getLogger(getClass());
 
+    /** Flow control for DSL */
     private Control control;
 
     /**
-     * Initializes the control
+     * Initialization of internal structures
      */
     @OnInit
     private void initModule() {
@@ -53,39 +67,77 @@ public abstract class ModuleBase implements Module {
             }
         };
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init() {
+        logger.debug("Module " + name() + " init()");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void started() {
+        logger.debug("Module " + name() + " started()");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void shutdown() {
+        logger.debug("Module " + name() + " shutdown()");
+    }
+    
+    /**
+     * @return Global configuration
+     */
+    protected final Config config() {
+        return config;
+    }
 
     /**
      * @return Gateway for the communication and control flow
      */
-    protected Gateway gateway() {
+    protected final Gateway gateway() {
         return gateway;
     }
 
     /**
      * @return Module descriptor
      */
-    protected ModuleDescriptor descriptor() {
+    protected final ModuleDescriptor descriptor() {
         return descriptor;
     }
 
     /**
      * @return {@linkplain TransactionManager} managing current transaction
      */
-    protected TransactionManager tm() {
+    protected final TransactionManager tm() {
         return tm;
     }
 
     /**
      * @return Current transaction associated with this thread
      */
-    protected Transaction transaction() {
+    protected final Transaction transaction() {
         return tm().getCurrent();
+    }
+    
+    /**
+     * @return Default logger for this module
+     */
+    protected final Logger logger() {
+        return logger;
     }
 
     /**
      * @return Name of the module
      */
-    protected String name() {
+    protected final String name() {
         return descriptor().name;
     }
 
@@ -104,7 +156,7 @@ public abstract class ModuleBase implements Module {
     /**
      * @return Control flow interface
      */
-    protected Control control() {
+    protected final Control control() {
         return control;
     }
 
