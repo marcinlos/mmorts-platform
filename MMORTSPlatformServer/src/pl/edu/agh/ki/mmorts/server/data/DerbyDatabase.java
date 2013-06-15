@@ -395,7 +395,7 @@ public class DerbyDatabase implements Database {
 		Statement stm = null;
 		try {
 			stm = perThreadConn.get().createStatement();
-			stm.executeUpdate(queriesCreator.getDeleteCustomDataQuery(playerName, moduleName);
+			stm.executeUpdate(queriesCreator.getDeleteCustomDataQuery(playerName, moduleName));
 			if (stm.getUpdateCount() == 0) {
 				throw new IllegalArgumentException();
 			}
