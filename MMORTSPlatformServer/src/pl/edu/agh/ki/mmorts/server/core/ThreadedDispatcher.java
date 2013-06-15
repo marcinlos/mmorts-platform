@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -226,7 +227,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
     private boolean targetExistsLocally(Message message) {
         String addr = message.target;
-        if (message.mode == Mode.UNICAST) {
+        if (message.isUnicast()) {
             return unicast.containsKey(addr);
         } else {
             // Don't validate multicast
@@ -263,12 +264,9 @@ public class ThreadedDispatcher extends ModuleContainer implements
                 "Initializing the pool (init=%d, max=%d, keepalive=%d s)",
                 threadsInit, threadsMax, keepalive);
         logger.debug(msg);
-        threadPool = /*
-                      * new ThreadPoolExecutor(threadsInit, threadsMax,
-                      * keepalive, TimeUnit.SECONDS, new
-                      * SynchronousQueue<Runnable>());
-                      */
-        Executors.newFixedThreadPool(10);
+        threadPool = new ThreadPoolExecutor(threadsInit, threadsMax, keepalive,
+                TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        // Executors.newFixedThreadPool(10);
     }
 
     /**
@@ -289,6 +287,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     // realize transaction
                     executor.get().run();
                     try {
+                        logger.debug("Transaction commited, executing listeners");
                         tm.commit();
                         runPostCommitStack();
                     } catch (Exception e) {
