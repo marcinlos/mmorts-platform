@@ -387,7 +387,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@inheritDoc}
      */
     @Override
-    public void sendResponse(Message message) {
+    public void output(Message message) {
         // TODO: some validation, maybe?
         executor.get().withheld.add(message);
     }

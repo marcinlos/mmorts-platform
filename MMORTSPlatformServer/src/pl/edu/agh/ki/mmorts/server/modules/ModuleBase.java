@@ -137,8 +137,8 @@ public abstract class ModuleBase implements Module {
      * @param response
      *            Response to send
      */
-    protected void sendResponse(Message response) {
-        gateway.sendResponse(response);
+    protected void output(Message response) {
+        gateway.output(response);
     }
 
     /**
@@ -227,6 +227,139 @@ public abstract class ModuleBase implements Module {
     }
 
     /**
+     * Convenience method, sends a response to the client with any of the
+     * module's unicast addresses as a source, and with a given request string.
+     * Carried data is {@code null}.
+     * 
+     * @param address
+     *            Unicast address to which the message is to be delivered
+     * @param request
+     *            Request string
+     * @see #anyAddress()
+     */
+    protected void output(String address, String request) {
+        output(Messages.unicast(0, anyAddress(), address, request, null));
+    }
+
+    /**
+     * Convenience method, sends a response to the client with specified unicast
+     * addresses as a source, and with a given request string. Carried data is
+     * {@code null}.
+     * 
+     * @param src
+     *            Source address of the message
+     * @param address
+     *            Unicast address to which the message is to be delivered
+     * @param request
+     *            Request string
+     */
+    protected void output(String src, String address, String request) {
+        output(Messages.unicast(0, src, address, request, null));
+    }
+
+    /**
+     * Convenience method, sends a response to the client with any of the
+     * module's unicast addresses as a source, given request string and carrying
+     * {@code data}. Carried data is {@code null}.
+     * 
+     * @param src
+     *            Source address of the message
+     * @param request
+     *            Request string
+     * @param data
+     *            Data carried with the message
+     */
+    protected void output(String address, String request, Object data) {
+        output(Messages.unicast(0, anyAddress(), address, request, data));
+    }
+
+    /**
+     * Convenience method, sends a response to the client with any of the
+     * module's unicast addresses as a source, given request string and carrying
+     * {@code data}. Carried data is {@code null}.
+     * 
+     * @param src
+     *            Source address of the message
+     * @param address
+     *            Unicast address to which the message is to be delivered
+     * @param request
+     *            Request string
+     * @param data
+     *            Data carried with the message
+     */
+    protected void output(String src, String address, String request,
+            Object data) {
+        output(Messages.unicast(0, src, address, request, data));
+    }
+
+    /**
+     * Constructs a response for the {@code message} with a new request string
+     * and sends it through the gateway back to the client.
+     * 
+     * @param message
+     *            Message to which we respond
+     * @param newRequest
+     *            Request string of the response
+     * @see Message#response(String)
+     */
+    protected void outputResponse(Message message, String newRequest) {
+        gateway.output(message.response(newRequest));
+    }
+
+    /**
+     * Constructs a response for the {@code message} with a new source and
+     * request string and sends it through the gateway back to the client.
+     * 
+     * @param message
+     *            Message to which we respond
+     * @param src
+     *            Source address of the response
+     * @param newRequest
+     *            Request string of the response
+     * @see Message#response(String, String)
+     */
+    protected void outputResponse(Message message, String src, String newRequest) {
+        gateway.output(message.response(src, newRequest));
+    }
+
+    /**
+     * Constructs a response for the {@code message} with a given request string
+     * and data and sends it through the gateway back to the client.
+     * 
+     * @param message
+     *            Message to which we respond
+     * @param newRequest
+     *            Request string of the response
+     * @param data
+     *            Data carried in the response
+     * @see Message#response(String, Object)
+     */
+    protected void outputResponse(Message message, String newRequest,
+            Object data) {
+        gateway.output(message.response(newRequest, data));
+    }
+
+    /**
+     * Constructs a response for the {@code message} with a specified source,
+     * request string and data and sends it through the gateway back to the
+     * client.
+     * 
+     * @param message
+     *            Message to which we respond
+     * @param src
+     *            Source address of the response
+     * @param newRequest
+     *            Request string of the response
+     * @param data
+     *            Data carried in the response
+     * @see Message#response(String, String, Object)
+     */
+    protected void outputResponse(Message message, String src,
+            String newRequest, Object data) {
+        gateway.output(message.response(src, newRequest, data));
+    }
+
+    /**
      * Convenience method, sends an immediate unicast message with any of the
      * module's unicast addresses as a source, and with a given request string.
      * Carried data is {@code null}.
@@ -247,7 +380,7 @@ public abstract class ModuleBase implements Module {
      * data is {@code null}.
      * 
      * @param src
-     *            Sourc address of the notification
+     *            Source address of the message
      * @param address
      *            Unicast address to which the message is to be delivered
      * @param request
@@ -263,7 +396,7 @@ public abstract class ModuleBase implements Module {
      * {@code data}. Carried data is {@code null}.
      * 
      * @param src
-     *            Sourc address of the notification
+     *            Source address of the message
      * @param request
      *            Request string
      * @param data
@@ -279,7 +412,7 @@ public abstract class ModuleBase implements Module {
      * {@code data}. Carried data is {@code null}.
      * 
      * @param src
-     *            Sourc address of the notification
+     *            Source address of the message
      * @param address
      *            Unicast address to which the message is to be delivered
      * @param request
@@ -290,7 +423,7 @@ public abstract class ModuleBase implements Module {
     protected void send(String src, String address, String request, Object data) {
         send(Messages.unicast(0, src, address, request, data));
     }
-    
+
     /**
      * Convenience method, sends a delayed unicast message with any of the
      * module's unicast addresses as a source, and with a given request string.
@@ -312,7 +445,7 @@ public abstract class ModuleBase implements Module {
      * data is {@code null}.
      * 
      * @param src
-     *            Sourc address of the notification
+     *            Source address of the message
      * @param address
      *            Unicast address to which the message is to be delivered
      * @param request
@@ -328,7 +461,7 @@ public abstract class ModuleBase implements Module {
      * {@code data}. Carried data is {@code null}.
      * 
      * @param src
-     *            Sourc address of the notification
+     *            Source address of the message
      * @param request
      *            Request string
      * @param data
@@ -344,7 +477,7 @@ public abstract class ModuleBase implements Module {
      * {@code data}. Carried data is {@code null}.
      * 
      * @param src
-     *            Sourc address of the notification
+     *            Source address of the message
      * @param address
      *            Unicast address to which the message is to be delivered
      * @param request
@@ -352,7 +485,8 @@ public abstract class ModuleBase implements Module {
      * @param data
      *            Data carried with the message
      */
-    protected void sendDelayed(String src, String address, String request, Object data) {
+    protected void sendDelayed(String src, String address, String request,
+            Object data) {
         sendDelayed(Messages.unicast(0, src, address, request, data));
     }
 

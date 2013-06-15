@@ -60,7 +60,7 @@ public interface Gateway extends ServiceLocator {
      * 
      * @param message
      */
-    void sendResponse(Message message);
+    void output(Message message);
 
     /**
      * Adds an item to the execution queue of a transaction.

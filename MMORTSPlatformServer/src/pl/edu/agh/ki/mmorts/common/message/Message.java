@@ -52,14 +52,14 @@ public class Message implements Serializable {
     public <T> boolean carries(Class<T> clazz) {
         return clazz.isInstance(data);
     }
-    
+
     /**
      * @return {@code true} if the message is unicast
      */
     public boolean isUnicast() {
         return mode == Mode.UNICAST;
     }
-    
+
     /**
      * @return {@code true} if the message is multicast
      */
@@ -156,8 +156,8 @@ public class Message implements Serializable {
         StringBuilder sb = new StringBuilder("Msg[");
         return sb.append("id=").append(convId).append(", ").append(source)
                 .append(" -> ").append(target).append(" (").append(mode)
-                .append(")").append(", content=[").append(data).append("]")
-                .append("]").toString();
+                .append("), request=").append(request).append(", content=[")
+                .append(data).append("]").append("]").toString();
     }
 
 }
