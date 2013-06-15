@@ -6,14 +6,14 @@ import java.util.TimerTask;
 
 public class ViewRefresher extends TimerTask {
 
-    private final View view;
+    private final AbstractModuleView view;
 
-    public ViewRefresher(View view) {
+    public ViewRefresher(AbstractModuleView view) {
         this.view = view;
     }
 
     @Override
     public void run() {
-        view.postInvalidate();
+        view.refresh();
     }
 }

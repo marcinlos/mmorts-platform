@@ -32,8 +32,8 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	public InfrastructureModule(Properties p){
 		pr = p;
 		if(p != null){
-			Integer tmp1 = Integer.valueOf((String) p.get("boardHeight"));
-			Integer tmp2 = Integer.valueOf((String) p.get("boardWidth"));
+			Integer tmp1 = Integer.valueOf((String) p.get("InfrastructureModule.boardHeight"));
+			Integer tmp2 = Integer.valueOf((String) p.get("InfrastructureModule.boardWidth"));
 			if(tmp1 != null)
 				mapHeight = tmp1;
 			if(tmp2 != null)
