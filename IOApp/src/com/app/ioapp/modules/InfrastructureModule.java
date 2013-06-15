@@ -1,6 +1,9 @@
 package com.app.ioapp.modules;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import android.util.Log;
@@ -8,7 +11,12 @@ import android.util.Log;
 import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.customDroidViews.BoardView;
 
-public class Infrastruture {
+/**
+ * Implementation of concrete module. Extends {@code AbstractCommunicatingModule} so can communicate with
+ * other modules and server site
+ *
+ */
+public class InfrastructureModule extends AbstractCommunicatingModule {
 	
 	private final static String ID = "Board";
 	private Properties pr;
@@ -16,13 +24,12 @@ public class Infrastruture {
 	private int mapHeight = 25;
 	private int mapWidth = 25;
 	private ITile[][] map;
-	private BoardView view;
 	
 	public ITile[][] getMap(){
 		return map;
 	}
 	
-	public Infrastruture(Properties p){
+	public InfrastructureModule(Properties p){
 		pr = p;
 		if(p != null){
 			Integer tmp1 = Integer.valueOf((String) p.get("boardHeight"));
@@ -35,10 +42,6 @@ public class Infrastruture {
 		map = new Tile[mapWidth][mapHeight];
 	}
 	
-	public void setView(BoardView v){
-		view = v;
-		view.setMap(this);
-	}
 	
 	public int getWidth(){
 		return mapWidth;
@@ -63,7 +66,6 @@ public class Infrastruture {
 		Log.d(ID, "Starting the setup");
 		fillVirtual(tiles);
 		
-		view.refresh();
 		Log.d(ID, "Ending the setup");
 	}
 	
@@ -118,7 +120,6 @@ public class Infrastruture {
 			t.setY(to_y);
 			addBuilding(t);
 		}
-		view.refresh();
 		
 	}
 	public void destroyBuilding(Tile t){
@@ -127,7 +128,6 @@ public class Infrastruture {
 				map[t.getX()+i-1][t.getY()+j-1] = null;
 			}
 		}
-		view.refresh();
 		
 	}
 	
@@ -153,7 +153,6 @@ public class Infrastruture {
 					
 			}
 		}
-		view.refresh();
 	}
 	public boolean isSpaceAvailable(int x, int y, int sx, int sy){
 		for(int i=sx; i>0;i--){
@@ -163,6 +162,32 @@ public class Infrastruture {
 			}
 		}
 		return true;
+	}
+
+	/** 
+	 * Initializes module with properties from configuration.
+	 * @see com.app.ioapp.modules.Module#init(java.util.Properties)
+	 */
+	@Override
+	public void init(Properties properties) {
+		//TODO
+	}
+
+	/**
+	 * Updates state
+	 * @see com.app.ioapp.modules.Module#setSynchronizedState(java.util.Properties)
+	 */
+	@Override
+	public void setSynchronizedState(Properties properties) {
+		// TODO
+		
+	}
+
+	@Override
+	public Map<String,String> getMenus() {
+		Map<String,String> m = new HashMap<String,String>();
+		m.put("Board", "BoardView");
+		return m;
 	}
 	
 

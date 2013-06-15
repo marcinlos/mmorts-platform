@@ -159,7 +159,7 @@ public class Init {
             initModules();
             createDataSource();
             createCustomPersistor();
-            createPlayersManager();
+            createPlayersPersistor();
             injectPersistors();
             logger.info("Server successfully initialized");
         } catch (Exception e) {
@@ -388,8 +388,8 @@ public class Init {
         logger.debug("Custom persistor created");
     }
 
-    private void createPlayersManager() {
-        logger.debug("Creating players manager");
+    private void createPlayersPersistor() {
+        logger.debug("Creating players persistor");
         Class<? extends PlayersPersistor> cl = config.getPlayerManagerClass();
         playersManager = DI.createWith(cl, configModule, databaseModule,
                 txManagerModule);

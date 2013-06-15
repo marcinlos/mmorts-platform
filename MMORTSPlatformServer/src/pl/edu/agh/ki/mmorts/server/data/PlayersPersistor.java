@@ -8,9 +8,6 @@ package pl.edu.agh.ki.mmorts.server.data;
  * This interface should be used to implement effective wrapper, cache, on the
  * real implementation providing connectivity to DB.
  */
-
-
-//TODO add init!!!
 public interface PlayersPersistor {
 
 	/**

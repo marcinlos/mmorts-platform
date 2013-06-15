@@ -1,5 +1,7 @@
 package com.app.ioapp.customDroidViews;
 
+import com.app.ioapp.modules.Module;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,7 +17,7 @@ import android.view.View;
  * @author Michal
  *
  */
-public class AdditionalViewA extends View {
+public class AdditionalViewA extends AbstractModuleView {
 
 	
 	
@@ -27,6 +29,16 @@ public class AdditionalViewA extends View {
 	}
 	public AdditionalViewA(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+	}
+	@Override
+	public void setModuleImpl(Module m) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

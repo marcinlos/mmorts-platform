@@ -20,13 +20,13 @@ public class ModuleDescriptor {
     public final Set<String> multicastGroups;
 
     /** Implementation of the moduleClass */
-    public final Class<? extends Module> moduleClass;
+    public final Class<? extends CommunicatingModule> moduleClass;
 
     /*
      * Used internally by the builder
      */
     private ModuleDescriptor(String unicastAddress,
-            Set<String> multicastGroups, Class<? extends Module> module) {
+            Set<String> multicastGroups, Class<? extends CommunicatingModule> module) {
         this.unicastAddress = unicastAddress;
         this.multicastGroups = multicastGroups;
         this.moduleClass = module;
@@ -63,7 +63,7 @@ public class ModuleDescriptor {
      * @return {@linkplain Builder}
      */
     public static Builder create(final String address,
-            final Class<? extends Module> module) {
+            final Class<? extends CommunicatingModule> module) {
         return new Builder() {
 
             private Set<String> multicast = new HashSet<String>();

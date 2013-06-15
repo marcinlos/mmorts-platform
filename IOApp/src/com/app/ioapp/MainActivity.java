@@ -10,7 +10,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.security.auth.login.LoginException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,9 +31,14 @@ import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
+import com.app.ioapp.customDroidViews.MenuButton;
+import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.init.Initializer;
-import com.app.ioapp.modules.Infrastruture;
+import com.app.ioapp.init.LogInException;
+import com.app.ioapp.init.RegisterException;
+import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.ITile;
+import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
 
@@ -39,26 +47,25 @@ public class MainActivity extends Activity implements UIListener {
 	private static final String ID = "MainActivity";
 	private static final String CONFIG_FILE = "client.properties";
 	private Initializer initializer;
-	private Infrastruture board;
+	private InfrastructureModule board;
 	private BoardView boardView;
 	private LinearLayout menu;
-	private MenuManager manager;
-	private Properties boardConfig;
+	private Properties boardConfig; //debug only
+	private Map<String,Module> modules;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		initialize();
+		modules = initializer.getModules();
 		
 		
-		MainView v = initializer.getView();
-		manager = new MenuManager(this,v);
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		boardView = new BoardView(this);
-		board = new Infrastruture(boardConfig);
-		board.setView(boardView);
+		board = new InfrastructureModule(boardConfig);
+		boardView.setModuleImpl(board);
 		setupBoard();
 		
 		layout.addView(boardView);
@@ -69,6 +76,18 @@ public class MainActivity extends Activity implements UIListener {
 		menu.setOrientation(LinearLayout.VERTICAL);
 		menu.setBackgroundColor(Color.CYAN);
 		mainLayout.addView(menu);
+		try {
+			fillMenu();
+		} catch (ClassNotFoundException e) {
+			Log.e(ID,"No View with that name implemented - do it!",e);
+			endProgram();
+		} catch (InstantiationException e) {
+			Log.e(ID,"Can't instantiate your view? What?",e);
+			endProgram();
+		} catch (IllegalAccessException e) {
+			Log.e(ID,"Can't access your view? What?",e);
+			endProgram();
+		}
 		
 		
 		
@@ -101,11 +120,10 @@ public class MainActivity extends Activity implements UIListener {
 		String pass = p.getProperty("password");
 		boolean fileExists = intent.getBooleanExtra(LoginActivity.FILEEXISTS,false);
 		FileOutputStream fos = null;
-		FileInputStream fis = null;
-		InputStream i;
+		InputStream i=null;
 		try {
 			i = getResources().getAssets().open(CONFIG_FILE);
-			boardConfig = StaticPropertiesLoader.load(i);
+			boardConfig = StaticPropertiesLoader.load(i); //debug only action
 			
 		} catch (IOException e) {
 			Log.e(ID,"config file error",e);
@@ -114,7 +132,6 @@ public class MainActivity extends Activity implements UIListener {
 			if(!fileExists){
 				 fos = openFileOutput(LoginActivity.loginFile,MODE_PRIVATE);
 			}
-			fis = openFileInput(LoginActivity.loginFile);
 		}
 		catch(FileNotFoundException e){
 			Log.e(ID,"Directory for apps internal files not existing or something... it's bad",e);
@@ -126,8 +143,38 @@ public class MainActivity extends Activity implements UIListener {
 		} catch (ConfigException e) {
 			Log.e(ID,"Initializer is bad",e);
 			endProgram();
+		}
+		try{
+			initializer.logIn();
+		}
+		catch(RegisterException e){
+			//email belonging to someone who is already a player or something
+			//this should lead to re-inserting email and password
+			//we leave that to UI developers
+			Log.e(ID,"Register unsuccesfull",e);
+			endProgram();
+		}
+		catch (LogInException e) {
+			// someone messed up their file with logging info
+			//or lack of internet connection
+			//exit program or something
+			Log.e(ID,"Login unsuccesfull",e);
+			endProgram();
 		} catch (IOException e) {
-			Log.e(ID,"Initializer is bad",e);
+			// Someone messed up with file
+			Log.e(ID,"Login info file messed or somethin",e);
+			endProgram();
+		}
+		
+		try {
+			initializer.initialize();
+		} catch (ConfigException e) {
+			// couldn't read config file to initialize, inform user to reinstall or something
+			Log.e(ID,"Initializer can't initialize - config wrong",e);
+			endProgram();
+		} catch (IOException e) {
+			// something bad happened to config file, reinstall
+			Log.e(ID,"Initializer can't initialize, IOExc?",e);
 			endProgram();
 		}
 		
@@ -135,28 +182,43 @@ public class MainActivity extends Activity implements UIListener {
 	}
 	
 	/**
-	 * see {@link #MenuManager.addButton}
-	 * @param name Text displayed by the button
-	 * @return ID of button created
+	 * Adds all the buttons needed to the menu. Used only after {@link modules} are filled.
+	 * See {@link 
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
 	 */
-	public int addMenuButton(String name){
-		Button b = new Button(this);
-		b.setText(name);
-		
-		OnClickListener ocl = new OnClickListener(){
-		    @Override
-		    public void onClick(View v){
-		        manager.onClick(v.getId());
-		    }
-		};
-		
-		b.setOnClickListener(ocl);
-		menu.addView(b);
-		menu.invalidate();
-		return b.getId();
+	private void fillMenu() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		for(String s : modules.keySet()){
+			Module m = modules.get(s);
+			Map<String,String> views = m.getMenus();
+			for(String text : views.keySet()){
+				AbstractModuleView t =(AbstractModuleView) Class.forName(views.get(text)).newInstance();
+				t.setModuleImpl(m);
+				MenuButton b = new MenuButton(this);
+				b.setView(t);
+				b.setText(text);
+				OnClickListener ocl = new OnClickListener(){
+				    @Override
+				    public void onClick(View v){
+				        if(v instanceof MenuButton){
+				        	MenuButton b = (MenuButton) v;
+				        	b.iWasClicked();
+				        }
+				        else{
+				        	Log.e(ID,"Button bahaving weirdly");
+				        }
+				    }
+				};
+				b.setOnClickListener(ocl);
+				menu.addView(b);
+				menu.invalidate();
+			}
+		}
 	}
 	
 	
+	//debug only method - example board created
 	private void setupBoard(){
 		Log.e(ID, "setupBoard - it's debug only procedure!");
 		List<ITile> tiles = new ArrayList<ITile>();
@@ -184,28 +246,15 @@ public class MainActivity extends Activity implements UIListener {
 		
 	}
 
-	/**
-	 *  {@inheritDoc}
-	 */
-	@Override
-	public void showMenuForModule(String name) {
+	
+	public void buttonWasClicked(MenuButton b){
+		View v = b.getView();
 		setContentView(R.layout.activity_menu);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.menu_layout);
 		TextView a = new TextView(this);
 		a.setText("menu here");
 		layout.addView(a);
-		if(name.equals("examplemodulename")){
-			//do stuff this module would need
-		}
-		else if(name.equals("anotherexamplemodulename")){
-			//do stuff
-		}
-		//...
-		else{
-			AdditionalViewA va = new AdditionalViewA(this);
-			layout.addView(va);
-		}
-		
+		layout.addView(v);
 		
 	}
 	

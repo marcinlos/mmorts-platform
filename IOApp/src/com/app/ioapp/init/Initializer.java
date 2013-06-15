@@ -1,17 +1,19 @@
 package com.app.ioapp.init;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+
+import android.util.Log;
 
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.ConfigReader;
-import com.app.ioapp.data.Context;
-import com.app.ioapp.data.State;
-import com.app.ioapp.view.MainView;
+import com.app.ioapp.modules.Module;
 
 /**
  * A class responsible for the initialization of the environment.
@@ -22,6 +24,10 @@ import com.app.ioapp.view.MainView;
  * 
  */
 public class Initializer {
+	/**
+	 * Used by logger
+	 */
+	public static final String ID = "Initializer";
 	
 	/**
 	 * Tells if player should be logged in or registered
@@ -36,6 +42,8 @@ public class Initializer {
 	 * Player's password
 	 */
 	private String password;
+	
+	private Map<String, Module> modules;
     
     /**
      * Stores properties read from  configuration file
@@ -58,23 +66,11 @@ public class Initializer {
      * Dispatcher object
      */
 	private Dispatcher dispatcher;
-	/**
-	 * View object
-	 */
-	private MainView view;
-	/**
-	 * Stores information
-	 */
-	private Context context;
-	/**
-	 * Stores information which changes frequently
-	 */
-	private State state;
 	
 	/**
 	 * Stream to read configuration from file
 	 */
-	private FileInputStream configInput;
+	private InputStream configInput;
 	/**
 	 * Stream to write player information if he is not registered yet
 	 */
@@ -87,66 +83,78 @@ public class Initializer {
 	 * @param alreadyRegistered true if player has been registered (a file with mail and password exists and is correct) 
 	 * @param configInput to read configuration from file
 	 * @param infoOutput to write players info to file if he has not been registered yet. If he has, it is {@code null}
-	 * @throws ConfigException
-	 * @throws IOException
 	 */
 	public Initializer
-	(String mail, String password, boolean alreadyRegistered, FileInputStream configInput, FileOutputStream infoOutput) 
-			throws ConfigException, IOException {
+	(String mail, String password, boolean alreadyRegistered, InputStream configInput, FileOutputStream infoOutput)  {
 		this.mail = mail;
 		this.password = password;
 		this.alreadyRegistered = alreadyRegistered;
 		this.configInput = configInput;
 		this.infoOutput = infoOutput;
-		initialize();
+		this.modules = new HashMap<String, Module>();
+		
+		//this.dispatcher = new ThreadedDispatcher(config, modules);   //must be initialized before logIn()
 	}
 	
 	/**
-	 * Returns object with configuration
-	 * @return {@code Config} object
+	 * Returns map of modules
+	 * @return modules
 	 */
-	public Config getConfig() {
-		return config;
+	public Map<String, Module> getModules() {
+		return modules;
+	}
+
+	
+	/**
+	 * Called before initializing the rest of environment
+	 * Exceptions must be handled by phone application
+	 * @throws IOException
+	 * @throws RegisterException
+	 */
+	public void logIn() throws IOException, RegisterException, LogInException {
+		Log.e(ID,"Logging in started");
+		this.loginModule = new LoginModule(dispatcher, mail, password);
+		if (alreadyRegistered) {
+			Log.e(ID,"User has already been registered");
+			loginModule.logIn();
+		}
+		else {
+			Log.e(ID,"User needs to be registered");
+			Properties ps = new Properties();
+			ps.setProperty("mail", mail);
+			ps.setProperty("password", password);
+			Log.e(ID,"User's data stored in a file");
+			ps.store(infoOutput, null);
+			loginModule.register(mail, password);
+		}
+		
 	}
 	
 
+
 /**
- * Initializes all classes
+ * Initializes all classes. Called after logging in
  * Exceptions must be handled by phone application
  * @throws ConfigException
  * @throws IOException 
  */
-	private void initialize() throws ConfigException, IOException{
+	public void initialize() throws ConfigException, IOException{
+			Log.e(ID,"Initializing environment started");
 			reader = new ConfigReader(configInput);
 			reader.configure();
 			config = reader.getConfig();
-	
-			//this.dispatcher = new ThreadedDispatcher();
-			this.loginModule = new LoginModule(dispatcher, mail, password);
-			if (alreadyRegistered) {
-				loginModule.logIn();
+			for (String moduleName : modules.keySet()) {
+				(modules.get(moduleName)).init(config.getModuleProperties(moduleName));
 			}
-			else {
-				Properties ps = new Properties();
-				ps.setProperty("mail", mail);
-				ps.setProperty("password", password);
-				ps.store(infoOutput, null);
-				loginModule.register(mail, password);
-			}
+			//dispatcher.registerModules(modules);
 			
-			this.context = new Context();
-			this.state = new State();
-			this.synchronizer = new Synchronizer(dispatcher, context, state);
-			//this.view = new MainView(dispatcher.getModules(), context);
+			this.synchronizer = new Synchronizer(dispatcher, modules);
 			
-			synchronizer.synchronizeContext();
 			synchronizer.synchronizeState();
 		
 	}
 	
-	public MainView getView(){
-		return view;
-	}
+
 
 	
 

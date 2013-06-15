@@ -1,7 +1,7 @@
 package com.app.ioapp.config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 
@@ -13,7 +13,7 @@ public class ConfigReader {
 	/**
 	 * Stream to read from file
 	 */
-	private FileInputStream inputStream;
+	private InputStream inputStream;
 	/**
 	 * {@code Config} created by {@code configure()}
 	 */
@@ -29,10 +29,10 @@ public class ConfigReader {
 	}
 
 	/**
-	 * @param inputStream
+	 * @param configInput
 	 */
-	public ConfigReader(FileInputStream inputStream) {
-		this.inputStream = inputStream;
+	public ConfigReader(InputStream configInput) {
+		this.inputStream = configInput;
 	}
 	
 	/**
