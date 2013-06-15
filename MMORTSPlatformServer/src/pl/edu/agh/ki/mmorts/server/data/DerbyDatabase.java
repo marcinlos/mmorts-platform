@@ -3,20 +3,20 @@ package pl.edu.agh.ki.mmorts.server.data;
 
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-
-import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.server.core.InitException;
 import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.utils.QueriesCreator;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
+
+import com.google.inject.Inject;
 
 
 
@@ -41,8 +41,43 @@ public class DerbyDatabase implements Database {
 	@Inject
 	SimpleConnectionPool connectionPool;
 	
-
+	ThreadLocal<Connection> perThreadConn =new ThreadLocal<Connection>() {
+		@Override
+		protected Connection initialValue() {
+			Connection conn = null;
+			try {
+				conn = initConnection();
+			} catch (NoConnectionException e) {
+				logger.fatal("Connection for transaction could not be taken(anyone). " +
+						"Server is shutting down");
+				System.exit(1);
+			}
+			return conn;
+		}
+	};
 	
+	private Connection initConnection() throws NoConnectionException{
+		Connection conn = connectionPool.getConnection();
+		tm.getCurrent().addListener(new TransactionListener() {
+			
+			@Override
+			public void rollback() {
+				connectionReturn();
+				
+			}
+			
+			@Override
+			public void commit() {
+				connectionReturn();
+				
+			}
+		});
+		return conn;
+	}
+	
+	private void connectionReturn(){
+		connectionPool.returnConnection(perThreadConn.get());
+	}
 	
 	
 	/**
@@ -54,20 +89,25 @@ public class DerbyDatabase implements Database {
 	public void init() {
 		logger.debug("Database init started");
 			connectionPool.init();
+			Connection conn = null;
 			try {
-				Connection conn = connectionPool.getConnection();
+				conn = connectionPool.getConnection();
 				conn.createStatement().execute(queriesCreator.getCreatePlayersTableQuery());
 				for(ModuleDescriptor desc : moduleTable.getModuleDescriptors()){
 					conn.createStatement().execute(queriesCreator.getCreateCustomTableQuery(desc.name));
 				}
 			} catch (NoConnectionException e) {
-				logger.fatal("Cannot create any, even starting, connection to DB!");
+				logger.fatal("Cannot create any, even starting connection to DB!");
 				throw new InitException(e);
 			} catch (SQLException e) {
+				
 			    // X0Y32 is the error code of "table already exists"
 			    if (!e.getSQLState().equals("X0Y32")) {
 			        throw new InitException(e);
 			    }
+			    
+			} finally {
+				connectionPool.returnConnection(conn);
 			}
 		logger.debug("Database init ended");
 	}

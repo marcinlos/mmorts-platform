@@ -21,10 +21,14 @@ public class QueriesCreator {
 	
 	public String getCreatePlayersTableQuery(){
 		return String.format("CREATE TABLE players " +
-				"(ID INT NOT NULL GENERATED ALWAYS AS IDENTITY," +
-				"player_name VARCHAR(255)," +
+				"(player_name VARCHAR(255)," +
 				"player_login VARCHAR(255)," +
-				"player_password VARCHAR(255))");
+				"player_password VARCHAR(255), PRIMARY KEY(player_name))");
+	}
+	
+	public String getSelectPlayersTableQuery(String playerName){
+		return String.format("SELECT * FROM players " +
+				"WHERE player_name=" + playerName);
 	}
 	
 }
