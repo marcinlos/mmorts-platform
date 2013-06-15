@@ -10,13 +10,14 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
+import pl.edu.agh.ki.mmorts.server.util.GsonUtil;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 
@@ -28,9 +29,6 @@ public class ModuleConfigReader {
     private static final Logger logger = Logger
             .getLogger(ModuleConfigReader.class);
 
-    /** Json parser */
-    private Gson gson = new Gson();
-
     /** Very simple data structure for parsing json */
     class ModuleData {
         @SerializedName("class")
@@ -38,6 +36,7 @@ public class ModuleConfigReader {
         String name;
         String[] unicast;
         String[] groups;
+        Map<String, String> properties;
     }
 
     /** Map of module descriptors */
@@ -59,7 +58,8 @@ public class ModuleConfigReader {
     public void load(InputStream stream) {
         Reader reader = new InputStreamReader(stream);
         try {
-            ModuleData[] data = gson.fromJson(reader, ModuleData[].class);
+            GsonUtil.gson.fromJson("java.lang.String", Class.class);
+            ModuleData[] data = GsonUtil.gson.fromJson(reader, ModuleData[].class);
             for (ModuleData item : data) {
                 try {
                     logger.debug("Processing config of module " + item.name);
@@ -88,6 +88,9 @@ public class ModuleConfigReader {
         }
         for (String group : item.groups) {
             b.addGroup(group);
+        }
+        for (Entry<String, String> entry: item.properties.entrySet()) {
+            b.addProperty(entry.getKey(), entry.getValue());
         }
         return b.build();
     }
