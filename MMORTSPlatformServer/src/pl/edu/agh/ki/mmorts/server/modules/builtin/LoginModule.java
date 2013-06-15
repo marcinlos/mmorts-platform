@@ -1,8 +1,15 @@
 package pl.edu.agh.ki.mmorts.server.modules.builtin;
 
-import org.apache.log4j.Logger;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL._if;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL._while;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.eq;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.map;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.neq;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.seq;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
+import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.with;
 
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.*;
+import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.config.Config;
@@ -11,9 +18,7 @@ import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
-import pl.edu.agh.ki.mmorts.server.modules.dsl.ContChain;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
-import pl.edu.agh.ki.mmorts.server.modules.dsl.IfThenElse;
 
 import com.google.inject.Inject;
 
@@ -61,7 +66,7 @@ public class LoginModule extends ModuleBase {
      * {@inheritDoc}
      */
     @Override
-    public void receive(Message message, Context ctx) {
+    public void receive(Message message, final Context ctx) {
         logger.debug("Message received");
         logger.debug(message);
         /*
@@ -73,9 +78,7 @@ public class LoginModule extends ModuleBase {
          * @Override public void execute(Context context) {
          * logger.debug("Another time!"); } }));
          */
-        with(control, 
-        _if(val(3).is(eq(3)))
-        .then(new Cont() {
+        with(control, _if(val(3).is(eq(3))).then(new Cont() {
             public void execute(Control c) {
                 logger.debug("3 == 3");
             }
@@ -84,6 +87,17 @@ public class LoginModule extends ModuleBase {
                 logger.debug("3 != 3");
             }
         }));
+
+        ctx.put("n", 1);
+        Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))
+        ._do(seq(new Cont() {
+            public void execute(Control c) {
+                int n = ctx.get("n", Integer.class);
+                logger.debug("Here goes " + n);
+                ctx.put("n", n + 1);
+            }
+        }));
+        with(control, c);
     }
 
     /**
