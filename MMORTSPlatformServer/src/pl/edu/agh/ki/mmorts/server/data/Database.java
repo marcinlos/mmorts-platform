@@ -51,6 +51,7 @@ public interface Database {
 	/**
 	 * Receives player with given name as {@link PlayerData}. Doesn't throw
 	 * any exception even, if player doesn't exist because it's not DB error
+	 * and returns null then
 	 * 
 	 * @param name
 	 * 			name of requested player's data

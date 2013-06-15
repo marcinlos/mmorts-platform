@@ -79,7 +79,7 @@ public class SimpleConnectionPool {
             logger.debug("Adding new connection to pool");
             try {
                 connectionPool.add(creator.createConnection());
-                ++maxConnections;
+                ++createdConnections;
             } catch (SQLException e) {
 
                 if (createdConnections == 0) {
@@ -113,9 +113,8 @@ public class SimpleConnectionPool {
      */
     public synchronized void returnConnection(Connection connection) {
         logger.debug("returning connection");
-
-        if (connectionPool.offer(connection)) {
-            logger.warn("The collection is outside of the pool!");
+        if (!connectionPool.offer(connection)) {
+            logger.warn("The collection is outside of the pool! Connection not returned");
         }
     }
 

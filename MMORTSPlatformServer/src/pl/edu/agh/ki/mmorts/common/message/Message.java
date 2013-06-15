@@ -138,7 +138,16 @@ public class Message implements Serializable {
     public Message(int convId, String source, String target, Mode mode,
             String request, Object data) {
         if (target == null) {
-            throw new NullPointerException("Target address may not be null");
+            throw new IllegalArgumentException("Target address may not be null");
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("Source address may not be null");
+        }
+        if (request == null) {
+            throw new IllegalArgumentException("Request may not be null");
+        }
+        if (mode == null) {
+            throw new IllegalArgumentException("Mode may not be null");
         }
         this.convId = convId;
         this.source = source;
@@ -147,17 +156,22 @@ public class Message implements Serializable {
         this.request = request;
         this.data = data;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Msg[");
-        return sb.append("id=").append(convId).append(", ").append(source)
-                .append(" -> ").append(target).append(" (").append(mode)
-                .append("), request=").append(request).append(", content=[")
-                .append(data).append("]").append("]").toString();
+        sb.append("id=").append(convId).append(", ");
+        sb.append(source).append(" -> ").append(target);
+        sb.append(" (").append(mode).append("), ");
+        sb.append("req=").append(request);
+        if (data != null) {
+            sb.append(", content=[").append(data).append("]");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
 }
