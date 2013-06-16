@@ -1,5 +1,9 @@
 package com.app.ioapp.communication;
 
+import pl.edu.agh.ki.mmorts.common.message.Message;
+
+import com.app.ioapp.modules.Continuation;
+
 /**
  * Dispatcher interface for use of the client modules. Allows sending messages
  * with both unicast and multicast target addresses.
@@ -7,39 +11,32 @@ package com.app.ioapp.communication;
 public interface Gateway {
 
     /**
-     * Sends a message to an unicast address.
+     * Immediately sends a local message. All the required data (whether it is
+     * uni/multicast etc) is contained inside the {@code message}.
      * 
-     * @param message
-     *            Message to be delivered
-     * @param address
-     *            Unicast address of the message intended receiver
-     * 
-     * @throws NoReceiverException
-     *             If the address has no receiver at the target dispatcher
-     * @throws CommunicationException
-     *             If some other communication error occurs
+     * @param mesage
+     *            Message to be sent
+     * @throws TargetNotExistsException
+     *             If the message target does not exists
      */
-    void sendTo(Message message, String address);
+    void send(Message mesage);
 
     /**
-     * Sends a message to a multicast group.
+     * Sends a local message at the successful <b>commit</b> of the current
+     * transaction. Can be called <b>only</b> during the transaction.
      * 
      * @param message
-     *            Message to be delivered to members of a multicast group
-     * @param category
-     *            Multicast address of the group to be delivered a message
-     * 
-     * @throws NoMulticastGroupException
-     *             If the address does not identify existing, registered group
-     *             at the target dispatcher
+     *            Message to be sent at the end of transaction
      */
-    void send(Message message, String category);
-    
-        /**
-         * Called when a new message is to be delivered.
-         * 
-         * @param message Received message
-         */
-    void receive(Message message);
+    void sendDelayed(Message message);
+
+    /**
+     * Adds an item to the execution queue of a transaction.
+     * 
+     * @param cont
+     *            Action to execute
+     */
+    void later(Continuation cont);
 
 }
+

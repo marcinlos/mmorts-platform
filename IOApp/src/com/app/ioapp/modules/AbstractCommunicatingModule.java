@@ -1,6 +1,7 @@
 package com.app.ioapp.modules;
 
-import com.app.ioapp.communication.Message;
+import pl.edu.agh.ki.mmorts.common.message.Message;
+
 
 /**
  * Implementation of {@code CommunicatingModule}
@@ -13,7 +14,7 @@ public abstract class AbstractCommunicatingModule implements CommunicatingModule
 		 
 	 }
 	 @Override
-	 public void receive(Message message) {
+	 public void receive(Message message, Context ctx) {
 		 
 	 }
 	 @Override

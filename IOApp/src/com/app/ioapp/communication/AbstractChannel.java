@@ -1,5 +1,7 @@
 package com.app.ioapp.communication;
 
+import pl.edu.agh.ki.mmorts.common.message.Message;
+
 /**
  * Partial implementation, merely managing the message receiver.
  */
