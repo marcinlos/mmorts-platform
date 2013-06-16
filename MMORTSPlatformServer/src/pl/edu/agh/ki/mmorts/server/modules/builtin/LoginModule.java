@@ -11,11 +11,12 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
 import java.util.Random;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
+import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
+import pl.edu.agh.ki.mmorts.server.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
 
@@ -35,12 +36,19 @@ public class LoginModule extends ModuleBase {
     @Inject(optional = true)
     @Named("login.number")
     private int number;
-
-    @OnInit
-    private void meh() {
-        descriptor().config.get("datatype", Class.class);
+    
+    @MessageMapping("auth")
+    public void handleAuth(Message message, Context ctx) {
+        logger().debug("handleAuth!!!!");
+        outputResponse(message, "auth-success", 666);
+        output("some_module", "kill-yourself", new int[] {7, 4});
     }
-
+    
+    @MessageMapping
+    public void general(Message message, Context ctx) {
+        logger().debug("=================general()====================");
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -48,8 +56,9 @@ public class LoginModule extends ModuleBase {
     public void receive(final Message message, final Context ctx) {
         logger().debug("Message received");
         logger().debug(message);
+        super.receive(message, ctx);
 
-        if (message.request.equals("auth")) {
+        /*if (message.request.equals("auth")) {
             call(_if(val(3).is(eq(3))).then(new Cont() {
                 public void execute(Control c) {
                     logger().debug("3 == 3");
@@ -91,7 +100,7 @@ public class LoginModule extends ModuleBase {
                         }
                     }));
             call(c);
-        }
+        }*/
     }
 
 }

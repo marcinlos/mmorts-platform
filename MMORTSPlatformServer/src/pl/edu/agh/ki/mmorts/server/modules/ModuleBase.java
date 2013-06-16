@@ -11,6 +11,8 @@ import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.modules.annotations.impl.CallDispatcher;
+import pl.edu.agh.ki.mmorts.server.modules.annotations.impl.TrivialMapperFactory;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.DSL;
@@ -22,7 +24,7 @@ import com.google.inject.Inject;
  * module developement.
  */
 public abstract class ModuleBase implements Module {
-    
+
     /** Global immutable configuration */
     @Inject(optional = true)
     private Config config;
@@ -38,12 +40,16 @@ public abstract class ModuleBase implements Module {
     /** Transaction manager */
     @Inject(optional = true)
     private TransactionManager tm;
-    
+
     /** Logger for the <b>derived</b> class */
     private final Logger logger = Logger.getLogger(getClass());
 
     /** Flow control for DSL */
     private Control control;
+
+    /** Call dispatcher */
+    private CallDispatcher callDispatcher = new CallDispatcher(getClass(),
+            new TrivialMapperFactory());
 
     /**
      * Initialization of internal structures
@@ -67,7 +73,31 @@ public abstract class ModuleBase implements Module {
             }
         };
     }
-    
+
+    /**
+     * Dispatches the message using annotation-based dispatcher.
+     * 
+     * @param message
+     *            Message to dispatch
+     * @param context
+     *            Associated context
+     */
+    protected void dispatchMessage(Message message, Context context) {
+        callDispatcher.handle(this, message, context);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Forwards to {@linkplain #dispatchMessage(Message, Context)}. Override it if
+     * you need a different behaviour.
+     */
+    @Override
+    public void receive(Message message, Context context) {
+        dispatchMessage(message, context);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -75,7 +105,7 @@ public abstract class ModuleBase implements Module {
     public void init() {
         logger.debug("Module " + name() + " init()");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +113,7 @@ public abstract class ModuleBase implements Module {
     public void started() {
         logger.debug("Module " + name() + " started()");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -91,7 +121,7 @@ public abstract class ModuleBase implements Module {
     public void shutdown() {
         logger.debug("Module " + name() + " shutdown()");
     }
-    
+
     /**
      * @return Global configuration
      */
@@ -126,7 +156,7 @@ public abstract class ModuleBase implements Module {
     protected final Transaction transaction() {
         return tm().getCurrent();
     }
-    
+
     /**
      * @return Default logger for this module
      */

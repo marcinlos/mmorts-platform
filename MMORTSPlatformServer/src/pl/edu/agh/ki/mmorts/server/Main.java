@@ -3,7 +3,7 @@ package pl.edu.agh.ki.mmorts.server;
 import pl.edu.agh.ki.mmorts.server.core.Init;
 
 /**
- * Entry point of the server
+ * MappingEntry point of the server
  */
 public class Main {
 
