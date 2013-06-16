@@ -24,6 +24,18 @@ public interface Module {
     void setSynchronizedState(Properties properties);
     
     /**
+     * Method called by module Views to check if there were changes that require
+     * pulling information
+     * @return true if view should redraw based on data
+     */
+    public boolean stateChanged();
+    
+    /**
+     * method called by module View to inform module that state change was taken into account.
+     */
+    public void stateReceived();
+    
+    /**
      * Called by (@link #MainActivity}. Used to get views connected with this module
      * to dynamically create menu.
      * @return text to place on the button as key, and name of the view class connected with said

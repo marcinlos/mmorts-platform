@@ -2,10 +2,12 @@ package com.app.ioapp.customDroidViews;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,6 +30,8 @@ public class BoardView extends AbstractModuleView{
 	private int mapWidth = 25;
 	private int mapHeight = 25;
 	private InfrastructureModule map;
+	private Map<String,Bitmap> cache;
+	private boolean refresh_in_progress;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
@@ -51,7 +55,7 @@ public class BoardView extends AbstractModuleView{
 	
 	private void addRefresher(){
 		Timer timer = new Timer();
-        timer.schedule(new ViewRefresher(this), 5, 400);
+        timer.schedule(new ViewRefresher(this), 5, 10000);
 	}
 	
 	@Override
@@ -67,7 +71,7 @@ public class BoardView extends AbstractModuleView{
 		//TODO not sure if that's how it'll work
 		Properties p = board.getProperties();
 		if(p != null){
-			Integer tmp = Integer.valueOf((String) p.get("tileSize"));
+			Integer tmp = Integer.valueOf((String) p.get("InfrastructureModule.tileSize"));
 			if(tmp != null){
 				imageSize = tmp;
 			}
@@ -75,12 +79,14 @@ public class BoardView extends AbstractModuleView{
 		addRefresher();
 	}
 	
-	/**
-	 * need to write something that will call refresh from time to time
-	 */
+	private void cacheBitmap(Bitmap b){
+		
+	}
+	
 	
 	@Override
 	public void refresh(){
+		Log.d(ID,"Refresh called");
 		virtual_map = map.getMap();
 		fields = new ArrayList<ITile>();
 		for(int i=0;i<mapWidth;i++){
@@ -116,14 +122,18 @@ public class BoardView extends AbstractModuleView{
 
 	@Override
 	public void onDraw(Canvas canvas) {
+		if(map.stateChanged()){
+			map.stateReceived();
+			refresh();
+		}
 		super.onDraw(canvas);
 		Log.d(ID, "Drawing stuff");
-		canvas.save();
+		//canvas.save();
 		if (fields != null) {
 			Log.d(ID, "Drawing what needs to be drawn");
 			drawBasicElements(canvas, fields);
 		}
-		canvas.restore();
+		//canvas.restore();
 	}
 
 	private void drawBasicElements(Canvas canvas, List<ITile> elements) {
