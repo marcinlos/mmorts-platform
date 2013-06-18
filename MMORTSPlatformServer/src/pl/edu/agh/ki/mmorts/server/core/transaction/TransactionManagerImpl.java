@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 /**
  * Concrete implementation of {@linkplain TransactionManager}, using
  * {@linkplain SequentialTM} as per-thread local managers.
+ * 
+ * @author los
  */
 public class TransactionManagerImpl implements TransactionManager {
 

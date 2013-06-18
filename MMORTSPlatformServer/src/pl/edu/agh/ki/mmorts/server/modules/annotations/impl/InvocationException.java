@@ -1,8 +1,10 @@
 package pl.edu.agh.ki.mmorts.server.modules.annotations.impl;
 
-
+/**
+ * 
+ * @author los
+ */
 public class InvocationException extends MappingException {
-
 
     public InvocationException() {
         // emtpy

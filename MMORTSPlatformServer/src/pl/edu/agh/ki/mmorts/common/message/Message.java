@@ -50,6 +50,8 @@ import java.io.Serializable;
  * accross the dispatcher bounds (i.e. by the network) to carry serializable
  * data as a {@code data} field, since network communication uses java
  * serialization. For local-only communication serialization is not required.
+ * 
+ * @author los
  */
 public class Message implements Serializable {
 

@@ -1,7 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.config;
 
 /**
- * Thrown when configuration processing encounters an error 
+ * Thrown when configuration processing encounters an error .
+ * 
+ * @author los
  */
 public class ConfigException extends RuntimeException {
 

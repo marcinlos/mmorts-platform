@@ -11,7 +11,9 @@ import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 
 /**
- * Allows retrieval of configuration properties
+ * Allows retrieval of configuration properties.
+ * 
+ * @author los
  */
 public interface Config {
 

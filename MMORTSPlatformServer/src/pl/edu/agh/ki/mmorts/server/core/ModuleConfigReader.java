@@ -23,6 +23,8 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Class for loading and parsing module configuration data from a JSON file.
+ * 
+ * @author los
  */
 public class ModuleConfigReader {
 

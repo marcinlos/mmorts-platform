@@ -34,6 +34,8 @@ import com.google.inject.name.Named;
 
 /**
  * Default implementation of a message dispatcher.
+ * 
+ * @author los
  */
 public class ThreadedDispatcher extends ModuleContainer implements
         MessageReceiver {

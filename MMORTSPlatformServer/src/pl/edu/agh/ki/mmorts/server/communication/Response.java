@@ -8,6 +8,7 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * Simple callback interface providing a way to response to a request in a fully
  * asynchronous manner.
  * 
+ * @author los
  * @see MessageChannel
  */
 public interface Response {

@@ -7,7 +7,9 @@ import java.util.Set;
  * Exception thrown when a vital, required configuration properties are missing
  * in the configuration file. Thrown when creating {@code Config}
  * implementation, having previously read all the configuration, or in the
- * classes using {@link Config}.
+ * classes using {@linkplain Config}.
+ * 
+ * @author los
  */
 public class MissingRequiredPropertiesException extends ConfigException {
 

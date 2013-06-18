@@ -10,6 +10,8 @@ import pl.edu.agh.ki.mmorts.server.util.PropertyMap;
 
 /**
  * Module configuration data class.
+ * 
+ * @author los
  */
 public final class ModuleDescriptor {
 

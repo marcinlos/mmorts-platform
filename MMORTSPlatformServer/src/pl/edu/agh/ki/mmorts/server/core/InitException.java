@@ -1,7 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
 /**
- * Base exception class for initialization failures
+ * Base exception class for initialization failures.
+ * 
+ * @author los
  */
 public class InitException extends RuntimeException {
 

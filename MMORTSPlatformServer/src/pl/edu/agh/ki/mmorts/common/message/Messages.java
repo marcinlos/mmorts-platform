@@ -19,6 +19,8 @@ import java.io.OutputStream;
 /**
  * Helper class for creation and serialization/deserialization of system message
  * objects.
+ * 
+ * @author los
  */
 public final class Messages {
 

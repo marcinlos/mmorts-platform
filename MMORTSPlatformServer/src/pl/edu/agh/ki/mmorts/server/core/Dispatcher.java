@@ -11,6 +11,8 @@ import pl.edu.agh.ki.mmorts.server.modules.Module;
  * modules.
  * 
  * <p>Initialization after constructor call is supported 
+ * 
+ * @author los
  */
 public interface Dispatcher extends Gateway {
 

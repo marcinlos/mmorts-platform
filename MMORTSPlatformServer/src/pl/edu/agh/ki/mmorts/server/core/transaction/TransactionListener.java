@@ -3,6 +3,8 @@ package pl.edu.agh.ki.mmorts.server.core.transaction;
 /**
  * Interface of a transaction callback. Used by the transaction manager and
  * transaction participants to react on the transaction final outcome.
+ * 
+ * @author los
  */
 public interface TransactionListener {
 

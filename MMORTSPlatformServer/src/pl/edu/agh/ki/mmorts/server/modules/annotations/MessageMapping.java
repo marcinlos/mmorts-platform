@@ -7,6 +7,11 @@ import java.lang.annotation.Target;
 
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 
+/**
+ * 
+ * 
+ * @author los
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface MessageMapping {

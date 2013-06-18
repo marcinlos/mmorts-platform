@@ -14,6 +14,8 @@ import pl.edu.agh.ki.mmorts.common.message.Messages;
  * system objects. Contains various convenience methods for converting
  * collections, arrays of messages and {@code Response}s to and from Ice types
  * to system messages.
+ * 
+ * @author los
  */
 public final class Translator {
 

@@ -1,5 +1,11 @@
 package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
+/**
+ * 
+ * @author los
+ *
+ * @param <T>
+ */
 public class ConstVal<T> extends AbstractValue<T> {
     
     private T value;

@@ -49,6 +49,8 @@ import com.google.inject.name.Names;
  * <li>Creates & initializes modules, based on the configuration
  * <li>Initializes database connection, creates persistence interfaces</li>
  * </ul>
+ * 
+ * @author los
  */
 public class Init {
 

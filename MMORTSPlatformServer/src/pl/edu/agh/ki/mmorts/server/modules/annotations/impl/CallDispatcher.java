@@ -13,6 +13,7 @@ import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
 /**
  * 
+ * @author los
  */
 public class CallDispatcher implements Handler {
 

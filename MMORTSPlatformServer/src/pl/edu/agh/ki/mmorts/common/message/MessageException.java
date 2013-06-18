@@ -3,6 +3,7 @@ package pl.edu.agh.ki.mmorts.common.message;
 /**
  * Base exception class for reporting message-related problems. 
  * 
+ * @author los
  * @see Message
  */
 public class MessageException extends RuntimeException {

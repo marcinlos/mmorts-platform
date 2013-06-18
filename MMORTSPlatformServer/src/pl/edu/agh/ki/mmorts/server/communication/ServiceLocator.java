@@ -9,7 +9,9 @@ package pl.edu.agh.ki.mmorts.server.communication;
  * 
  * <p>
  * Implementations should be thread safe. In particular,
- * {@link #registerIfAbsent} must be atomic.
+ * {@linkplain #registerIfAbsent} must be atomic.
+ * 
+ * @author los
  */
 public interface ServiceLocator {
 

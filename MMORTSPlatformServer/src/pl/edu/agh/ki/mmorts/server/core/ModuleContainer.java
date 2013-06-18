@@ -17,6 +17,8 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 /**
  * Abstract base dispatcher managing modules.
+ * 
+ * @author los
  */
 public abstract class ModuleContainer implements Dispatcher {
 

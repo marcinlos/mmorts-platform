@@ -1,5 +1,11 @@
 package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
+/**
+ * 
+ * @author los
+ *
+ * @param <T>
+ */
 public class Satisfies<T> implements Condition {
     
     private Value<? extends T> val;

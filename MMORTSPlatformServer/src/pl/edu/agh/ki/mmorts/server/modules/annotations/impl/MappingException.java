@@ -1,5 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.modules.annotations.impl;
 
+/**
+ * 
+ * @author los
+ */
 public class MappingException extends RuntimeException {
 
     public MappingException() {

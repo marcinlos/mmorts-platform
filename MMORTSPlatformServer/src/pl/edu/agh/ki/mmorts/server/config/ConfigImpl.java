@@ -20,6 +20,8 @@ import pl.edu.agh.ki.mmorts.server.util.PropertiesAdapter;
 /**
  * Implementation of configuration interface, processes the properties at the
  * creation time.
+ * 
+ * @author los
  */
 class ConfigImpl implements Config {
 

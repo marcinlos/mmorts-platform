@@ -12,6 +12,11 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import Ice.ObjectPrx;
 
+/**
+ * Test client application.
+ * 
+ * @author los
+ */
 public class Client extends Ice.Application {
 
     private DispatcherPrx dispatcher;

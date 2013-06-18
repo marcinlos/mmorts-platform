@@ -26,6 +26,8 @@ import com.google.inject.name.Named;
 /**
  * Module responsible for receiving login messages, authenticating players and
  * sending back player state when necessary.
+ * 
+ * @author los
  */
 public class LoginModule extends ModuleBase {
 

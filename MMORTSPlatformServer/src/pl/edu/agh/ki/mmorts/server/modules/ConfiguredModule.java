@@ -2,6 +2,8 @@ package pl.edu.agh.ki.mmorts.server.modules;
 
 /**
  * Simple pair (module, descriptor).
+ * 
+ * @author los
  */
 public final class ConfiguredModule {
 

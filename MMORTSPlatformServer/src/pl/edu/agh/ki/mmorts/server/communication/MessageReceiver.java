@@ -4,6 +4,8 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 
 /**
  * Entity receiving messages from the {@linkplain MessageChannel}.
+ * 
+ * @author los
  */
 public interface MessageReceiver {
 

@@ -29,6 +29,8 @@ import pl.edu.agh.ki.mmorts.server.modules.Continuation;
  * <li>If an exception occurs inside the commit handler, all the messages are
  * discarded - this situation is considered abnormal
  * </ul>
+ * 
+ * @author los
  */
 public interface Gateway extends ServiceLocator {
 

@@ -27,6 +27,8 @@ import com.google.inject.name.Named;
 /**
  * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
  * using Ice.
+ * 
+ * @author los
  */
 public class IceChannel extends AbstractChannel {
 

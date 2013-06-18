@@ -6,6 +6,10 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
 
+/**
+ * 
+ * @author los
+ */
 final class MappingEntry {
     public final MessageMapping desc;
     public final Handler handler;

@@ -6,6 +6,10 @@ import java.lang.reflect.Method;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 
+/**
+ * 
+ * @author los
+ */
 public class HandlerImpl implements Handler {
 
     public final Method method;

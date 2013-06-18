@@ -9,6 +9,8 @@ import com.google.gson.JsonParseException;
 /**
  * Simple immutable property map, allowing conversion to a precise type at
  * retrieval.
+ * 
+ * @author los
  */
 public class PropertyMap {
 

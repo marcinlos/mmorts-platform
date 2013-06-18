@@ -2,6 +2,8 @@ package pl.edu.agh.ki.mmorts.server.core.transaction;
 
 /**
  * Base class for transaction-related exceptions.
+ * 
+ * @author los
  */
 public class TransactionException extends RuntimeException {
 

@@ -1,5 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
+/**
+ * 
+ * @author los
+ */
 public class And implements Condition {
     
     private Condition[] conds;

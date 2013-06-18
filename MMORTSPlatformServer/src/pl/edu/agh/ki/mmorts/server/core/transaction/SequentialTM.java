@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
  * synchronization is provided, as the methods of {@code TransactionManager} are
  * not thread-safe. This is because it is intended to be used by the single
  * thread, or on a manager per thread basis.
+ * 
+ * @author los
  */
 public class SequentialTM {
 

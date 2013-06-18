@@ -1,5 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.modules.annotations.impl;
 
+/**
+ * 
+ * @author los
+ */
 public class NoMappingException extends MappingException {
 
     public NoMappingException() {

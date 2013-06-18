@@ -3,6 +3,8 @@ package pl.edu.agh.ki.mmorts.server.config;
 /**
  * Thrown when some configuration property has invalid value. For example, if
  * some implementation class cannot be found on the classpath.
+ * 
+ * @author los
  */
 public class InvalidConfigPropertyException extends ConfigException {
 

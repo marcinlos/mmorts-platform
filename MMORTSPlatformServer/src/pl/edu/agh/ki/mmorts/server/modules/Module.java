@@ -3,13 +3,13 @@ package pl.edu.agh.ki.mmorts.server.modules;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
 /**
- * Interface of the moduleClass, basic unit of functionality.
+ * Interface of the module, basic unit of functionality.
  * 
  * <p>
  * Modules are message-based request handlers, reacting on messages delivered by
  * the dispatcher.
  * 
- * Interface of the moduleClass used during initialization process.
+ * @author los
  */
 public interface Module {
 

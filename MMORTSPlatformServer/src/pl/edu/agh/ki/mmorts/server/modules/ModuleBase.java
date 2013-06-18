@@ -22,6 +22,8 @@ import com.google.inject.Inject;
 /**
  * Abstract base class for modules, containing many neat features to facilitate
  * module developement.
+ * 
+ * @author los
  */
 public abstract class ModuleBase implements Module {
 

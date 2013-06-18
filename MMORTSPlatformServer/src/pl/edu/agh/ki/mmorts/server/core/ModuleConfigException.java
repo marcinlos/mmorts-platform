@@ -4,6 +4,8 @@ import pl.edu.agh.ki.mmorts.server.config.ConfigException;
 
 /**
  * Base class for exceptions caused by errors in module configuration file.
+ * 
+ * @author los
  */
 public class ModuleConfigException extends ConfigException {
 
