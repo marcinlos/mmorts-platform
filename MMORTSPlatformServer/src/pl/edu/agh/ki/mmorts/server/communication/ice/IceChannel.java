@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.AMD_Dispatcher_deliver;
-import pl.edu.agh.ki.mmorts.Response;
+import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts._DispatcherDisp;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
@@ -121,6 +121,7 @@ public class IceChannel extends AbstractChannel {
         @Override
         public void deliver_async(final AMD_Dispatcher_deliver __cb,
                 pl.edu.agh.ki.mmorts.Message msg, Current __current) {
+            // Forward message to the associated receiver
             forwardMessage(Translator.deiceify(msg), new Resp(__cb));
         }
     }
@@ -129,8 +130,7 @@ public class IceChannel extends AbstractChannel {
      * Implementation of the callback, translating message to Ice format and
      * sending it as a response.
      */
-    private class Resp implements
-            pl.edu.agh.ki.mmorts.server.communication.Response {
+    private class Resp implements Response {
 
         private final AMD_Dispatcher_deliver __cb;
 
@@ -140,13 +140,7 @@ public class IceChannel extends AbstractChannel {
 
         @Override
         public void send(Collection<Message> messages) {
-            pl.edu.agh.ki.mmorts.Message[] msgs = new pl.edu.agh.ki.mmorts.Message[messages
-                    .size()];
-            int i = 0;
-            for (Message msg : messages) {
-                msgs[i++] = Translator.iceify(msg);
-            }
-            __cb.ice_response(new Response(msgs));
+            __cb.ice_response(Translator.toIceResponse(messages));
         }
 
         @Override

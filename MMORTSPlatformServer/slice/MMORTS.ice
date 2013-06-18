@@ -13,7 +13,7 @@ module mmorts {
 
     /* Message from the client to the server */
     struct Message {
-        int conversationId;
+        int convId;
         Ice::ByteSeq content;
     };
     
