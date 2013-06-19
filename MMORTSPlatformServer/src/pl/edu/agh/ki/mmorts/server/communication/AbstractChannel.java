@@ -7,7 +7,7 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * 
  * @author los
  */
-public abstract class AbstractChannel implements MessageChannel {
+public abstract class AbstractChannel implements MessageInputChannel {
 
     /** Message receiver object */
     private MessageReceiver receiver;

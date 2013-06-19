@@ -9,7 +9,7 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * asynchronous manner.
  * 
  * @author los
- * @see MessageChannel
+ * @see MessageInputChannel
  */
 public interface Response {
 

@@ -21,6 +21,7 @@ import java.io.OutputStream;
  * objects.
  * 
  * @author los
+ * @see Message
  */
 public final class Messages {
 

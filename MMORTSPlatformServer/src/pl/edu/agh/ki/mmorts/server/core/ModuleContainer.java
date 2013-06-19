@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
@@ -24,9 +26,31 @@ public abstract class ModuleContainer implements Dispatcher {
 
     public static final Logger logger = Logger.getLogger(ModuleContainer.class);
 
-    protected Map<String, ConfiguredModule> modules = new HashMap<String, ConfiguredModule>();
-    protected Map<String, Module> unicast = new HashMap<String, Module>();
-    protected Map<String, Set<Module>> multicast = new HashMap<String, Set<Module>>();
+    private final Map<String, ConfiguredModule> modules;
+    private final Map<String, Module> unicast;
+    private final Map<String, Set<Module>> multicast;
+    
+    /** Implementation of service locator */
+    private ServiceLocator services = new ServiceLocatorDelgate();
+    
+    public ModuleContainer() {
+        modules = new HashMap<String, ConfiguredModule>();
+        unicast = new HashMap<String, Module>();
+        multicast = new HashMap<String, Set<Module>>();
+    }
+    
+    
+    protected Map<String, ConfiguredModule> modules() {
+        return modules;
+    }
+    
+    protected Map<String, Module> unicast() {
+        return unicast;
+    }
+    
+    protected Map<String, Set<Module>> multicast() {
+        return multicast;
+    }
 
     /**
      * {@inheritDoc}
@@ -167,6 +191,41 @@ public abstract class ModuleContainer implements Dispatcher {
             }
         }
         logger.debug("Modules shat down");
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Delegates to the {@link ServiceLocatorDelgate}
+     */
+    @Override
+    public <T> void register(Class<? super T> service, T provider) {
+        logger.debug("Registering " + provider.getClass() + " as " + service);
+        services.register(service, provider);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Delegates to the {@link ServiceLocatorDelgate}
+     */
+    @Override
+    public <T> void registerIfAbsent(Class<? super T> service, T provider) {
+        logger.debug("Registering " + provider.getClass() + " as " + service);
+        services.registerIfAbsent(service, provider);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Delegates to the {@link ServiceLocatorDelgate}
+     */
+    @Override
+    public <T> T lookup(Class<T> service) {
+        return services.lookup(service);
     }
 
 }

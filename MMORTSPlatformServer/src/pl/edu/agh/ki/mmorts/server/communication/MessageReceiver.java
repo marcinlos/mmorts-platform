@@ -3,7 +3,7 @@ package pl.edu.agh.ki.mmorts.server.communication;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
 /**
- * Entity receiving messages from the {@linkplain MessageChannel}.
+ * Entity receiving messages from the {@linkplain MessageInputChannel}.
  * 
  * @author los
  */

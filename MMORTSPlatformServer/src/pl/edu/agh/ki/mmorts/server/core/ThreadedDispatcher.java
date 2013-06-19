@@ -15,11 +15,9 @@ import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
-import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
 import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
 import pl.edu.agh.ki.mmorts.server.communication.Response;
-import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
-import pl.edu.agh.ki.mmorts.server.communication.ServiceLocatorDelgate;
 import pl.edu.agh.ki.mmorts.server.communication.TargetNotExistsException;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
@@ -49,7 +47,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
     /** Message service */
     @Inject
-    private MessageChannel channel;
+    private MessageInputChannel channel;
 
     /** Transaction manager */
     @Inject
@@ -70,23 +68,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     /** Thread pool used to handle incoming messages */
     private ExecutorService threadPool;
 
-    /** Implementation of service locator */
-    private ServiceLocator services = new ServiceLocatorDelgate();
 
-    /**
-     * Enum describing possible thread states.
-     */
-    private enum State {
-
-        /** No transaction is currently active */
-        NO_TRANS,
-
-        /** There is an active transaction */
-        IN_TRANS,
-
-        /** Transaction commit/rollback listeners are executing */
-        POST_TRANS
-    }
 
     /**
      * Thread-local transaction executor
@@ -106,12 +88,27 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
         private static final Logger logger = Logger
                 .getLogger(TransactionExecutor.class);
+        
+        /**
+         * Enum describing possible thread states.
+         */
+        public enum State {
+
+            /** No transaction is currently active */
+            NO_TRANS,
+
+            /** There is an active transaction */
+            IN_TRANS,
+
+            /** Transaction commit/rollback listeners are executing */
+            POST_TRANS
+        }
 
         /** State of the transaction */
         private State state = State.NO_TRANS;
 
         /** Transaction stack */
-        private Deque<Continuation> executionStack = new ArrayDeque<Continuation>();
+        private final Deque<Continuation> executionStack;
 
         /** True if rollback handlers are being executed */
         private boolean rollback = false;
@@ -120,10 +117,16 @@ public class ThreadedDispatcher extends ModuleContainer implements
         private Context context;
 
         /** Collection of local notifications */
-        private List<Message> notifications = new ArrayList<Message>();
+        private final List<Message> notifications;
 
         /** Colletion of withheld response messages */
-        private List<Message> withheld = new ArrayList<Message>();
+        private final List<Message> withheld;
+        
+        public TransactionExecutor() {
+            executionStack = new ArrayDeque<Continuation>();
+            notifications = new ArrayList<Message>();
+            withheld = new ArrayList<Message>();
+        }
 
         /** Run the transaction */
         public void run() throws Exception {
@@ -227,28 +230,42 @@ public class ThreadedDispatcher extends ModuleContainer implements
 
     }
 
+    /**
+     * Validates message's destination. If the message is labeled as unicast, it
+     * checks if there is a module associated with {@code message.target}
+     * unicast address. Else it does nothing, as the empty multicast group is
+     * considered a valid target.
+     * 
+     * @param message
+     *            Message to validate target address of
+     * @return {@code true} if the address has not been found invalid
+     */
     private boolean targetExistsLocally(Message message) {
         String addr = message.target;
         if (message.isUnicast()) {
-            return unicast.containsKey(addr);
+            return unicast().containsKey(addr);
         } else {
             // Don't validate multicast
             return true;
         }
     }
 
+    private TransactionExecutor executor() {
+        return executor.get();
+    }
+
     /**
      * @return Current transaction state
      */
-    private State getState() {
-        return executor.get().state;
+    private TransactionExecutor.State getState() {
+        return executor().state;
     }
 
     /**
      * @return {@code true} if a transaction is currently being executed
      */
     private boolean inTransaction() {
-        return getState() == State.IN_TRANS;
+        return getState() == TransactionExecutor.State.IN_TRANS;
     }
 
     @OnInit
@@ -301,9 +318,9 @@ public class ThreadedDispatcher extends ModuleContainer implements
                     tm.rollback();
                 } finally {
                     // finally send client messages
-                    response.send(executor.get().withheld);
+                    response.send(executor().withheld);
                     // After commit/rollback reset the executor
-                    executor.get().clear();
+                    executor().clear();
                 }
             }
         });
@@ -316,7 +333,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     private void runPostCommitStack() {
         try {
-            for (Message message : executor.get().notifications) {
+            for (Message message : executor().notifications) {
                 try {
                     dispatchInThisThread(message);
                 } catch (Exception e) {
@@ -324,7 +341,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
                             + "notifications", e);
                 }
             }
-            executor.get().runStack();
+            executor().runStack();
         } catch (Exception e) {
             logger.error("Exception during the post-commit phase", e);
         }
@@ -374,7 +391,8 @@ public class ThreadedDispatcher extends ModuleContainer implements
     }
 
     /**
-     * Bypasses state checing, used to push first message
+     * Bypasses state checing, used to push first message to initiate the
+     * execution stack.
      * */
     private void doSend(Message message) {
         if (!targetExistsLocally(message)) {
@@ -390,7 +408,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     @Override
     public void output(Message message) {
         // TODO: some validation, maybe?
-        executor.get().withheld.add(message);
+        executor().withheld.add(message);
     }
 
     /**
@@ -431,20 +449,20 @@ public class ThreadedDispatcher extends ModuleContainer implements
      * {@link Module#receive}.
      */
     private void dispatchInThisThread(Message message) {
-        String addr = message.target;
+        final String addr = message.target;
         if (message.mode == Mode.UNICAST) {
-            if (unicast.containsKey(addr)) {
-                Module module = unicast.get(addr);
-                module.receive(message, executor.get().getContext());
+            Module module = unicast().get(addr);
+            if (module != null) {
+                module.receive(message, executor().getContext());
             } else {
                 throw new TargetNotExistsException(addr);
             }
         } else {
             // Multicast
-            Iterable<Module> interested = multicast.get(addr);
+            Iterable<Module> interested = multicast().get(addr);
             if (interested != null) {
                 for (Module module : interested) {
-                    module.receive(message, executor.get().getContext());
+                    module.receive(message, executor().getContext());
                 }
             } else {
                 logger.warn("Message to nonexistant multicast group [" + addr
@@ -458,46 +476,11 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void later(Continuation cont) {
-        if (getState() != State.IN_TRANS) {
+        if (inTransaction()) {
             throw new IllegalStateException("later() called outside the "
                     + "transaction (" + getState() + ")");
         }
-        executor.get().push(cont);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * <p>
-     * Delegates to the {@link ServiceLocatorDelgate}
-     */
-    @Override
-    public <T> void register(Class<? super T> service, T provider) {
-        logger.debug("Registering " + provider.getClass() + " as " + service);
-        services.register(service, provider);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * <p>
-     * Delegates to the {@link ServiceLocatorDelgate}
-     */
-    @Override
-    public <T> void registerIfAbsent(Class<? super T> service, T provider) {
-        logger.debug("Registering " + provider.getClass() + " as " + service);
-        services.registerIfAbsent(service, provider);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * <p>
-     * Delegates to the {@link ServiceLocatorDelgate}
-     */
-    @Override
-    public <T> T lookup(Class<T> service) {
-        return services.lookup(service);
+        executor().push(cont);
     }
 
 }

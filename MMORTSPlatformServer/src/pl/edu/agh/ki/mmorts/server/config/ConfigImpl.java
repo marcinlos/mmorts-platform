@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
@@ -57,7 +57,7 @@ class ConfigImpl implements Config {
     private Class<? extends PlayersPersistor> playersManagerClass;
 
     /** Used message channel class */
-    private Class<? extends MessageChannel> channelClass;
+    private Class<? extends MessageInputChannel> channelClass;
     
     /** Used JDBC driver class */
     private Class<? extends Driver> jdbcDriverClass;
@@ -150,7 +150,7 @@ class ConfigImpl implements Config {
     private void loadChannelClass() {
         logger.debug("Loading pmessage channel class");
         try {
-            channelClass = loadClass(CHANNEL_CLASS, MessageChannel.class);
+            channelClass = loadClass(CHANNEL_CLASS, MessageInputChannel.class);
             if (playersManagerClass == null) {
                 addMissing(CHANNEL_CLASS);
                 logger.fatal("Failed to load message channel class (missing)");
@@ -382,7 +382,7 @@ class ConfigImpl implements Config {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends MessageChannel> getChannelClass() {
+    public Class<? extends MessageInputChannel> getChannelClass() {
         return channelClass;
     }
 

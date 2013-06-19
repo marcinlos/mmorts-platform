@@ -91,7 +91,7 @@ public class Message implements Serializable {
     }
 
     /**
-     * Checks if the carried type is the one passed as the argument.
+     * Checks if the carried value is of the type passed as the argument.
      * 
      * @param clazz
      *            Class to check carried data against
@@ -118,29 +118,15 @@ public class Message implements Serializable {
     /**
      * Convenience method, creates a unicast response for a message - with
      * target as a srouce, source as a target, same conversation id and
-     * {@code null} data. Original message must be unicast.
+     * {@code null} data. Original message must be unicast, otherwise an
+     * {@code IllegalArgumentException} is thrown.
      * 
-     * @param newRequest
+     * @param request
      *            Request string of the response
      * @return New message conforming to a above specification
      */
-    public Message response(String newRequest) {
-        return response(newRequest, null);
-    }
-
-    /**
-     * Creates a unicast response for a message with a specific source address,
-     * source as a target, same conversation id and {@code null} data.
-     * 
-     * @param src
-     *            Source of the response
-     * 
-     * @param newRequest
-     *            Request string of the response
-     * @return New message conforming to a above specification
-     */
-    public Message response(String src, String newRequest) {
-        return response(src, newRequest, null);
+    public Message response(String request) {
+        return response(request, null);
     }
 
     /**
@@ -148,18 +134,17 @@ public class Message implements Serializable {
      * source as a target, same conversation id. Original message must be
      * unicast.
      * 
-     * @param newRequest
+     * @param request
      *            Request string of the response
-     * @param newData
+     * @param data
      *            Data carried in the response
      * @return New message conforming to a above specification
      */
-    public Message response(String newRequest, Object newData) {
+    public Message response(String request, Object data) {
         if (!isUnicast()) {
             throw new IllegalArgumentException("Specify unicast address!");
         }
-        return new Message(convId, target, source, Mode.UNICAST, newRequest,
-                newData);
+        return new Message(convId, target, source, Mode.UNICAST, request, data);
     }
 
     /**
@@ -221,9 +206,6 @@ public class Message implements Serializable {
     }
 
     /**
-     * {@inheritDoc}
-     * 
-     * <p>
      * Provides a fairly readable string representation of the message. Uses
      * {@code data}'s {@code toString} method. Useful for debugging purpose.
      */

@@ -11,8 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
+import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
-import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.config.ConfigException;
 import pl.edu.agh.ki.mmorts.server.config.ConfigReader;
@@ -30,7 +31,6 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.server.util.DI;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
-import pl.edu.agh.ki.mmorts.testclient.Client;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -38,7 +38,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
- * First class to be instantiated in {@link Client#main(String[])}. Responsible
+ * First class to be instantiated in {@link Main#main(String[])}. Responsible
  * for the initialization of the whole server.
  * 
  * <p>
@@ -81,7 +81,7 @@ public class Init {
     /**
      * Message channel created using the class specified in the configuration
      */
-    private MessageChannel channel;
+    private MessageInputChannel channel;
     private com.google.inject.Module channelModule;
 
     /**
@@ -116,7 +116,9 @@ public class Init {
     private com.google.inject.Module moduleTableModule;
 
     /**
-     * Creates the {@code Init} object and initializes the server.
+     * Creates the {@code Init} object and initializes the server, up to the
+     * point when all the components are fully operational, and the server is
+     * listening for incoming requests.
      * 
      * @param args
      *            Command line arguments
@@ -137,6 +139,10 @@ public class Init {
     /**
      * Waits until the shutdown is desired. Used as a filler between server init
      * and shutdown.
+     * 
+     * TODO: This has the potential to be a builtin REPL. However, the server
+     * really needs a standard JMX interface anyway, so this is probably pretty
+     * much useless.
      */
     private void waitForShutdown() {
         Scanner scanner = new Scanner(System.in);
@@ -271,6 +277,18 @@ public class Init {
     }
 
     /**
+     * Registers module at runtime, after the server initialization sequence.
+     * The module initialization steps are precisely the same as for the
+     * ordinary initialization during server startup.
+     * 
+     * @param desc
+     *            Descriptor of the module to be loaded
+     */
+    private void registerModule(ModuleDescriptor desc) {
+
+    }
+
+    /**
      * Handles shutdown sequence. Called at the end of the constructor.
      */
     private void shutdown() {
@@ -360,10 +378,10 @@ public class Init {
 
     private void createChannel() {
         logger.debug("Creating message channel");
-        Class<? extends MessageChannel> cl = config.getChannelClass();
+        Class<? extends MessageInputChannel> cl = config.getChannelClass();
         channel = DI.createWith(cl, configModule);
         callInit(channel);
-        channelModule = DI.objectModule(channel, MessageChannel.class);
+        channelModule = DI.objectModule(channel, MessageInputChannel.class);
         logger.debug("Message channel created");
     }
 
