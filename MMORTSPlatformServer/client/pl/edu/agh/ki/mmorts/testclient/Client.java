@@ -94,11 +94,11 @@ public class Client implements Interpreter {
         int perSec;
         int burstCount;
 
-        public StressTester(Message message, int totalCount, int perSec) {
+        public StressTester(Message message, int secs, int perSec) {
             this.message = message;
-            this.totalCount = totalCount;
+            this.totalCount = secs * perSec;
             this.perSec = perSec;
-            this.burstCount = perSec <= BURST_COUNT ? BURST_COUNT : perSec;
+            this.burstCount = perSec <= BURST_COUNT ? perSec : BURST_COUNT;
         }
 
         @Override
@@ -167,11 +167,11 @@ public class Client implements Interpreter {
 
     private void floodMessage(Scanner scanner) {
         try {
-            final int n = scanner.nextInt();
+            final int secs = scanner.nextInt();
             final int perSec = scanner.nextInt();
 
             Message msg = parseMessage(scanner);
-            new StressTester(msg, n * perSec, perSec).run();
+            new StressTester(msg, secs, perSec).run();
         } catch (NoSuchElementException e) {
             System.err.println("usage: flood sec per_sec address (U|M) type");
         }
