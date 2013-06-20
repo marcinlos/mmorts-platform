@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.testclient;
 
+import pl.edu.agh.ki.mmorts.cli.InputSource;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
@@ -9,7 +10,10 @@ public class Main {
         Client client = null;
         try {
             client = new Client(args);
-            client.repl();
+            InputSource input = new InputSource();
+            input.setInterpreter(client);
+            input.enablePrompt();
+            input.run();
         } catch (Exception e) {
             System.err.println("Exception: ");
             e.printStackTrace(System.err);

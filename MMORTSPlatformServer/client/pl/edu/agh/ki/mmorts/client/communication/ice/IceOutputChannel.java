@@ -51,6 +51,7 @@ public class IceOutputChannel implements MessageOutputChannel {
             System.out.println("done");
         } catch (Ice.ConnectionRefusedException e) {
             System.out.println("\nConnection refused, is server running?");
+            shutdown();
             throw new RuntimeException(e);
         }
     }
@@ -62,7 +63,8 @@ public class IceOutputChannel implements MessageOutputChannel {
     public void shutdown() {
         try {
             // deactivate the object
-            ice.shutdown();
+            System.out.println("Shutting down Ice channel");
+            ice.destroy();
         } catch (Ice.LocalException e) {
             System.err.println("Error while shutting down Ice communicator");
             System.err.println(e.getMessage());
