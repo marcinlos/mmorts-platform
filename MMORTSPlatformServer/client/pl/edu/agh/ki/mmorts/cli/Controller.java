@@ -1,19 +1,19 @@
 package pl.edu.agh.ki.mmorts.cli;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.util.Scanner;
 
 /**
  * Class for creating command line interfaces.
  */
-public class InputSource {
+public class Controller {
 
     /** Input source */
-    protected final BufferedReader input;
+    protected final LineSource input;
 
     /** Output */
     protected final PrintStream output = System.out;
@@ -24,13 +24,6 @@ public class InputSource {
     /** Invoked upon ecxeption while interpreting the line */
     private ErrorHandler errorHandler = new DefaultErrorHandler();
 
-    /**
-     * Creates a command line interface using standard input.
-     */
-    public InputSource() throws IOException {
-        input = new BufferedReader(new InputStreamReader(System.in));
-    }
-
     /** Whether or not print a prompt after each command */
     private boolean promptEnabled = false;
 
@@ -38,24 +31,34 @@ public class InputSource {
     private String prompt = "> ";
 
     /**
+     * Creates a command line interface using standard input.
+     */
+    public Controller() throws IOException {
+        this(new ScannerLineSource(new Scanner(System.in)));
+    }
+
+    /**
      * Creates a command line interface using given {@code Reader} instance as
      * an input source.
      */
-    public InputSource(Reader reader) {
-        // Check whether the reader already is buffered
-        if (reader instanceof BufferedReader) {
-            input = (BufferedReader) reader;
-        } else {
-            input = new BufferedReader(reader);
-        }
+    public Controller(Reader reader) {
+        this(new ScannerLineSource(new Scanner(reader)));
     }
 
     /**
      * Creates a command line interface using given {@code Stream} instance as
      * an input source.
      */
-    public InputSource(InputStream stream) {
+    public Controller(InputStream stream) {
         this(new InputStreamReader(stream));
+    }
+
+    /**
+     * Creates a command line interface using given {@code LineSource} as the
+     * line source.
+     * */
+    public Controller(LineSource source) {
+        this.input = source;
     }
 
     /**
@@ -109,10 +112,12 @@ public class InputSource {
      *             if there is a problem during an attempt to invoke the command
      */
     public void run() throws IOException, CommandException {
+        printPrompt();
         String line;
-        while ((line = input.readLine()) != null) {
+        while ((line = input.getLine()) != null) {
             try {
-                if (!interpret(line)) {
+                // ignore empty lines
+                if (!line.isEmpty() && !interpret(line)) {
                     break;
                 }
             } catch (CommandException e) {
@@ -125,9 +130,7 @@ public class InputSource {
                     throw e;
                 }
             } finally {
-                if (promptEnabled) {
-                    printPrompt();
-                }
+                printPrompt();
             }
         }
         System.out.println("\r");
@@ -137,14 +140,16 @@ public class InputSource {
      * Prints the prompt to the standard output and flushes
      */
     private void printPrompt() {
-        output.print(prompt);
-        output.flush();
+        if (promptEnabled) {
+            output.print(prompt);
+            output.flush();
+        }
     }
-    
+
     public void enablePrompt() {
         promptEnabled = true;
     }
-    
+
     public void disablePrompt() {
         promptEnabled = false;
     }
@@ -157,8 +162,6 @@ public class InputSource {
      *            whole line from the terminal
      * @return {@code true} if the server should continue running, {@code false}
      *         otherwise.
-     * @throws ParseException
-     *             if the input line cannot be correctly parsed
      * @throws NoSuchCommandException
      *             if the input line cannot be recognized as a command
      *             invocation
@@ -166,6 +169,7 @@ public class InputSource {
      *             wrapping exceptions thrown by commands
      */
     protected boolean interpret(String line) throws CommandException {
+        System.out.println("I see '" + line + "'");
         if (interpreter != null) {
             return interpreter.interpret(line);
         } else {

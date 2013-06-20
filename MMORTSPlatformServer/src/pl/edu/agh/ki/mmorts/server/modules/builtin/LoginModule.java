@@ -16,7 +16,6 @@ import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
-import pl.edu.agh.ki.mmorts.server.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
 

@@ -1,6 +1,8 @@
 package pl.edu.agh.ki.mmorts.testclient;
 
-import pl.edu.agh.ki.mmorts.cli.InputSource;
+import jline.ConsoleReader;
+import pl.edu.agh.ki.mmorts.cli.Controller;
+import pl.edu.agh.ki.mmorts.cli.JLineLineSource;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
@@ -10,9 +12,9 @@ public class Main {
         Client client = null;
         try {
             client = new Client(args);
-            InputSource input = new InputSource();
+            ConsoleReader reader = new ConsoleReader();
+            Controller input = new Controller(new JLineLineSource(reader));
             input.setInterpreter(client);
-            input.enablePrompt();
             input.run();
         } catch (Exception e) {
             System.err.println("Exception: ");
