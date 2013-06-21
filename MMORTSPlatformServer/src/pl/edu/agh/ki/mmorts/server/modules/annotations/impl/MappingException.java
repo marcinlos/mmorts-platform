@@ -1,6 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.modules.annotations.impl;
 
 /**
+ * Base class for exceptions caused by the message mapping problems.
  * 
  * @author los
  */
