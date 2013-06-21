@@ -32,13 +32,15 @@ public interface ITile {
 	public abstract int getY();
 /**
  * 
- * @param x between 0 and BoardView.mapSize (or this thing in config when we write one)
+ * @param x between 0 and BoardView.mapSize (or this thing in config when we write one),
+ * represents position on the map in X axis
  */
 	public abstract void setX(int x);
 
 	/**
 	 * 
-	 * @param y between 0 and BoardView.mapSize (or this thing in config when we write one)
+	 * @param y between 0 and BoardView.mapSize (or this thing in config when we write one),
+	 * represents position on the map in Y axis
 	 */
 	public abstract void setY(int y);
 
@@ -60,5 +62,9 @@ public interface ITile {
 	 * determines height of building
 	 */
 	public abstract void setSize_y(int size_y);
+	
+	public abstract void setBuilding(Building b);
+	
+	public abstract Building getBuilding();
 
 }

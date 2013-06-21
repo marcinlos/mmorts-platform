@@ -1,6 +1,7 @@
 package com.app.ioapp.customDroidViews;
 
 import com.app.ioapp.modules.Module;
+import com.app.ioapp.view.MainView;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -31,12 +32,17 @@ public class AdditionalViewA extends AbstractModuleView {
 		super(context, attrs, defStyle);
 	}
 	@Override
-	public void setModuleImpl(Module m) {
+	public void refresh() {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void refresh() {
+	public void iWasClicked(float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void init(String moduleName, MainView view) {
 		// TODO Auto-generated method stub
 		
 	}
