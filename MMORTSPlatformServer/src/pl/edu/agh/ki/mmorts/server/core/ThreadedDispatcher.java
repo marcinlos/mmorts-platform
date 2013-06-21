@@ -168,10 +168,10 @@ public class ThreadedDispatcher extends AbstractModuleContainer implements
     private void dispatchMessage(Message message, Response response) {
         logger.debug("Begin message transaction");
         // begin message transaction
-        tm.begin();
         try {
             // lock the module list
             readLock.lock();
+            tm.begin();
             doSend(message);
             // realize transaction
             executor().run();
@@ -191,7 +191,6 @@ public class ThreadedDispatcher extends AbstractModuleContainer implements
         } finally {
             // After commit/rollback reset the executor
             executor().clear();
-            // unlock the module list
             readLock.unlock();
         }
     }
