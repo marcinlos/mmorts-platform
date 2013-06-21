@@ -84,15 +84,19 @@ public abstract class AbstractDispatcher extends AbstractModuleContainer
     protected abstract TransactionExecutor executor();
 
     /**
-     * Creates the thread pool and initializes the communication
+     * Creates the thread pool and initializes the communication. It is not
+     * annotated with {@linkplain OnInit} due to unspecified ordering of calling
+     * {@code OnInit} methods and the fact this step should generally be the
+     * last, as it assumes the dispatcher is fully prepared for handling
+     * incoming messages. Ensure it's called in the concrete implementation
+     * dispatcher.
      */
-    @OnInit
     protected void init() {
         channel.startReceiving(this);
     }
-    
+
     /**
-     * @return Input message channel 
+     * @return Input message channel
      */
     protected MessageInputChannel channel() {
         return channel;
