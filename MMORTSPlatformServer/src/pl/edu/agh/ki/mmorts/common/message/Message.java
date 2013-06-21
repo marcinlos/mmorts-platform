@@ -26,13 +26,11 @@ import java.io.Serializable;
  * {@code some-fancy-request}. Should be an imperative sentence when describing
  * a request (e.g. {@code create-building}), interrogative when describing a
  * check for some condition (e.g. {@code is-logged}, {@code has-item}), passive
- * for notifications (e.g. {@code item-bought}).
- * 
- * <p>
- * URL-like embedding request parameters is discouraged, since it is inefficient
- * and error-prone. In general, consider using the {@code data} field instead.
- * One exception may be properties getters - the property name may be encoded in
- * the request string for convenience.
+ * for notifications (e.g. {@code item-bought}). URL-like embedding request
+ * parameters is discouraged, since it is inefficient and error-prone. In
+ * general, consider using the {@code data} field instead. One exception may be
+ * properties getters - the property name may be encoded in the request string
+ * for convenience.
  * 
  * <li><b>data</b> - arbitrary Java object to be carried with the message.
  * 

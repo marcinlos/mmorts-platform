@@ -274,10 +274,9 @@ public abstract class ModuleBase implements Module {
      *            Source address of the response
      * @param newRequest
      *            Request string of the response
-     * @see Message#response(String, String)
      */
     protected void respond(Message message, String src, String newRequest) {
-        gateway.send(message.response(src, newRequest));
+        gateway.send(message.response(src, newRequest, null));
     }
 
     /**
@@ -405,10 +404,9 @@ public abstract class ModuleBase implements Module {
      *            Source address of the response
      * @param newRequest
      *            Request string of the response
-     * @see Message#response(String, String)
      */
     protected void outputResponse(Message message, String src, String newRequest) {
-        gateway.output(message.response(src, newRequest));
+        gateway.output(message.response(src, newRequest, null));
     }
 
     /**
