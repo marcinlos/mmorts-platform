@@ -12,5 +12,7 @@
  * </ul>
  * 
  * Request for comment.
+ * 
+ * @author los
  */
 package pl.edu.agh.ki.mmorts.server.communication.cluster;

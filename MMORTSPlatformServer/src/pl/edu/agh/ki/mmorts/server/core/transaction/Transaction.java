@@ -2,6 +2,8 @@ package pl.edu.agh.ki.mmorts.server.core.transaction;
 
 /**
  * Interface of a single transaction.
+ * 
+ * @author los
  */
 public interface Transaction {
 

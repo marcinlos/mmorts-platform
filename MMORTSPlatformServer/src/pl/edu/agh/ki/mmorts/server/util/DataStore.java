@@ -7,6 +7,8 @@ import java.util.Map;
  * Generic retrieval-typesafe map, storing arbitrary values and providing access
  * through an interface taking a class token to perform a cast and thus ensure
  * type safety.
+ * 
+ * @author los
  */
 public class DataStore extends HashMap<Object, Object> {
 

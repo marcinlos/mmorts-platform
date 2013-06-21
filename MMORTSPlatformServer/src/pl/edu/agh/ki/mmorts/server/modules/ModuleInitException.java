@@ -2,6 +2,8 @@ package pl.edu.agh.ki.mmorts.server.modules;
 
 /**
  * Thrown when module initialization fails.
+ * 
+ * @author los
  */
 public class ModuleInitException extends RuntimeException {
 

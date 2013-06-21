@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 
 /**
  * Reads the server configuration, possibly combining multiple sources.
+ * 
+ * @author los
  */
 public class ConfigReader {
 

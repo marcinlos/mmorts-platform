@@ -1,5 +1,11 @@
 package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
+/**
+ * 
+ * @author los
+ *
+ * @param <T>
+ */
 public class EqualTo<T> implements Predicate<T> {
 
     private Value<T> value;

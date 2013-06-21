@@ -5,6 +5,8 @@ import pl.edu.agh.ki.mmorts.server.core.ModuleConfigException;
 /**
  * Thrown by the {@linkplain ModuleDescriptor} builder when some fields are 
  * missing.
+ * 
+ * @author los
  */
 public class IncompleteDescriptorException extends ModuleConfigException {
 

@@ -1,5 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
+/**
+ * 
+ * @author los
+ */
 public class While implements Cont {
     
     private Condition cond;

@@ -11,11 +11,11 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
 import java.util.Random;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
+import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
 
@@ -25,6 +25,8 @@ import com.google.inject.name.Named;
 /**
  * Module responsible for receiving login messages, authenticating players and
  * sending back player state when necessary.
+ * 
+ * @author los
  */
 public class LoginModule extends ModuleBase {
 
@@ -35,12 +37,19 @@ public class LoginModule extends ModuleBase {
     @Inject(optional = true)
     @Named("login.number")
     private int number;
-
-    @OnInit
-    private void meh() {
-        descriptor().config.get("datatype", Class.class);
+    
+    @MessageMapping("auth")
+    public void handleAuth(Message message, Context ctx) {
+        logger().debug("handleAuth!!!!");
+        outputResponse(message, "auth-success", 666);
+        output("some_module", "kill-yourself", new int[] {7, 4});
     }
-
+    
+    @MessageMapping
+    public void general(Message message, Context ctx) {
+        logger().debug("=================general()====================");
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -48,6 +57,7 @@ public class LoginModule extends ModuleBase {
     public void receive(final Message message, final Context ctx) {
         logger().debug("Message received");
         logger().debug(message);
+        //super.receive(message, ctx);
 
         if (message.request.equals("auth")) {
             call(_if(val(3).is(eq(3))).then(new Cont() {
@@ -85,7 +95,7 @@ public class LoginModule extends ModuleBase {
                             outputResponse(message, ":|",
                                     (Object) ("So far so good, " + n));
                             if (rand.nextInt(10) == 7) {
-                                throw new RuntimeException("Evul exception!");
+                                //throw new RuntimeException("Evul exception!");
                             }
                             send("inc_mod", "increment", (Object) "n");
                         }

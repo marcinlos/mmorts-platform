@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
  * Annotation usually denoting cleanup method, which is supposed to be called
  * when the resources should be released. This is usually during the shutdown
  * sequence.
+ * 
+ * @author los
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

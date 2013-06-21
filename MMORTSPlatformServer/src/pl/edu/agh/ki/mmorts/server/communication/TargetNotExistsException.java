@@ -3,6 +3,8 @@ package pl.edu.agh.ki.mmorts.server.communication;
 /**
  * Thrown when a message is send with a unicast address that is not registered
  * at the destination dispatcher.
+ * 
+ * @author los
  */
 public class TargetNotExistsException extends CommunicationException {
 

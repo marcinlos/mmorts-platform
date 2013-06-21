@@ -5,9 +5,10 @@ package pl.edu.agh.ki.mmorts.server.communication;
  * Interface representing messaging service. Provides the necessary input and
  * output capabilities, necessary for bidirectional communication.
  * 
+ * @author los
  * @see MessageReceiver
  */
-public interface MessageChannel {
+public interface MessageInputChannel {
 
     /**
      * Sets channel's message receiver and begins the receiving process.

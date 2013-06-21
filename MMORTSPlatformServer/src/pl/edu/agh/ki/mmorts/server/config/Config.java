@@ -3,7 +3,7 @@ package pl.edu.agh.ki.mmorts.server.config;
 import java.sql.Driver;
 import java.util.Map;
 
-import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
@@ -11,7 +11,9 @@ import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 
 /**
- * Allows retrieval of configuration properties
+ * Allows retrieval of configuration properties.
+ * 
+ * @author los
  */
 public interface Config {
 
@@ -63,10 +65,10 @@ public interface Config {
     Class<? extends TransactionManager> getTransactionManagerClass();
 
     /**
-     * @return MessageChannel implementation class specified in the
+     * @return MessageInputChannel implementation class specified in the
      *         configuration
      */
-    Class<? extends MessageChannel> getChannelClass();
+    Class<? extends MessageInputChannel> getChannelClass();
 
     /**
      * @return Dispatcher implementation class specified in the configuration

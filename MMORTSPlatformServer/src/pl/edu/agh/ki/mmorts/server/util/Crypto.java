@@ -5,7 +5,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
- * Cryptography utilities
+ * Cryptographic utilities.
+ * 
+ * @author los
  */
 public class Crypto {
 

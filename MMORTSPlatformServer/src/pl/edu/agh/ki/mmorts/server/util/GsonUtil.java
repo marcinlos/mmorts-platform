@@ -11,6 +11,8 @@ import com.google.gson.JsonParseException;
 
 /**
  * Static class containing Gson utility elements.
+ * 
+ * @author los
  */
 public class GsonUtil {
 

@@ -2,17 +2,15 @@ package pl.edu.agh.ki.mmorts.common.message;
 
 /**
  * Message destination multiplicity (unicast/multicast).
+ * 
+ * @author los
  */
 public enum Mode {
 
-    /** Unicast message */
+    /** Unicast message - single receiver */
     UNICAST,
-    
-    /** Multicast message */
+
+    /** Multicast message - possibly multiple receivers */
     MULTICAST;
-    
-    public static Mode fromInt(int i) {
-        return values()[i]; 
-    }
-    
+
 }

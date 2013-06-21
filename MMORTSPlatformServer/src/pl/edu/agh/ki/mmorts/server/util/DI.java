@@ -11,6 +11,8 @@ import com.google.inject.Provider;
 
 /**
  * Utility class for DI operations.
+ * 
+ * @author los
  */
 public class DI {
 

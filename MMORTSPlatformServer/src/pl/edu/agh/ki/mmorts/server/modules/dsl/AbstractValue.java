@@ -1,5 +1,11 @@
 package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
+/**
+ * 
+ * @author los
+ *
+ * @param <T>
+ */
 public abstract class AbstractValue<T> implements Value<T> {
 
     @Override

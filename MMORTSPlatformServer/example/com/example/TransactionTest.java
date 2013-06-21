@@ -11,6 +11,8 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManagerImpl;
 
 /**
  * Simple test and demonstraction of transactionality support. 
+ * 
+ * @author los
  */
 public class TransactionTest {
     

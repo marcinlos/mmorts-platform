@@ -6,8 +6,10 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Nasty, nasty wrapper for {@link Properties} object to provide
+ * Nasty, nasty wrapper for {@linkplain Properties} object to provide
  * {@code Map<String, String>} interface.
+ * 
+ * @author los
  */
 public class PropertiesAdapter implements Map<String, String> {
 

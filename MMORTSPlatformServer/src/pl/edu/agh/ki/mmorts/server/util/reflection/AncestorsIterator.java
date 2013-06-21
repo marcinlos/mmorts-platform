@@ -12,6 +12,8 @@ import java.util.Set;
  * <p>
  * Order in case of complex multiple-inheritance based hierarchies is for now
  * left undefined.
+ * 
+ * @author los
  */
 public class AncestorsIterator implements Iterator<Class<?>> {
 
