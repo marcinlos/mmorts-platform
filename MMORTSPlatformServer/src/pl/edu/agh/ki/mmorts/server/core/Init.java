@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.config.ConfigException;
 import pl.edu.agh.ki.mmorts.server.config.ConfigReader;
@@ -391,7 +392,13 @@ public class Init {
         dispatcher = DI.createWith(cl, configModule, channelModule,
                 txManagerModule);
         callInit(dispatcher);
-        dispatcherModule = DI.objectModule(dispatcher, Gateway.class);
+        dispatcherModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                install(DI.objectModule(dispatcher, Gateway.class));
+                install(DI.objectModule(dispatcher, ServiceLocator.class));
+            }
+        };
         logger.debug("Dispatcher created");
     }
 

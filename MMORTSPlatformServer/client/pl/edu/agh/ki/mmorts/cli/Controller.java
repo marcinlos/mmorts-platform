@@ -24,9 +24,6 @@ public class Controller {
     /** Invoked upon ecxeption while interpreting the line */
     private ErrorHandler errorHandler = new DefaultErrorHandler();
 
-    /** Whether or not print a prompt after each command */
-    private boolean promptEnabled = false;
-
     /** Prompt to print */
     private String prompt = "> ";
 
@@ -112,7 +109,6 @@ public class Controller {
      *             if there is a problem during an attempt to invoke the command
      */
     public void run() throws IOException, CommandException {
-        printPrompt();
         String line;
         while ((line = input.getLine()) != null) {
             try {
@@ -129,29 +125,9 @@ public class Controller {
                     // Rethrow if error handler is missing
                     throw e;
                 }
-            } finally {
-                printPrompt();
             }
         }
         System.out.println("\r");
-    }
-
-    /**
-     * Prints the prompt to the standard output and flushes
-     */
-    private void printPrompt() {
-        if (promptEnabled) {
-            output.print(prompt);
-            output.flush();
-        }
-    }
-
-    public void enablePrompt() {
-        promptEnabled = true;
-    }
-
-    public void disablePrompt() {
-        promptEnabled = false;
     }
 
     /**
@@ -169,7 +145,6 @@ public class Controller {
      *             wrapping exceptions thrown by commands
      */
     protected boolean interpret(String line) throws CommandException {
-        System.out.println("I see '" + line + "'");
         if (interpreter != null) {
             return interpreter.interpret(line);
         } else {

@@ -1,9 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -14,7 +10,6 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
 import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
 import pl.edu.agh.ki.mmorts.server.communication.Response;
@@ -22,11 +17,11 @@ import pl.edu.agh.ki.mmorts.server.communication.TargetNotExistsException;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
+import pl.edu.agh.ki.mmorts.server.modules.util.ContAdapter;
 
 import com.google.inject.name.Named;
 
@@ -35,8 +30,8 @@ import com.google.inject.name.Named;
  * 
  * @author los
  */
-public class ThreadedDispatcher extends ModuleContainer implements
-        MessageReceiver {
+public class ThreadedDispatcher extends AbstractModuleContainer implements
+        MessageReceiver, Dispatcher {
 
     private static final Logger logger = Logger
             .getLogger(ThreadedDispatcher.class);
@@ -68,8 +63,6 @@ public class ThreadedDispatcher extends ModuleContainer implements
     /** Thread pool used to handle incoming messages */
     private ExecutorService threadPool;
 
-
-
     /**
      * Thread-local transaction executor
      */
@@ -81,153 +74,20 @@ public class ThreadedDispatcher extends ModuleContainer implements
     };
 
     /**
-     * Helper class containing per-thread state necessary for conducting
-     * transactions.
+     * Creates a {@code Continuation} encapsulating an operation of message
+     * delivery.
+     * 
+     * @param message
+     *            Message to deliver
+     * @return {@code Continuation} wrapping an action of delivering the message
      */
-    private static class TransactionExecutor {
-
-        private static final Logger logger = Logger
-                .getLogger(TransactionExecutor.class);
-        
-        /**
-         * Enum describing possible thread states.
-         */
-        public enum State {
-
-            /** No transaction is currently active */
-            NO_TRANS,
-
-            /** There is an active transaction */
-            IN_TRANS,
-
-            /** Transaction commit/rollback listeners are executing */
-            POST_TRANS
-        }
-
-        /** State of the transaction */
-        private State state = State.NO_TRANS;
-
-        /** Transaction stack */
-        private final Deque<Continuation> executionStack;
-
-        /** True if rollback handlers are being executed */
-        private boolean rollback = false;
-
-        /** Current transaction context */
-        private Context context;
-
-        /** Collection of local notifications */
-        private final List<Message> notifications;
-
-        /** Colletion of withheld response messages */
-        private final List<Message> withheld;
-        
-        public TransactionExecutor() {
-            executionStack = new ArrayDeque<Continuation>();
-            notifications = new ArrayList<Message>();
-            withheld = new ArrayList<Message>();
-        }
-
-        /** Run the transaction */
-        public void run() throws Exception {
-            state = State.IN_TRANS;
-            // context per transaction
-            context = new Context();
-            try {
-                runStack();
-            } finally {
-                state = State.POST_TRANS;
+    private Continuation deliveryAction(final Message message) {
+        return new ContAdapter() {
+            @Override
+            public void execute(Context context) {
+                deliver(message);
             }
-        }
-
-        /** Runs the execution stack, does not initate a transaction */
-        public void runStack() throws Exception {
-            try {
-                while (!executionStack.isEmpty()) {
-                    Continuation cont = executionStack.pop();
-                    cont.execute(context);
-                }
-            } catch (Exception e) {
-                // Remove all the stored messages
-                clearMessageStore();
-                rollbackAll(e);
-                throw e;
-            }
-        }
-
-        /** Removes all the stored messages (local and responses) */
-        public void clearMessageStore() {
-            notifications.clear();
-            withheld.clear();
-        }
-
-        /** Definitely finish the current transaction, clear state */
-        public void clear() {
-            clearMessageStore();
-            state = State.NO_TRANS;
-            context = null;
-        }
-
-        /**
-         * @return Current transaction context
-         */
-        public Context getContext() {
-            return context;
-        }
-
-        /**
-         * Informs all the remaining continuations about the failure.
-         * 
-         * @param exc
-         *            Exception that caused the failure
-         */
-        private void rollbackAll(Throwable exc) {
-            rollback = true;
-            while (!executionStack.isEmpty()) {
-                Continuation cont = executionStack.pop();
-                try {
-                    cont.failure(exc, context);
-                } catch (Exception e) {
-                    logger.error("Exception in a failure handler", e);
-                }
-            }
-            rollback = false;
-        }
-
-        /**
-         * Pushes a continuation on the execution stack
-         * 
-         * @param cont
-         *            Continuation to push
-         */
-        public void push(Continuation cont) {
-            if (!rollback) {
-                executionStack.push(cont);
-            } else {
-                throw new IllegalStateException(
-                        "Cannot push continuation during rollback");
-            }
-        }
-    }
-
-    private class DeliverMessage implements Continuation {
-
-        private Message message;
-
-        public DeliverMessage(Message message) {
-            this.message = message;
-        }
-
-        @Override
-        public void execute(Context context) {
-            dispatchInThisThread(message);
-        }
-
-        @Override
-        public void failure(Throwable e, Context context) {
-            // empty
-        }
-
+        };
     }
 
     /**
@@ -250,24 +110,16 @@ public class ThreadedDispatcher extends ModuleContainer implements
         }
     }
 
+    /**
+     * @return Current transaction executor
+     */
     private TransactionExecutor executor() {
         return executor.get();
     }
 
     /**
-     * @return Current transaction state
+     * Creates the thread pool and initializes the communication
      */
-    private TransactionExecutor.State getState() {
-        return executor().state;
-    }
-
-    /**
-     * @return {@code true} if a transaction is currently being executed
-     */
-    private boolean inTransaction() {
-        return getState() == TransactionExecutor.State.IN_TRANS;
-    }
-
     @OnInit
     void init() {
         logger.debug("Initializing");
@@ -298,52 +150,76 @@ public class ThreadedDispatcher extends ModuleContainer implements
         threadPool.execute(new Runnable() {
             @Override
             public void run() {
-                logger.debug("Begin message transaction");
-                // begin message transaction
-                tm.begin();
-                try {
-                    doSend(message);
-                    // realize transaction
-                    executor.get().run();
-                    try {
-                        logger.debug("Transaction commited, executing listeners");
-                        tm.commit();
-                        runPostCommitStack();
-                    } catch (Exception e) {
-                        logger.error("Exception inside a commit handler", e);
-                        response.failed(e);
-                    }
-                } catch (Exception e) {
-                    logger.debug("Transaction rolled back due to exception", e);
-                    tm.rollback();
-                } finally {
-                    // finally send client messages
-                    response.send(executor().withheld);
-                    // After commit/rollback reset the executor
-                    executor().clear();
-                }
+                dispatchMessage(message, response);
             }
         });
         logger.debug("Message submitted to the thread pool");
     }
 
     /**
+     * Dispatches the message and performs the full message processing
+     * transaction.
+     * 
+     * @param message
+     *            Message to process
+     * @param response
+     *            Response object
+     */
+    private void dispatchMessage(Message message, Response response) {
+        logger.debug("Begin message transaction");
+        // begin message transaction
+        tm.begin();
+        try {
+            // lock the module list
+            readLock.lock();
+            doSend(message);
+            // realize transaction
+            executor().run();
+            try {
+                logger.debug("Transaction commited, executing listeners");
+                tm.commit();
+                runPostCommitStack();
+                response.send(executor().responses());
+            } catch (Exception e) {
+                logger.error("Exception inside a commit handler", e);
+                response.failed(e);
+            }
+        } catch (Exception e) {
+            logger.debug("Transaction rolled back due to exception", e);
+            tm.rollback();
+            response.send(executor().responses());
+        } finally {
+            // After commit/rollback reset the executor
+            executor().clear();
+            // unlock the module list
+            readLock.unlock();
+        }
+    }
+
+    /**
      * Runs the "rest", sequence of messages and events generated by the
      * transaction listeners, after the transaction has finished
+     * 
+     * @throws Exception
+     *             If there was an exception during this phase of communication
      */
-    private void runPostCommitStack() {
+    private void runPostCommitStack() throws Exception {
         try {
-            for (Message message : executor().notifications) {
+            for (Message message : executor().notifications()) {
                 try {
-                    dispatchInThisThread(message);
+                    deliver(message);
+                } catch (TargetNotExistsException e) {
+                    logger.error("Notification for nonexistant module", e);
                 } catch (Exception e) {
                     logger.error("Exception while processing post-commit "
                             + "notifications", e);
+                    throw e;
                 }
             }
             executor().runStack();
         } catch (Exception e) {
             logger.error("Exception during the post-commit phase", e);
+            throw e;
         }
     }
 
@@ -383,7 +259,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     @Override
     public void send(Message message) {
         // Only during the transaction
-        if (!inTransaction()) {
+        if (executor().noTransaction()) {
             throw new IllegalStateException("send() called outside "
                     + "the transaction");
         }
@@ -398,7 +274,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
         if (!targetExistsLocally(message)) {
             throw new TargetNotExistsException();
         } else {
-            executor.get().push(new DeliverMessage(message));
+            executor().push(deliveryAction(message));
         }
     }
 
@@ -408,7 +284,7 @@ public class ThreadedDispatcher extends ModuleContainer implements
     @Override
     public void output(Message message) {
         // TODO: some validation, maybe?
-        executor().withheld.add(message);
+        executor().addResponse(message);
     }
 
     /**
@@ -417,40 +293,24 @@ public class ThreadedDispatcher extends ModuleContainer implements
     @Override
     public void sendDelayed(final Message message) {
         // Only during the transaction
-        if (!inTransaction()) {
+        if (!executor().inTransaction()) {
             throw new IllegalStateException("sendDelayed called outside "
-                    + "the transaction (" + getState() + ")");
+                    + "the transaction (" + executor().getState() + ")");
         }
         if (!targetExistsLocally(message)) {
-            throw new TargetNotExistsException();
+            throw new TargetNotExistsException(message.target);
         }
         // execute actual message dispatching after the transaction
-        // TODO: save it somewhere and execute in one transaction listener,
-        // maybe?
-        tm.getCurrent().addListener(new TransactionListener() {
-            @Override
-            public void rollback() {
-                // empty
-            }
-
-            @Override
-            public void commit() {
-                try {
-                    dispatchInThisThread(message);
-                } catch (Exception e) {
-                    logger.error("Error during message dispatching", e);
-                }
-            }
-        });
+        executor().addNotification(message);
     }
 
     /**
-     * Dispatches the message in the current thread, all the way down to calling
-     * {@link Module#receive}.
+     * Delivers the message to the appropriate target module, and executes its'
+     * {@linkplain Module#receive} in the current thread.
      */
-    private void dispatchInThisThread(Message message) {
+    private void deliver(Message message) {
         final String addr = message.target;
-        if (message.mode == Mode.UNICAST) {
+        if (message.isUnicast()) {
             Module module = unicast().get(addr);
             if (module != null) {
                 module.receive(message, executor().getContext());
@@ -476,9 +336,9 @@ public class ThreadedDispatcher extends ModuleContainer implements
      */
     @Override
     public void later(Continuation cont) {
-        if (inTransaction()) {
+        if (executor().noTransaction()) {
             throw new IllegalStateException("later() called outside the "
-                    + "transaction (" + getState() + ")");
+                    + "transaction (" + executor().getState() + ")");
         }
         executor().push(cont);
     }

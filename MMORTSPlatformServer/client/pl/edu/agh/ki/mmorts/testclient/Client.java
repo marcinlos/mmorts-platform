@@ -155,7 +155,7 @@ public class Client implements Interpreter {
             StringBuilder sb = new StringBuilder("\r|");
             final int size = 40;
             final int filled = (int) (size * ((double) i / totalCount));
-            for (int j = 0; j < size; ++j) {
+            for (int j = 0; j < size - 1; ++j) {
                 sb.append(j < filled ? '*' : ' ');
             }
             sb.append("|");

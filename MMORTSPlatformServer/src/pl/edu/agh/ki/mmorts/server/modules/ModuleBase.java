@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Messages;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
@@ -34,6 +35,10 @@ public abstract class ModuleBase implements Module {
     /** Communication gateway and flow control */
     @Inject(optional = true)
     private Gateway gateway;
+    
+    /** Service locator */
+    @Inject(optional = true)
+    private ServiceLocator services;
 
     /** Module-specific configuration */
     @Inject(optional = true)
@@ -136,6 +141,13 @@ public abstract class ModuleBase implements Module {
      */
     protected final Gateway gateway() {
         return gateway;
+    }
+    
+    /**
+     * @return Service locator
+     */
+    protected final ServiceLocator services() {
+        return services;
     }
 
     /**
