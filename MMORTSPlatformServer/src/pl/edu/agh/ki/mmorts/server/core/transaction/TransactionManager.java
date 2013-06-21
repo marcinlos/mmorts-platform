@@ -54,5 +54,10 @@ public interface TransactionManager {
      *             If there is no currently active transaction
      */
     void rollback();
+    
+    /**
+     * @return {@code TransactionProvider} for this manager
+     */
+    TransactionProvider getProvider();
 
 }

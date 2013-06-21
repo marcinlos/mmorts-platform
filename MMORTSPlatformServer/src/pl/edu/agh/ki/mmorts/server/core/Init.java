@@ -22,6 +22,7 @@ import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionProvider;
 import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
@@ -261,15 +262,16 @@ public class Init {
             Class<? extends Module> cl = desc.moduleClass;
             // Inject config, dispatcher, tx manager and individual module
             // configuration
-            com.google.inject.Module props = new AbstractModule() {
+            com.google.inject.Module properties = new AbstractModule() {
                 @Override
                 protected void configure() {
                     Names.bindProperties(binder(), desc.config.asMap());
                 }
             };
             Module module = DI.createWith(cl, configModule, dispatcherModule,
-                    txManagerModule, props,
-                    DI.objectModule(desc, ModuleDescriptor.class));
+                    DI.objectModule(txManager.getProvider(),
+                            TransactionProvider.class), properties, DI
+                            .objectModule(desc, ModuleDescriptor.class));
             callInit(module);
             return module;
         } catch (Exception e) {

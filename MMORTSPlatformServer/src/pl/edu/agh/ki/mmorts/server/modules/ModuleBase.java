@@ -11,7 +11,7 @@ import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.Transaction;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionProvider;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.impl.TrivialMapperFactory;
 import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
@@ -44,9 +44,9 @@ public abstract class ModuleBase implements Module {
     @Inject(optional = true)
     private ModuleDescriptor descriptor;
 
-    /** Transaction manager */
+    /** Transaction provider */
     @Inject(optional = true)
-    private TransactionManager tm;
+    private TransactionProvider txProvider;
 
     /** Logger for the <b>derived</b> class */
     private final Logger logger = Logger.getLogger(getClass());
@@ -158,17 +158,10 @@ public abstract class ModuleBase implements Module {
     }
 
     /**
-     * @return {@linkplain TransactionManager} managing current transaction
-     */
-    protected final TransactionManager tm() {
-        return tm;
-    }
-
-    /**
      * @return Current transaction associated with this thread
      */
     protected final Transaction transaction() {
-        return tm().getCurrent();
+        return txProvider.getCurrent();
     }
 
     /**

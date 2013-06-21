@@ -23,7 +23,7 @@ import pl.edu.agh.ki.mmorts.server.modules.util.ContAdapter;
  * 
  * @author los
  */
-public abstract class AbstractDispatcher extends AbstractModuleContainer
+public abstract class AbstractDispatcher extends DefaultModuleContainer
         implements MessageReceiver, Dispatcher {
 
     private static final Logger logger = Logger
