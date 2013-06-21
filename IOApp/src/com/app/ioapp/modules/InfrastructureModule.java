@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.app.board.SpaceOccupiedException;
 import com.app.ioapp.customDroidViews.BoardView;
+import com.app.ioapp.view.MainView;
 
 /**
  * Implementation of concrete module. Extends {@code AbstractCommunicatingModule} so can communicate with
@@ -198,9 +199,31 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	@Override
 	public Map<String,String> getMenus() {
 		Map<String,String> m = new HashMap<String,String>();
-		m.put("Board", "BoardView");
+		
+		m.put(this.getClass().getSimpleName(), "BoardView");
 		return m;
 	}
+	
+	/**
+	 * example to show that something happens, true implementation should do something
+	 * that makes SENSE
+	 * @param x
+	 * @param y
+	 */
+	public void click(int x, int y){
+		map[x][y] = null;
+		stateChanged = true;
+	}
+@Override
+public <T> void setData(T data) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public <T> T getData() {
+	// TODO Auto-generated method stub
+	return null;
+}
 	
 
 }

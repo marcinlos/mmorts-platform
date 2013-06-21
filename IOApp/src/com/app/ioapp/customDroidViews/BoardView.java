@@ -16,10 +16,13 @@ import android.util.Log;
 
 import com.app.ioapp.R;
 import com.app.ioapp.config.ConfigException;
+import com.app.ioapp.modules.Building;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.InfrastructureModule;
+import com.app.ioapp.modules.InfrastructureModuleData;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.Tile;
+import com.app.ioapp.view.MainView;
 
 public class BoardView extends AbstractModuleView{
 
@@ -29,9 +32,10 @@ public class BoardView extends AbstractModuleView{
 	//private int mapSize = 25;
 	private int mapWidth = 25;
 	private int mapHeight = 25;
-	private InfrastructureModule map;
+	//private InfrastructureModule map;
 	private Map<String,Bitmap> cache;
 	private boolean refresh_in_progress;
+	private InfrastructureModuleData currentData;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
@@ -55,29 +59,9 @@ public class BoardView extends AbstractModuleView{
 	
 	private void addRefresher(){
 		Timer timer = new Timer();
-        timer.schedule(new ViewRefresher(this), 5, 10000);
+        timer.schedule(new ViewRefresher(this), 5, 1000);
 	}
 	
-	@Override
-	public void setModuleImpl(Module module){
-		if(!(module instanceof InfrastructureModule)){
-			Log.e(ID,"Wrong module uset for init");
-			throw new ConfigException();
-		}
-		InfrastructureModule board = (InfrastructureModule) module;
-		this.map = board;
-		this.mapWidth = board.getWidth();
-		this.mapHeight = board.getHeight();
-		//TODO not sure if that's how it'll work
-		Properties p = board.getProperties();
-		if(p != null){
-			Integer tmp = Integer.valueOf((String) p.get("InfrastructureModule.tileSize"));
-			if(tmp != null){
-				imageSize = tmp;
-			}
-		}
-		addRefresher();
-	}
 	
 	private void cacheBitmap(Bitmap b){
 		
@@ -87,18 +71,26 @@ public class BoardView extends AbstractModuleView{
 	@Override
 	public void refresh(){
 		Log.d(ID,"Refresh called");
-		virtual_map = map.getMap();
+		virtual_map = currentData.map;
 		fields = new ArrayList<ITile>();
 		for(int i=0;i<mapWidth;i++){
 			for(int j=0;j<mapHeight;j++){
 				ITile tile = virtual_map[i][j];
 				if(tile != null && tile.isValid()){
+					//TODO wybieranie obrazka na podstawie budynku który tam jest a nie
+					Building b = tile.getBuilding();
+					if(b == null){
+						Log.e(ID,"Tile is valid but no building is built here, hmm");
+					}
+					
 					if (tile.getBitmap() == null){
 						int id = getResources().getIdentifier(tile.getBitmapID(), "drawable", "com.app.ioapp");
 						tile.setBitmap(BitmapFactory.decodeResource(getResources(),id));
 					}
 					fields.add(tile);
 					Log.d(ID, "Added a tile");
+					
+					
 				}
 				else if(tile == null){
 					fields.add(new Tile(
@@ -122,8 +114,9 @@ public class BoardView extends AbstractModuleView{
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		if(map.stateChanged()){
-			map.stateReceived();
+		if(view.stateChanged(moduleName)){
+			view.stateReceived(moduleName);
+			currentData = view.getData(moduleName, InfrastructureModuleData.class);
 			refresh();
 		}
 		super.onDraw(canvas);
@@ -141,6 +134,29 @@ public class BoardView extends AbstractModuleView{
 			canvas.drawBitmap(element.getBitmap(), element.getX()*imageSize,
 					element.getY()*imageSize, null);
 		}
+	}
+
+	@Override
+	public void iWasClicked(float x, float y) {
+		Log.d(ID,"I was clicked on: x=" + x + " y=" + y);
+		float tmp = x/imageSize;
+		int truex = (int)tmp;
+		tmp = y/imageSize;
+		int truey = (int)tmp;
+		//map.click(truex,truey);
+		//TODO - how to invoke specific methods? Pass functions defining object?
+		
+	}
+
+	@Override
+	public void init(String s, MainView v){
+		view = v;
+		moduleName = s;
+		currentData = view.getData(s, InfrastructureModuleData.class);
+		this.mapWidth = currentData.mapWidth;
+		this.mapHeight = currentData.mapHeight;
+		//TODO set tile size to somethin, based on phone specifics or somethin?
+		addRefresher();
 	}
 
 }
