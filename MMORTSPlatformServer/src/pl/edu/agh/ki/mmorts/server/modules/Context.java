@@ -3,7 +3,8 @@ package pl.edu.agh.ki.mmorts.server.modules;
 import pl.edu.agh.ki.mmorts.server.util.DataStore;
 
 /**
- * Simple storage class for transaction context information.
+ * Heterogenous type-safe key-value container allowing modules to share
+ * request-scope data.
  * 
  * @author los
  */
