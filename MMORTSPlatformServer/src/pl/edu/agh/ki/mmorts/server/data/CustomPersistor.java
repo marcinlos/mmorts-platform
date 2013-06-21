@@ -32,12 +32,12 @@ public interface CustomPersistor {
 	 * 			indicates for which module binding occurs
 	 * @param playerName
 	 * 			object is going to be bound to this player name
-	 * @param o
-	 * 			object bound
+	 * @param data
+	 * 			data object bound
 	 * @throws IllegalArgumentException
 	 * 			thrown when binding with this player name exists in this module in database
 	 */
-	void createBinding(String moduleName, String playerName, Object o) throws IllegalArgumentException;
+	<T> void createBinding(String moduleName, String playerName, T data) throws IllegalArgumentException;
 	
 	/**
 	 * Receives object bound to player name for given module.
@@ -47,11 +47,11 @@ public interface CustomPersistor {
 	 * @param playerName
 	 * 			indicates player to which object is bound
 	 * @return
-	 * 			Valid Java object bound with player name in given module
+	 * 			Valid Java object(connected with module) bound with player name in given module
 	 * @throws IllegalArgumentException
 	 * 			thrown when player name is not bound in this module
 	 */
-	Object receiveBinding(String moduleName, String playerName) throws IllegalArgumentException;
+	<T> T receiveBinding(String moduleName, String playerName, Class<T> type) throws IllegalArgumentException;
 	/**
 	 * Updates object bound to player name for given module.
 	 * Player name must be bound in this module in database earlier.
@@ -65,7 +65,7 @@ public interface CustomPersistor {
 	 * @throws IllegalArgumentException
 	 * 			thrown when player name is not bound in this module 
 	 */
-	void updateBinding(String modulename, String playerName, Object o) throws IllegalArgumentException;
+	<T> void updateBinding(String modulename, String playerName, T data) throws IllegalArgumentException;
 	/**
 	 * Deletes binding in given module.
 	 * Binding must occur in this module in database earlier.

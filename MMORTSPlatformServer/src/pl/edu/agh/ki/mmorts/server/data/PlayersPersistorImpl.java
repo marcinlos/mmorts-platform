@@ -11,28 +11,29 @@ public class PlayersPersistorImpl implements PlayersPersistor {
 
 	@Override
 	public void createPlayer(PlayerData player) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
+		db.createPlayer(player);
 	}
 
 	@Override
 	public PlayerData receivePlayer(String name)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		return db.receivePlayer(name);
 	}
 
 	@Override
 	public void updatePlayer(String name, PlayerData player)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
+		if (name.equals(player.getName())) {
+			throw new IllegalArgumentException();
+		}
+		db.updatePlayer(name, player);
 	}
 
 	@Override
 	public void deletePlayer(String name) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
+		db.deletePlayer(name);
 	}
+
+
 
 }
