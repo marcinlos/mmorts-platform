@@ -22,6 +22,8 @@ module mmorts {
     /* Server's response for the client message */
     struct Response {
     
+        int version;
+    
         /* Many modules may respond, the responses are bundled */ 
         MessageSeq messages;
     };

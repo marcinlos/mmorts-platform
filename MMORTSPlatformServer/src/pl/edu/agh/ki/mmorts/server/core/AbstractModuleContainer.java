@@ -41,6 +41,9 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
 
     /** Implementation of service locator */
     private final ServiceLocator services = new ServiceLocatorDelgate();
+    
+    /** Version of the server */
+    private int version;
 
     
     public AbstractModuleContainer() {
@@ -59,6 +62,20 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
 
     protected Map<String, Set<Module>> multicast() {
         return multicast;
+    }
+    
+    /**
+     * @return Version of the application
+     */
+    protected int version() {
+        return version;
+    }
+    
+    /**
+     * Updates the version number 
+     */
+    protected void updateVersion() {
+        ++ version;
     }
 
     /**

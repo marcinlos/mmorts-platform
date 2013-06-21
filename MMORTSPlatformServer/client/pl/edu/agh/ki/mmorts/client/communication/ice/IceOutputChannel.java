@@ -1,7 +1,5 @@
 package pl.edu.agh.ki.mmorts.client.communication.ice;
 
-import java.util.List;
-
 import pl.edu.agh.ki.mmorts.Callback_Dispatcher_deliver;
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
 import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
@@ -10,6 +8,7 @@ import pl.edu.agh.ki.mmorts.client.communication.MessageOutputChannel;
 import pl.edu.agh.ki.mmorts.client.communication.ResponseCallback;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import Ice.LocalException;
 import Ice.ObjectPrx;
@@ -76,7 +75,7 @@ public class IceOutputChannel implements MessageOutputChannel {
      * {@inheritDoc}
      */
     @Override
-    public List<Message> send(Message message) {
+    public MessagePack send(Message message) {
         Response response = dispatcher.deliver(Translator.iceify(message));
         return Translator.fromIceResponse(response);
     }

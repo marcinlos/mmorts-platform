@@ -7,6 +7,7 @@ import java.util.List;
 
 import pl.edu.agh.ki.mmorts.Response;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.common.message.Messages;
 
 /**
@@ -59,24 +60,29 @@ public final class Translator {
      * Converts a collection of system messages to an Ice {@code Response}
      * structure.
      * 
+     * @param ver
+     *            Version of the application
      * @param msgs
      *            Collection of messages constituting the response
      * @return Ice {@code Response} structure
      */
-    public static Response toIceResponse(Collection<Message> msgs) {
-        return new Response(iceify(msgs));
+    public static Response toIceResponse(int ver, Collection<Message> msgs) {
+        return new Response(ver, iceify(msgs));
     }
 
     /**
      * Converts an array of system messages to an Ice {@code Response}
      * structure.
      * 
+     * @param ver
+     *            Version of the application
+     * 
      * @param msgs
      *            Collection of messages constituting the response
      * @return Ice {@code Response} structure
      */
-    public static Response toIceResponse(Message[] msgs) {
-        return toIceResponse(Arrays.asList(msgs));
+    public static Response toIceResponse(int ver, Message[] msgs) {
+        return toIceResponse(ver, Arrays.asList(msgs));
     }
 
     /**
@@ -97,14 +103,15 @@ public final class Translator {
      * 
      * @param iceMsgs
      *            Array of Ice messages
-     * @return {@linkplain List} of system-format messages
+     * @return {@linkplain MessagePack} containing a sequence of system messages
      */
-    public static List<Message> deicefy(pl.edu.agh.ki.mmorts.Message[] iceMsgs) {
+    public static MessagePack deicefy(int ver,
+            pl.edu.agh.ki.mmorts.Message[] iceMsgs) {
         List<Message> msgs = new ArrayList<Message>(iceMsgs.length);
         for (pl.edu.agh.ki.mmorts.Message iceMsg : iceMsgs) {
             msgs.add(deiceify(iceMsg));
         }
-        return msgs;
+        return new MessagePack(ver, msgs);
     }
 
     /**
@@ -113,9 +120,9 @@ public final class Translator {
      * 
      * @param response
      *            Ice {@code Response} structure
-     * @return {@linkplain List} of system messages
+     * @return {@linkplain MessagePack} containing a sequence of system messages
      */
-    public static List<Message> fromIceResponse(Response response) {
-        return deicefy(response.messages);
+    public static MessagePack fromIceResponse(Response response) {
+        return deicefy(response.version, response.messages);
     }
 }

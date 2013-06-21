@@ -1,6 +1,5 @@
 package pl.edu.agh.ki.mmorts.testclient;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
@@ -13,6 +12,7 @@ import pl.edu.agh.ki.mmorts.client.communication.MessageOutputChannel;
 import pl.edu.agh.ki.mmorts.client.communication.ResponseCallback;
 import pl.edu.agh.ki.mmorts.client.communication.ice.IceOutputChannel;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
@@ -69,9 +69,10 @@ public class Client implements Interpreter {
     private void sendSingleMessage(Scanner scanner) {
         try {
             Message msg = parseMessage(scanner);
-            List<Message> response = channel.send(msg);
+            MessagePack response = channel.send(msg);
             System.out.println("Response:");
-            for (Message message : response) {
+            System.out.println("version: " + response.version);
+            for (Message message : response.messages) {
                 System.out.println("* + " + message);
             }
         } catch (NoSuchElementException e) {
@@ -112,7 +113,7 @@ public class Client implements Interpreter {
                 for (int i = 0; i < totalCount; ++i) {
                     channel.sendAsync(message, new ResponseCallback() {
                         @Override
-                        public void responded(List<Message> messages) {
+                        public void responded(MessagePack messages) {
                             latch.countDown();
                         }
 

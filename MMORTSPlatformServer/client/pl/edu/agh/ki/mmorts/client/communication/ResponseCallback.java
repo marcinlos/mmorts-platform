@@ -1,8 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.communication;
 
-import java.util.List;
-
-import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 
 /**
  * Message callback, invoked upon receiving the response for previously sent
@@ -20,7 +18,7 @@ public interface ResponseCallback {
      * @param messages
      *            Messages constituing the response
      */
-    void responded(List<Message> messages);
+    void responded(MessagePack messages);
 
     /**
      * Invoked when the message delivery/processing has failed at some point.

@@ -1,8 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.communication;
 
-import java.util.List;
-
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 
 /**
  * Interface of a message output channel, providing output capabilities
@@ -19,7 +18,7 @@ public interface MessageOutputChannel {
      *            Message to be synchronously delivered
      * @return Messages constituing the response
      */
-    List<Message> send(Message message);
+    MessagePack send(Message message);
 
     /**
      * Sends the message asynchronously, ignores the response. Debug and

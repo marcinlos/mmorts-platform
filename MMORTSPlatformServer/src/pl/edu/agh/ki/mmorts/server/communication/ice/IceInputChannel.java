@@ -45,7 +45,7 @@ public class IceInputChannel extends AbstractChannel {
     @Inject
     @Named(ICE_ARGS)
     private String argString;
-
+    
     /** Ice object */
     private Ice.Communicator ice;
 
@@ -166,13 +166,13 @@ public class IceInputChannel extends AbstractChannel {
         }
 
         @Override
-        public void send(Collection<Message> messages) {
-            __cb.ice_response(Translator.toIceResponse(messages));
+        public void send(int version, Collection<Message> messages) {
+            __cb.ice_response(Translator.toIceResponse(version, messages));
         }
 
         @Override
-        public void send(Message... messages) {
-            send(Arrays.asList(messages));
+        public void send(int version, Message... messages) {
+            send(version, Arrays.asList(messages));
         }
 
         @Override

@@ -121,7 +121,7 @@ public abstract class AbstractDispatcher extends AbstractModuleContainer
                 logger.debug("Transaction commited, executing listeners");
                 tm.commit();
                 runPostCommitStack();
-                response.send(executor().responses());
+                response.send(version(), executor().responses());
             } catch (Exception e) {
                 logger.error("Exception inside a commit handler", e);
                 response.failed(e);
@@ -129,7 +129,7 @@ public abstract class AbstractDispatcher extends AbstractModuleContainer
         } catch (Exception e) {
             logger.debug("Transaction rolled back due to exception", e);
             tm.rollback();
-            response.send(executor().responses());
+            response.send(version(), executor().responses());
         } finally {
             // After commit/rollback reset the executor
             executor().clear();
