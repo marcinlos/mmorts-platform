@@ -2,6 +2,10 @@ package pl.edu.agh.ki.mmorts.server.modules.dsl;
 
 import java.util.Map;
 
+/**
+ * 
+ * @author los
+ */
 public class DSL {
 
     private DSL() {

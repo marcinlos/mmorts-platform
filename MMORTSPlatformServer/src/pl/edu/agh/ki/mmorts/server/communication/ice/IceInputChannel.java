@@ -8,12 +8,13 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.AMD_Dispatcher_deliver;
-import pl.edu.agh.ki.mmorts.Response;
+import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts._DispatcherDisp;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.AbstractChannel;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
+import pl.edu.agh.ki.mmorts.server.communication.MessageReceiver;
 import pl.edu.agh.ki.mmorts.server.config.MissingRequiredPropertiesException;
 import pl.edu.agh.ki.mmorts.server.core.Dispatcher;
 import pl.edu.agh.ki.mmorts.server.core.InitException;
@@ -27,12 +28,15 @@ import com.google.inject.name.Named;
 /**
  * Concrete {@linkplain Gateway} and {@linkplain Dispatcher} implementation,
  * using Ice.
+ * 
+ * @author los
  */
-public class IceChannel extends AbstractChannel {
+public class IceInputChannel extends AbstractChannel {
 
+    private static final Logger logger = Logger.getLogger(IceInputChannel.class);
+
+    /** Name of the property containing desired adapter name */
     private static final String ADAPTER_NAME = "Adapter.Name";
-
-    private static final Logger logger = Logger.getLogger(IceChannel.class);
 
     /** Name of the config property denoting ice communicator args */
     public static final String ICE_ARGS = "sv.dispatcher.ice.args";
@@ -41,7 +45,7 @@ public class IceChannel extends AbstractChannel {
     @Inject
     @Named(ICE_ARGS)
     private String argString;
-
+    
     /** Ice object */
     private Ice.Communicator ice;
 
@@ -90,20 +94,26 @@ public class IceChannel extends AbstractChannel {
             Identity id = ice.stringToIdentity("Dispatcher");
             adapter.add(impl, id);
             logger.debug("Servant added");
-            adapter.activate();
-            logger.debug("Adapter activated");
-
         } catch (Ice.LocalException e) {
-            logger.fatal("Error while initializing Ice communicator", e);
-            try {
-                if (ice != null) {
-                    ice.shutdown();
-                }
-            } catch (Exception e1) {
-                logger.fatal("Cannot shutdown ice after init failure", e1);
-            }
-            throw new InitException("Ice init failure", e);
+            fatalShutdown(e);
         }
+    }
+
+    /**
+     * Helper function for shutting down Ice in case of an emergency
+     * 
+     * @param e Exception that caused the shutdown
+     */
+    private void fatalShutdown(Ice.LocalException e) {
+        logger.fatal("Error while initializing Ice communicator", e);
+        try {
+            if (ice != null) {
+                ice.shutdown();
+            }
+        } catch (Exception e1) {
+            logger.fatal("Cannot shutdown ice after init failure", e1);
+        }
+        throw new InitException("Ice init failure", e);
     }
 
     /**
@@ -114,13 +124,31 @@ public class IceChannel extends AbstractChannel {
     }
 
     /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Activates an object adapter created previously during initialization.
+     */
+    @Override
+    public void startReceiving(MessageReceiver receiver) {
+        super.startReceiving(receiver);
+        try {
+            adapter.activate();
+            logger.debug("Adapter activated");
+        } catch (Ice.LocalException e) {
+            fatalShutdown(e);
+        }
+    }
+
+    /**
      * Actual Ice object used to communicate with the client.
      */
     class DispatcherImpl extends _DispatcherDisp {
 
         @Override
-        public void deliver_async(final AMD_Dispatcher_deliver __cb,
+        public void deliver_async(AMD_Dispatcher_deliver __cb,
                 pl.edu.agh.ki.mmorts.Message msg, Current __current) {
+            // Forward message to the associated receiver
             forwardMessage(Translator.deiceify(msg), new Resp(__cb));
         }
     }
@@ -129,8 +157,7 @@ public class IceChannel extends AbstractChannel {
      * Implementation of the callback, translating message to Ice format and
      * sending it as a response.
      */
-    private class Resp implements
-            pl.edu.agh.ki.mmorts.server.communication.Response {
+    private class Resp implements Response {
 
         private final AMD_Dispatcher_deliver __cb;
 
@@ -139,19 +166,13 @@ public class IceChannel extends AbstractChannel {
         }
 
         @Override
-        public void send(Collection<Message> messages) {
-            pl.edu.agh.ki.mmorts.Message[] msgs = new pl.edu.agh.ki.mmorts.Message[messages
-                    .size()];
-            int i = 0;
-            for (Message msg : messages) {
-                msgs[i++] = Translator.iceify(msg);
-            }
-            __cb.ice_response(new Response(msgs));
+        public void send(int version, Collection<Message> messages) {
+            __cb.ice_response(Translator.toIceResponse(version, messages));
         }
 
         @Override
-        public void send(Message... messages) {
-            send(Arrays.asList(messages));
+        public void send(int version, Message... messages) {
+            send(version, Arrays.asList(messages));
         }
 
         @Override

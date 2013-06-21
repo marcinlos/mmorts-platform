@@ -1,93 +1,193 @@
 package pl.edu.agh.ki.mmorts.testclient;
 
-import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import pl.edu.agh.ki.mmorts.DispatcherPrx;
-import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
-import pl.edu.agh.ki.mmorts.Response;
-import pl.edu.agh.ki.mmorts.common.ice.Translator;
+import pl.edu.agh.ki.mmorts.cli.CommandException;
+import pl.edu.agh.ki.mmorts.cli.Interpreter;
+import pl.edu.agh.ki.mmorts.client.communication.MessageOutputChannel;
+import pl.edu.agh.ki.mmorts.client.communication.ResponseCallback;
+import pl.edu.agh.ki.mmorts.client.communication.ice.IceOutputChannel;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
-import Ice.ObjectPrx;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
-public class Client extends Ice.Application {
+/**
+ * Test client application.
+ * 
+ * @author los
+ */
+public class Client implements Interpreter {
 
-    private DispatcherPrx dispatcher;
+    /** Message channel */
+    private final MessageOutputChannel channel;
 
-    private static final String PROMPT = "> ";
-
-    @Override
-    public int run(String[] args) {
-        String str = communicator().getProperties().getProperty("MMORTSServer.Proxy");
-        ObjectPrx obj = communicator().stringToProxy(str);
-        System.out.print("Obtaining server reference...");
-        System.out.flush();
-        try {
-            dispatcher = DispatcherPrxHelper.checkedCast(obj);
-            if (dispatcher == null) {
-                System.err.println("Failed to obtain dispatcher reference");
-                System.exit(1);
-            }
-            System.out.println("done");
-        } catch (Ice.ConnectionRefusedException e) {
-            System.out.println("\nConnection refused, is server running?");
-            return 1;
-        }
-        try {
-            repl();
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        } finally {
-            communicator().destroy();
-        }
-        return 0;
+    public Client(String[] args) {
+        channel = new IceOutputChannel(args);
     }
 
-    private void repl() throws IOException {
-        System.out.println("MMORTS Platform");
-        System.out.println("Test client");
-        Scanner input = new Scanner(System.in);
-        while (input.hasNextLine()) {
-            System.out.print(PROMPT);
-            System.out.flush();
-            String line = input.nextLine();
-            if (!line.isEmpty()) {
-                interpret(new Scanner(line));
-            }
-        }
+    /**
+     * Closes the channel
+     */
+    @OnShutdown
+    private void shutdown() {
+        Methods.callAnnotated(OnShutdown.class, channel);
     }
 
-    private void interpret(Scanner scanner) {
-        String cmd = scanner.next();
-        if (cmd.equals("msg")) {
-            parseMessage(scanner);
+    /**
+     * Parses the message in the format <tt>address (U|M) type</tt> from the
+     * given scanner.
+     * 
+     * @param scanner
+     *            Scanner to take input from
+     * @return Parsed message
+     */
+    private Message parseMessage(Scanner scanner) {
+        String address = scanner.next();
+        String m = scanner.next();
+        Mode mode;
+        if (m.equals("U")) {
+            mode = Mode.UNICAST;
+        } else {
+            mode = Mode.MULTICAST;
         }
+        String type = scanner.next();
+        Message msg = new Message(66, "source", address, mode, type, "Content");
+        return msg;
     }
 
-    private void parseMessage(Scanner scanner) {
+    /**
+     * Sends a single message as read from the input scanner.
+     * 
+     * @param scanner
+     */
+    private void sendSingleMessage(Scanner scanner) {
         try {
-            String address = scanner.next();
-            String m = scanner.next();
-            Mode mode;
-            if (m.equals("U")) {
-                mode = Mode.UNICAST;
-            } else {
-                mode = Mode.MULTICAST;
-            }
-            String type = scanner.next();
-            Message msg = new Message(66, "ja", address, mode, type, "Siema");
-            Response resp = dispatcher.deliver(Translator.iceify(msg));
+            Message msg = parseMessage(scanner);
+            MessagePack response = channel.send(msg);
             System.out.println("Response:");
-            for (pl.edu.agh.ki.mmorts.Message iceMsg: resp.messages) {
-                Message message = Translator.deiceify(iceMsg);
+            System.out.println("version: " + response.version);
+            for (Message message : response.messages) {
                 System.out.println("* + " + message);
             }
-
         } catch (NoSuchElementException e) {
             System.err.println("usage: msg address (U|M) type");
         }
+    }
+
+    /**
+     * Helper for testing absolute raw throughput of the server.
+     */
+    private class StressTester implements Runnable {
+
+        /** How often are the bursts sent */
+        static final int BURST_COUNT = 20;
+
+        Message message;
+        AtomicInteger failures = new AtomicInteger(0);
+
+        int totalCount;
+        int perSec;
+        int burstCount;
+
+        public StressTester(Message message, int secs, int perSec) {
+            this.message = message;
+            this.totalCount = secs * perSec;
+            this.perSec = perSec;
+            this.burstCount = perSec <= BURST_COUNT ? perSec : BURST_COUNT;
+        }
+
+        @Override
+        public void run() {
+            final int millis = 1000 / burstCount;
+            final int burstSize = perSec / burstCount;
+            final CountDownLatch latch = new CountDownLatch(totalCount);
+            try {
+                final long before = System.currentTimeMillis();
+                long burstStart = before;
+                for (int i = 0; i < totalCount; ++i) {
+                    channel.sendAsync(message, new ResponseCallback() {
+                        @Override
+                        public void responded(MessagePack messages) {
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void failed(Exception e) {
+                            failures.incrementAndGet();
+                            latch.countDown();
+                        }
+                    });
+                    // Send burst
+                    if (i % burstSize == 0) {
+                        updateProgressBar(i);
+                        long now = System.currentTimeMillis();
+                        long elapsed = now - burstStart;
+                        TimeUnit.MILLISECONDS.sleep(millis - elapsed);
+                        burstStart = System.currentTimeMillis();
+                    }
+                }
+                if (!latch.await(5, TimeUnit.SECONDS)) {
+                    System.err.println("Timeout");
+                }
+                // Last message
+                long now = System.currentTimeMillis();
+                long time = now - before;
+                System.out.println("\nOK: " + time + "ms");
+                double actualCPS = 1000 * totalCount / (double) time;
+                System.out.format("%.1f calls/s\n", actualCPS);
+                int lost = failures.get() + (int) latch.getCount();
+                int ok = totalCount - lost;
+                double lossPerc = 100 * (double) lost / totalCount;
+                System.out.format("%d/%d (%.2f%% loss)\n", ok, totalCount,
+                        lossPerc);
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted...");
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        private void updateProgressBar(int i) {
+            StringBuilder sb = new StringBuilder("\r|");
+            final int size = 40;
+            final int filled = (int) (size * ((double) i / totalCount));
+            for (int j = 0; j < size - 1; ++j) {
+                sb.append(j < filled ? '*' : ' ');
+            }
+            sb.append("|");
+            System.out.print(sb.toString());
+            System.out.flush();
+        }
+
+    }
+
+    private void floodMessage(Scanner scanner) {
+        try {
+            final int secs = scanner.nextInt();
+            final int perSec = scanner.nextInt();
+
+            Message msg = parseMessage(scanner);
+            new StressTester(msg, secs, perSec).run();
+        } catch (NoSuchElementException e) {
+            System.err.println("usage: flood sec per_sec address (U|M) type");
+        }
+    }
+
+    @Override
+    public boolean interpret(String line) throws CommandException {
+        Scanner scanner = new Scanner(line);
+        String first = scanner.next();
+        if (first.equals("msg")) {
+            sendSingleMessage(scanner);
+        } else if (first.equals("flood")) {
+            floodMessage(scanner);
+        }
+        return true;
     }
 
 }

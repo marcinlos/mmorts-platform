@@ -7,22 +7,30 @@ import java.lang.annotation.Target;
 
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 
+/**
+ * 
+ * 
+ * @author los
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface MessageMapping {
 
     /** Request string */
-    String[] value();
+    String[] value() default {};
     
     /** Mode of the message delivery */
     Mode[] mode() default Mode.UNICAST;
 
     /** Target address */
-    String[] address() default "";
+    String[] address() default {};
     
     /** Multicast group address */
-    String[] group() default "";
+    String[] group() default {};
     
     /** Source address */
-    String source() default "";
+    String[] source() default {};
+    
+    /** Carried data */
+    Class<?>[] type() default {};
 }

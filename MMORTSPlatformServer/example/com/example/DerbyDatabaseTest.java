@@ -45,15 +45,23 @@ public class DerbyDatabaseTest {
 
 	private PlayerData olderJohnData = new PlayerDataImpl(johnData.getName(),
 			"OlderJohnPass", "GrandMaster");
+	
+	private ExData exampleData = new ExData(12345, false);
+	private ExData exampleSecData = new ExData(54321, true);
 
 	@BeforeClass
 	public static void init() {
 		try {
 
 			QueriesCreator qc = new QueriesCreator();
-			md = ModuleDescriptor.create("Module 1 T_est", LoginModule.class)
-					.build();
-
+			ModuleDescriptor.Builder mdCreat = ModuleDescriptor.create("Module 1 T_est", LoginModule.class);
+			mdCreat.addProperty("datatype","com.example.ExData");
+			md = mdCreat.build();
+			
+			
+			
+			
+			
 			DerbyConnectionCreator connCreator = new DerbyConnectionCreator();
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 			for (Field f : connCreator.getClass().getDeclaredFields()) {
@@ -254,8 +262,149 @@ public class DerbyDatabaseTest {
 		tm.commit();
 	}
 	
+	@Test
+	public void receiveNonExistingPlayer() throws Exception {
+		clean();
+		tm.begin();
+		PlayerData data = johnData;
+		try {
+			data = database.receivePlayer("NonExisting");
+		} catch (Exception e) {
+			tm.rollback();
+			e.printStackTrace();
+			throw e;
+		}
+		tm.commit();
+		Assert.assertNull(data);
+	}
+	
+	@Test
+	public void createBindingSucc() throws Exception {
+		clean();
+		tm.begin();
+		try {
+			database.createBinding(md.name, johnData.getName(), exampleData);
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+		tm.commit();
+		
+		tm.begin();
+		ExData rec = null;
+		try {
+			rec = (ExData)database.receiveBinding(md.name, johnData.getName());
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+
+		tm.commit();
+		String[] got = { String.valueOf(rec.getBoolObject()), String.valueOf(rec.getIntField())};
+		String[] org = { String.valueOf(exampleData.getBoolObject()), String.valueOf(exampleData.getIntField()) };
+		Assert.assertArrayEquals(org, got);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void createTheSameBinding() throws Exception {
+		tm.begin();
+		try {
+			database.createBinding(md.name, johnData.getName(), exampleData);
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+		tm.commit();
+	}
+	
+	
+	@Test
+	public void updateBindingSucc() throws Exception {
+		tm.begin();
+		try {
+			database.updateBinding(md.name, johnData.getName(), exampleSecData);
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+		tm.commit();
+		
+		tm.begin();
+		ExData rec = null;
+		try {
+			rec = (ExData)database.receiveBinding(md.name, johnData.getName());
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+
+		tm.commit();
+		String[] got = { String.valueOf(rec.getBoolObject()), String.valueOf(rec.getIntField())};
+		String[] org = { String.valueOf(exampleSecData.getBoolObject()), String.valueOf(exampleSecData.getIntField()) };
+		Assert.assertArrayEquals(org, got);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void updateBindingNonExistingSucc() throws Exception {
+		tm.begin();
+		try {
+			database.updateBinding(md.name, "NonExisting", exampleSecData);
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+		tm.commit();
+		}
+	
+	
+	/*Just execute without exception*/
+	@Test
+	public void deleteExistingBinding() throws Exception {
+		tm.begin();
+		try {
+			database.deleteBinding(md.name, johnData.getName());
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+		tm.commit();
+		Assert.assertTrue(true);
+		}
+	
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void deleteNonExistingBinding() throws Exception {
+		tm.begin();
+		try {
+			database.deleteBinding(md.name, "NonExisting");
+		} catch (Exception e) {
+			tm.rollback();
+			throw e;
+		}
+		tm.commit();
+		}
+	
+	@Test
+	public void receiveNonExistingBinding() throws Exception {
+		clean();
+		tm.begin();
+		Object o = new Object();
+		try {
+			o = database.receiveBinding(md.name, "NonExisting");
+		} catch (Exception e) {
+			tm.rollback();
+			e.printStackTrace();
+			throw e;
+		}
+		tm.commit();
+		Assert.assertNull(o);
+		}
+	
+	
 	private static String prepareModuleName(String moduleName) {
 		moduleName = moduleName.replace(" ", "__");
 		return moduleName;
 	}
+	
+	
 }

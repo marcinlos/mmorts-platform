@@ -6,6 +6,8 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 /**
  * Provides read-only information about loaded modules. 
+ * 
+ * @author los
  */
 public interface ModuleTable {
     

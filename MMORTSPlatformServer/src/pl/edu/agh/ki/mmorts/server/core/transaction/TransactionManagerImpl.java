@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 /**
  * Concrete implementation of {@linkplain TransactionManager}, using
  * {@linkplain SequentialTM} as per-thread local managers.
+ * 
+ * @author los
  */
 public class TransactionManagerImpl implements TransactionManager {
 
@@ -27,10 +29,19 @@ public class TransactionManagerImpl implements TransactionManager {
             return new SequentialTM();
         }
     };
-
+    
     /** Per-thread current transaction */
     private static final ThreadLocal<Transaction> transaction = new ThreadLocal<Transaction>();
 
+    /** Transaction provider implementation */
+    private TransactionProvider provider = new TransactionProvider() {
+        
+        @Override
+        public Transaction getCurrent() {
+            return getCurrent();
+        }
+    };
+    
     /**
      * Creates the transaction manager instance.
      */
@@ -116,6 +127,14 @@ public class TransactionManagerImpl implements TransactionManager {
         } else {
             throw new TransactionStateException("No transaction to rollback");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TransactionProvider getProvider() {
+        return provider;
     }
 
 }

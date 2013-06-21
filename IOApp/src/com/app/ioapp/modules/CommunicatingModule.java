@@ -1,6 +1,6 @@
 package com.app.ioapp.modules;
 
-import com.app.ioapp.communication.Message;
+import pl.edu.agh.ki.mmorts.common.message.Message;
 
 
 /**
@@ -29,8 +29,9 @@ public interface CommunicatingModule extends Module {
      * @param message
      *            Message of interest (i.e. matching module's unicast address or
      *            one of its' multicast groups)
+     *            TODO: javadoc
      */
-    void receive(Message message);
+    void receive(Message message, Context ctx);
     
     
     /**

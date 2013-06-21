@@ -1,5 +1,7 @@
 package com.app.ioapp.communication;
 
+import pl.edu.agh.ki.mmorts.common.message.Message;
+
 
 /**
  * Entity receiving messages from the {@linkplain MessageChannel}.

@@ -9,6 +9,8 @@ import java.util.Set;
 /**
  * Utility class containint various methods facilitating working reflectively
  * with methods.
+ * 
+ * @author los
  */
 public class Methods {
 

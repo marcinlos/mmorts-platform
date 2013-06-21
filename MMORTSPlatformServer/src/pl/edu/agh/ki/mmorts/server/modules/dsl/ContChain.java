@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 
+ * @author los
+ */
 public class ContChain implements Cont {
 
     private List<Cont> contList = new ArrayList<Cont>();

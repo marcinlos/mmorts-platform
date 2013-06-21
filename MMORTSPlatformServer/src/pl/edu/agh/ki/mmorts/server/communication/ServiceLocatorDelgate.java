@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Simple, efficient {@linkplain ServiceLocator} implementation based on
  * concurrent hash map from the JDK.
+ * 
+ * @author los
  */
 public class ServiceLocatorDelgate implements ServiceLocator {
 

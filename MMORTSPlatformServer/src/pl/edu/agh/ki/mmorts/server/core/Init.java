@@ -11,8 +11,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
+import pl.edu.agh.ki.mmorts.server.Main;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
-import pl.edu.agh.ki.mmorts.server.communication.MessageChannel;
+import pl.edu.agh.ki.mmorts.server.communication.MessageInputChannel;
+import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.config.Config;
 import pl.edu.agh.ki.mmorts.server.config.ConfigException;
 import pl.edu.agh.ki.mmorts.server.config.ConfigReader;
@@ -20,6 +22,7 @@ import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionProvider;
 import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
@@ -30,7 +33,6 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.server.util.DI;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
-import pl.edu.agh.ki.mmorts.testclient.Client;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -38,7 +40,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
- * First class to be instantiated in {@link Client#main(String[])}. Responsible
+ * First class to be instantiated in {@link Main#main(String[])}. Responsible
  * for the initialization of the whole server.
  * 
  * <p>
@@ -49,6 +51,8 @@ import com.google.inject.name.Names;
  * <li>Creates & initializes modules, based on the configuration
  * <li>Initializes database connection, creates persistence interfaces</li>
  * </ul>
+ * 
+ * @author los
  */
 public class Init {
 
@@ -79,7 +83,7 @@ public class Init {
     /**
      * Message channel created using the class specified in the configuration
      */
-    private MessageChannel channel;
+    private MessageInputChannel channel;
     private com.google.inject.Module channelModule;
 
     /**
@@ -114,7 +118,9 @@ public class Init {
     private com.google.inject.Module moduleTableModule;
 
     /**
-     * Creates the {@code Init} object and initializes the server.
+     * Creates the {@code Init} object and initializes the server, up to the
+     * point when all the components are fully operational, and the server is
+     * listening for incoming requests.
      * 
      * @param args
      *            Command line arguments
@@ -135,6 +141,10 @@ public class Init {
     /**
      * Waits until the shutdown is desired. Used as a filler between server init
      * and shutdown.
+     * 
+     * TODO: This has the potential to be a builtin REPL. However, the server
+     * really needs a standard JMX interface anyway, so this is probably pretty
+     * much useless.
      */
     private void waitForShutdown() {
         Scanner scanner = new Scanner(System.in);
@@ -252,20 +262,33 @@ public class Init {
             Class<? extends Module> cl = desc.moduleClass;
             // Inject config, dispatcher, tx manager and individual module
             // configuration
-            com.google.inject.Module props = new AbstractModule() {
+            com.google.inject.Module properties = new AbstractModule() {
                 @Override
                 protected void configure() {
                     Names.bindProperties(binder(), desc.config.asMap());
                 }
             };
             Module module = DI.createWith(cl, configModule, dispatcherModule,
-                    txManagerModule, props,
-                    DI.objectModule(desc, ModuleDescriptor.class));
+                    DI.objectModule(txManager.getProvider(),
+                            TransactionProvider.class), properties, DI
+                            .objectModule(desc, ModuleDescriptor.class));
             callInit(module);
             return module;
         } catch (Exception e) {
             throw new ModuleInitException(e);
         }
+    }
+
+    /**
+     * Registers module at runtime, after the server initialization sequence.
+     * The module initialization steps are precisely the same as for the
+     * ordinary initialization during server startup.
+     * 
+     * @param desc
+     *            Descriptor of the module to be loaded
+     */
+    private void registerModule(ModuleDescriptor desc) {
+
     }
 
     /**
@@ -358,10 +381,10 @@ public class Init {
 
     private void createChannel() {
         logger.debug("Creating message channel");
-        Class<? extends MessageChannel> cl = config.getChannelClass();
+        Class<? extends MessageInputChannel> cl = config.getChannelClass();
         channel = DI.createWith(cl, configModule);
         callInit(channel);
-        channelModule = DI.objectModule(channel, MessageChannel.class);
+        channelModule = DI.objectModule(channel, MessageInputChannel.class);
         logger.debug("Message channel created");
     }
 
@@ -371,7 +394,13 @@ public class Init {
         dispatcher = DI.createWith(cl, configModule, channelModule,
                 txManagerModule);
         callInit(dispatcher);
-        dispatcherModule = DI.objectModule(dispatcher, Gateway.class);
+        dispatcherModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                install(DI.objectModule(dispatcher, Gateway.class));
+                install(DI.objectModule(dispatcher, ServiceLocator.class));
+            }
+        };
         logger.debug("Dispatcher created");
     }
 

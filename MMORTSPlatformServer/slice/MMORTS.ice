@@ -13,7 +13,7 @@ module mmorts {
 
     /* Message from the client to the server */
     struct Message {
-        int conversationId;
+        int convId;
         Ice::ByteSeq content;
     };
     
@@ -21,6 +21,8 @@ module mmorts {
     
     /* Server's response for the client message */
     struct Response {
+    
+        int version;
     
         /* Many modules may respond, the responses are bundled */ 
         MessageSeq messages;

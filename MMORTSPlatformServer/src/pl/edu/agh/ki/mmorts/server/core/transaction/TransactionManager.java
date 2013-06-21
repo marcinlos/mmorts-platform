@@ -6,6 +6,8 @@ package pl.edu.agh.ki.mmorts.server.core.transaction;
  * to register commit/rollback callbacks. This way transaction participants are
  * able to guarantee atomicity, as long as they provide appropriate callbacks
  * and care is taken of locking the underlying resources.
+ * 
+ * @author los
  */
 public interface TransactionManager {
     
@@ -52,5 +54,10 @@ public interface TransactionManager {
      *             If there is no currently active transaction
      */
     void rollback();
+    
+    /**
+     * @return {@code TransactionProvider} for this manager
+     */
+    TransactionProvider getProvider();
 
 }

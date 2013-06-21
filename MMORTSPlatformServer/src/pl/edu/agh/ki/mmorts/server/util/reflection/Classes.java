@@ -5,6 +5,8 @@ import java.util.Iterator;
 /**
  * Utility class containing various methods facilitating working with java's
  * Class objects.
+ * 
+ * @author los
  */
 public class Classes {
 

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * 
+ * @author los
  */
 @BindingAnnotation
 @Target({ FIELD, METHOD, CONSTRUCTOR })
