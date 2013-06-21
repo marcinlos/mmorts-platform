@@ -15,11 +15,17 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.Response;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 
+/**
+ * Concrete implementation of the dispatcher using thead pool and per-thread
+ * transaction executors.
+ * 
+ * @author los
+ */
 public class ThreadedDispatcher extends AbstractDispatcher {
 
     private static final Logger logger = Logger
             .getLogger(ThreadedDispatcher.class);
-    
+
     @Inject
     @Named("sv.dispatcher.threads.init")
     private int threadsInit;
@@ -51,7 +57,7 @@ public class ThreadedDispatcher extends AbstractDispatcher {
     protected TransactionExecutor executor() {
         return executor.get();
     }
-    
+
     /**
      * Creates the thread pool and initializes the communication
      */
@@ -62,7 +68,7 @@ public class ThreadedDispatcher extends AbstractDispatcher {
         createThreadPool();
         super.init();
     }
-    
+
     /**
      * Initializes the thread pool used to dispatch messages
      */
@@ -74,7 +80,7 @@ public class ThreadedDispatcher extends AbstractDispatcher {
         threadPool = new ThreadPoolExecutor(threadsInit, threadsMax, keepalive,
                 TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
     }
-    
+
     /**
      * Orders thread pool shutdown and waits for the messages being processed.
      */

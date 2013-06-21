@@ -19,7 +19,7 @@ import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.util.ContAdapter;
 
 /**
- * Default implementation of a message dispatcher.
+ * Partial implementation of a message dispatcher.
  * 
  * @author los
  */
