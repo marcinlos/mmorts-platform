@@ -2,6 +2,7 @@ package pl.edu.agh.ki.mmorts.server.communication;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
+import pl.edu.agh.ki.mmorts.server.modules.ModuleLogicException;
 
 /**
  * Dispatcher interface for use of the client modules. Allows sending messages
@@ -21,13 +22,49 @@ import pl.edu.agh.ki.mmorts.server.modules.Continuation;
  * In general, invocation order is the reverse of that of actions registration.
  * 
  * <p>
- * As for the behaviour of messaging system in case of exceptions:
+ * Exception semantics during the transaction are somewhat complicated. Every
+ * transaction (assuming an {@linkplain Error} does not occur ) follows the
+ * following scenario:
  * <ul>
- * <li>If an exception occurs inside the transaction, all the messages sent
- * before it by {@link #sendDelayed} and {@link #sendResponse} are discarded.
- * Any further response messages are delivered.
- * <li>If an exception occurs inside the commit handler, all the messages are
- * discarded - this situation is considered abnormal
+ * <li>If no exception has been thrown during the main transaction body, commit
+ * handlers and post-transaction action stack is executed.
+ * <ul>
+ * <li>If no exception occurs during the post-commit phase, response is sent to
+ * the client.
+ * <li>If any exception is thrown in the commit handlers, the transaction is
+ * deemed unsuccessful and the remaining listeners are executed as during the
+ * rollback. Exceptions during their executions are ignored. Pending delayed
+ * messages are ignored, exception is sent as a response to the request.
+ * <li>If an exception is thrown in the post-commit communication, it is
+ * considered an error. Pending delayed messages are discarded and the
+ * continuations remaining on the stack have their {@link Continuation#failure}
+ * executed. Exceptions during their execution are ignored. Exception that
+ * caused the failure is sent as the request response.
+ * </ul>
+ * 
+ * <li>If the {@linkplain ModuleLogicException} is thrown inside the
+ * transaction, it is treated as a legitimate rollback request. Pending delayed
+ * messages are discarded. Transaction is rolled back - continuations remaining
+ * on the stack have their {@link Continuation#failure} invoked (errors during
+ * their execution are ignored), transaction listeners are executed (errors are
+ * ignored as well), and the post-rollbackphase follows.
+ * <ul>
+ * <li>If no exception is thrown during the post-rollback, the response messages
+ * are sent to the client
+ * <li>If an exception is thrown in the post-rollback communication, it is
+ * considered an error. Pending delayed messages are discarded and the
+ * continuations remaining on the stack have their {@link Continuation#failure}
+ * executed. Exceptions during their execution are ignored. Exception that
+ * caused the failure is sent as the request response.
+ * </ul>
+ * 
+ * <li>If any other exception occurs inside the transaction, it is considered an
+ * error. All pending delayed messages are discarded. Continuations remaining on
+ * the stack have their {@linkplain Continuation#failure} invoked, the
+ * transaction is rolled back. Post-rollback phase <strong>IS NOT
+ * EXECUTED</strong>. The details on the raised exception are sent to the client
+ * as the response.
+ * </ul>
  * </ul>
  * 
  * @author los

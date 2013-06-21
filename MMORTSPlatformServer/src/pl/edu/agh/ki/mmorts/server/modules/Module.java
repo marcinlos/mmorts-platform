@@ -8,6 +8,7 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.communication.Gateway;
 import pl.edu.agh.ki.mmorts.server.communication.ServiceLocator;
 import pl.edu.agh.ki.mmorts.server.config.Config;
+import pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionProvider;
 
 /**
@@ -24,10 +25,18 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionProvider;
  * module's {@linkplain #receive} method, together with the request context.
  * 
  * <p>
+ * Requests are processed in a transactional manner. At the beginning of the
+ * request, transaction is initiated. To cause rollback, module can at any point
+ * throw {@linkplain ModuleLogicException} if module logic precludes commiting.
+ * Any other exception is treated as an error and details are sent to the
+ * client. See {@linkplain Gateway} javadoc for the details on transaction
+ * anatomy and exception semantics.
+ * 
+ * <p>
  * During the request processing the module can initiate communication with
  * other modules, send the response to the client or send a notification delayed
  * until the successful commit of the request processing transaction through the
- * {@linkplain Gateway}. See the {@code Gateway}'s javadoc for details on the
+ * {@linkplain Gateway}. See the {@code Gateway} javadoc for details on the
  * semantics of provided operations.
  * 
  * <p>
@@ -50,6 +59,8 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionProvider;
  * <li>{@linkplain ServiceLocator}
  * <li>{@linkplain TransactionProvider}
  * <li>{@linkplain ModuleDescriptor} (of this module)
+ * <li>Custom persistor (configurable type, inject using
+ * {@linkplain CustomPersistor} annotation in addition to {@code Inject})
  * </ul>
  * 
  * <p>

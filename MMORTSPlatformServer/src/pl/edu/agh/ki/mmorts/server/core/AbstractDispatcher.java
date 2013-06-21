@@ -16,6 +16,7 @@ import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.Continuation;
 import pl.edu.agh.ki.mmorts.server.modules.Module;
+import pl.edu.agh.ki.mmorts.server.modules.ModuleLogicException;
 import pl.edu.agh.ki.mmorts.server.modules.util.ContAdapter;
 
 /**
@@ -115,9 +116,10 @@ public abstract class AbstractDispatcher extends DefaultModuleContainer
         logger.debug("Begin message transaction");
         // begin message transaction
         try {
-            // lock the module list
+            // lock the module list to ensure consistency across the transaction
             readLock.lock();
             tm.begin();
+            // place the message on the stack
             doSend(message);
             // realize transaction
             executor().run();
@@ -130,10 +132,23 @@ public abstract class AbstractDispatcher extends DefaultModuleContainer
                 logger.error("Exception inside a commit handler", e);
                 response.failed(e);
             }
-        } catch (Exception e) {
+        } catch (ModuleLogicException e) {
             logger.debug("Transaction rolled back due to exception", e);
+            // saved messages were cleared by the executor inside the run()
             tm.rollback();
-            response.send(version(), executor().responses());
+            try {
+                // handlers may have sent some messages
+                runPostCommitStack();
+                response.send(version(), executor().responses());
+            } catch (Exception e1) {
+                logger.error("Exception during post-rollback communication", e1);
+                response.failed(e1);
+            }
+        } catch (Exception e) {
+            // other exception - this is an error
+            logger.error("Unexpected exception during request processing", e);
+            tm.rollback();
+            response.failed(e);
         } finally {
             // After commit/rollback reset the executor
             executor().clear();
@@ -152,8 +167,11 @@ public abstract class AbstractDispatcher extends DefaultModuleContainer
         try {
             for (Message message : executor().notifications()) {
                 try {
-                    deliver(message);
+                    doSend(message);
                 } catch (TargetNotExistsException e) {
+                    // this will result in a fatal exception later on anyway,
+                    // it is kind of ignored here to ensure consistency of
+                    // exception semantics
                     logger.error("Notification for nonexistant module", e);
                 } catch (Exception e) {
                     logger.error("Exception while processing post-commit "
