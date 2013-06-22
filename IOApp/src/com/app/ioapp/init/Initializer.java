@@ -9,10 +9,11 @@ import java.util.Properties;
 
 import android.util.Log;
 
-import com.app.ioapp.communication.Dispatcher;
+import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.ConfigReader;
+import com.app.ioapp.modules.Dispatcher;
 import com.app.ioapp.modules.Module;
 
 /**
@@ -42,7 +43,9 @@ public class Initializer {
 	 * Player's password
 	 */
 	private String password;
-	
+	/**
+	 * Map of modules
+	 */
 	private Map<String, Module> modules;
     
     /**
@@ -148,7 +151,7 @@ public class Initializer {
 			}
 			//dispatcher.registerModules(modules);
 			
-			this.synchronizer = new Synchronizer(dispatcher, modules);
+			this.synchronizer = new Synchronizer((Gateway) dispatcher, modules);
 			
 			synchronizer.synchronizeState();
 		

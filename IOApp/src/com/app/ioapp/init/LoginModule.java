@@ -2,7 +2,7 @@ package com.app.ioapp.init;
 
 import android.util.Log;
 
-import com.app.ioapp.communication.Dispatcher;
+import com.app.ioapp.modules.Dispatcher;
 
 /**
  * Class responsible for registering, logging in and logging out
