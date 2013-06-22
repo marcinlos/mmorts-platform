@@ -11,7 +11,6 @@ import com.app.ioapp.config.PropertyMap;
 /**
  * Module configuration data class.
  * 
- * @author los
  */
 public final class ModuleDescriptor {
 

@@ -5,7 +5,6 @@ import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 /**
  * Entity receiving messages from the {@linkplain MessageInputChannel}.
  * 
- * @author los
  */
 public interface MessageReceiver {
 
