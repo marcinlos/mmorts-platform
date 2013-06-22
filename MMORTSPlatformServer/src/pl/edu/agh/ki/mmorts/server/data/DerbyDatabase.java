@@ -23,6 +23,15 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 /**
+ * Simple implementation of {@link Database} which wraps Apache Derby database.
+ * Implementation use connection pooling(implemented by {@link SimpleConnectionPool}) 
+ * Implementation is fully trasanctional. Contract for transaction and connection is:
+ * <ul>
+ * <li>One connection per transaction</li>
+ * <li>One transaction per one thread</li>
+ * <li>Connection is returned to pool after either commit or rollback</li>
+ * </ul>
+ * 
  * @author drew
  * 
  */
@@ -30,9 +39,15 @@ public class DerbyDatabase implements Database {
 
 	private static final Logger logger = Logger.getLogger(DerbyDatabase.class);
 
+	/**
+	 * Transaction manager which manages transactions 
+	 */
 	@Inject
 	private TransactionManager tm;
 
+	/**
+	 * Contains informations about loaded moduels
+	 */
 	@Inject
 	private ModuleTable moduleTable;
 	
@@ -61,6 +76,19 @@ public class DerbyDatabase implements Database {
 
 	private Gson gson = new Gson();
 	
+	/**
+	 * Initialize correct connection. Done operations:
+	 * <ul>
+	 * <li>Getting connection from pool</li>
+	 * <li>Disabling auto commit for connections</li>
+	 * <li>Adding listeners if transaction is either commited or rolled back.
+	 * Those listeners returns connection</li>
+	 * </ul>
+	 * @return
+	 * 		initialized connection
+	 * @throws NoConnectionException
+	 * 		when can't get connection from pool
+	 */
 	private Connection initConnection() throws NoConnectionException {
 		logger.debug("Initializing connection");
 		final Connection conn = connectionPool.getConnection();
@@ -103,11 +131,18 @@ public class DerbyDatabase implements Database {
 		return conn;
 	}
 
+	/**
+	 * Just returns connection to pool
+	 */
 	private void connectionReturn() {
 		connectionPool.returnConnection(perThreadConn.get());
 	}
 	
 	
+	/**
+	 * @param desc
+	 * @return
+	 */
 	private Class<?> getModuleDataClass(ModuleDescriptor desc){
 		return desc.config.get("datatype", Class.class);
 	}
