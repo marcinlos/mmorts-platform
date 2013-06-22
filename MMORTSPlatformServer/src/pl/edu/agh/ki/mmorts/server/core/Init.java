@@ -96,8 +96,8 @@ public class Init {
     /**
      * Players manager
      */
-    private PlayersPersistor playersManager;
-    private com.google.inject.Module playersManagerModule;
+    private PlayersPersistor playersPersistor;
+    private com.google.inject.Module playersPersistorModule;
 
     /**
      * Database interface, implementation as in the configuration file
@@ -242,7 +242,7 @@ public class Init {
     private void injectPersistors() {
         logger.debug("Injecting persistors");
         Injector injector = Guice.createInjector(customPersistorModule,
-                playersManagerModule);
+                playersPersistorModule);
         for (ConfiguredModule conf : dispatcher.getModules()) {
             injector.injectMembers(conf.module);
         }
@@ -311,9 +311,9 @@ public class Init {
                 logger.debug("Shutting down custom persistor");
                 callShutdown(customPersistor);
             }
-            if (playersManager != null) {
+            if (playersPersistor != null) {
                 logger.debug("Shutting down players manager");
-                callShutdown(playersManager);
+                callShutdown(playersPersistor);
             }
             if (database != null) {
                 logger.debug("Shutting down data source");
@@ -420,11 +420,11 @@ public class Init {
     private void createPlayersPersistor() {
         logger.debug("Creating players persistor");
         Class<? extends PlayersPersistor> cl = config.getPlayerManagerClass();
-        playersManager = DI.createWith(cl, configModule, databaseModule,
+        playersPersistor = DI.createWith(cl, configModule, databaseModule,
                 txManagerModule);
-        playersManagerModule = DI.objectModule(playersManager,
+        playersPersistorModule = DI.objectModule(playersPersistor,
                 PlayersPersistor.class);
-        callInit(playersManager);
+        callInit(playersPersistor);
         logger.debug("Players manager created");
     }
 

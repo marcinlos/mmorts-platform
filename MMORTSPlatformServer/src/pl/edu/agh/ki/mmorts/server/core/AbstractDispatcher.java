@@ -20,7 +20,11 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleLogicException;
 import pl.edu.agh.ki.mmorts.server.modules.util.ContAdapter;
 
 /**
- * Partial implementation of a message dispatcher.
+ * Partial implementation of a message dispatcher. Contains mechanisms for
+ * delivering messages directly to modules, initiating and conducting request
+ * processing transaction. Requires subclasses to provide transaction executor
+ * through {@link #executor()} abstract method, and to implement the
+ * {@link #receive} method.
  * 
  * @author los
  */
@@ -205,7 +209,9 @@ public abstract class AbstractDispatcher extends DefaultModuleContainer
     /**
      * Invoked during shutdown, before shutting down modules
      */
-    protected abstract void onShutdown();
+    protected void onShutdown() {
+        // empty
+    }
 
     /**
      * {@inheritDoc}

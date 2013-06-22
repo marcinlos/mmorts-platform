@@ -72,8 +72,11 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleLogicException;
 public interface Gateway {
 
     /**
-     * Immediately sends a local message. All the required data (whether it is
-     * uni/multicast etc) is contained inside the {@code message}.
+     * Immediately sends a local message as a part of the currently running
+     * transaction. All the required address information (whether it is
+     * uni/multicast etc) is contained inside the {@code message}. Can be called
+     * at any point during request processing, i.e. inside a transaction or
+     * during post-transaction phase.
      * 
      * @param mesage
      *            Message to be sent
@@ -84,7 +87,8 @@ public interface Gateway {
 
     /**
      * Sends a local message at the successful <b>commit</b> of the current
-     * transaction. Can be called <b>only</b> during the transaction.
+     * transaction. If the transaction fails, message is silently discarded. Can
+     * be called <b>only</b> during the transaction.
      * 
      * @param message
      *            Message to be sent at the end of transaction
@@ -102,7 +106,8 @@ public interface Gateway {
     void output(Message message);
 
     /**
-     * Adds an item to the execution queue of a transaction.
+     * Adds an item to the execution queue of a transaction. The continuation is
+     * pushed on the execution stack.
      * 
      * @param cont
      *            Action to execute

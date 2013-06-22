@@ -9,11 +9,9 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 
-import com.google.inject.name.Named;
-
-import pl.edu.agh.ki.mmorts.server.core.Init;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+
+import com.google.inject.name.Named;
 
 
 
@@ -79,7 +77,7 @@ public class SimpleConnectionPool {
             logger.debug("Adding new connection to pool");
             try {
                 connectionPool.add(creator.createConnection());
-                ++createdConnections;
+                createdConnections = Math.max(createdConnections+1,maxConnections);
             } catch (SQLException e) {
 
                 if (createdConnections == 0) {

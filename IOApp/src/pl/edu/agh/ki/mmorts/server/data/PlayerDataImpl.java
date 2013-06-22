@@ -9,19 +9,23 @@ package pl.edu.agh.ki.mmorts.server.data;
  *
  */
 public class PlayerDataImpl implements PlayerData {
+	
 	/**
 	 * Name of player this object represents
 	 */
 	private String name;
+	
 	/**
 	 * Hash of password to login to this account
 	 */
 	private String passwordHash;
+	
 	/**
 	 * Name of account this player belongs to
 	 */
 	private String login;
 	
+		
 	/**
 	 * Constructs <b>immutable</b> {@link PlayersPersistorImpl} object with given attributes
 	 * @param name
@@ -32,7 +36,6 @@ public class PlayerDataImpl implements PlayerData {
 	 * 			name of account this player belongs to
 	 */
 	public PlayerDataImpl(String name, String passwordHash, String login) {
-		super();
 		this.name = name;
 		this.passwordHash = passwordHash;
 		this.login = login;

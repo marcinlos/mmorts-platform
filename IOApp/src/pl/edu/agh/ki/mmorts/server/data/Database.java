@@ -1,39 +1,44 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
-import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
-import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 
 /**
- * Database wrapper of real DBS - DAO.
+ * Database wrapper of some storage mechanisms - it's like DAO
  * Its operations are really similar to {@link CustomPersistor} and {@link PlayersPersistor}
  * It shouldn't be an surprise cause this interface only perform raw operations
- * on database(but gently wrapped) and is developed to easily maintain
- * a process of changing underlying database.
+ * on storage(but gently wrapped) and is developed to easily maintain
+ * a process of changing underlying storage.
+ * 
+ * <p>
+ * Considered situation deal with storing only currently playing avatar data and this interface is
+ * generally used to preserve server's architecture so both architectures could be easier to understand.
+ * Of course, here could be used
+ * easier hierarchy but we wanted to avoid inconsistency in architecture
+ * </p> 
  * 
  * Additionally DAO shouldn't do any additional validation or processing of data except for this
- * which will be reported by database system(primary key constraints or non-existing
- * of some records).
+ * which will be reported by underlying storage.
  * 
  * Moreover this interface is very low-level interface. There is no place for magic.
  * 
+ * Later in this doc, storage is named as database. However, on this side this storage could be made
+ * of java Maps
+ * 
  * @see CustomPersistor
  * 
- * <p>
- * Supports use of {@linkplain OnInit} / {@linkplain OnShutdown} for
- * initialization/cleanup.
  */
 public interface Database {
+
 	
 	/**
 	 * Performs all initialization processes which should be done.
-	 * Usually everything connected with connections management
+	 * Usually everything connected with schema validation and connections
+	 * management.
 	 * 
 	 * 
 	 * @see OnInit
 	 */
 	void init();
+	
 	/**
 	 * Adds player to database. Player name cannot be in database earlier
 	 * cause it raises database error.
@@ -138,7 +143,7 @@ public interface Database {
 	 * javadoc to find out why!
 	 * </p>
 	 *
-	 * @param modulename
+	 * @param moduleName
 	 * 			indicates for which module binding is processed
 	 * @param playerName
 	 * 			indicates player to which updated object is bound
@@ -147,7 +152,7 @@ public interface Database {
 	 * @throws IllegalArgumentException
 	 * 			thrown when player name is not bound in this module 
 	 */
-	void updateBinding(String modulename, String playerName, Object o) throws IllegalArgumentException;
+	void updateBinding(String moduleName, String playerName, Object o) throws IllegalArgumentException;
 	/**
 	 * Deletes binding in given module.
 	 * Binding must occur in this module in database earlier.
@@ -158,23 +163,20 @@ public interface Database {
 	 * </p>
 	 *
 	 * 
-	 * @param modulename
+	 * @param moduleName
 	 * 		indicates for which module binding is processed
 	 * @param playerName
 	 * 		indicates player whose binding is being deleted
 	 * @throws IllegalArgumentException
 	 * 		thrown when player name is not bound in this module
 	 */
-	void deleteBinding(String modulename, String playerName) throws IllegalArgumentException;
+	void deleteBinding(String moduleName, String playerName) throws IllegalArgumentException;
 	
 	
 	/**
 	 * Releases all used resources, usually connected with connection or dbcache
 	 * 
-	 * @see OnShutdown
 	 */
-	
-	@OnShutdown
 	void shutdown();
 	
 }

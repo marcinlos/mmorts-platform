@@ -1,0 +1,138 @@
+<!--
+    Ant build file for the the server of MMORTS Platform.  
+-->
+<project basedir=".">
+
+    <!-- Enable environmental variables -->
+    <property environment="env" />
+
+    <!-- Packages -->
+    <property name="pkg" value="pl.edu.agh.ki.mmorts" />
+    <property name="pkg.server" value="${pkg}.server" />
+    <property name="pkg.common" value="${pkg}.common" />
+
+    <property name="pkg.dir" value="pl/edu/agh/ki/mmorts" />
+    <property name="pkg.server.dir" value="${pkg.dir}/server" />
+    <property name="pkg.common.dir" value="${pkg.dir}/common" />
+
+    <!-- Directory for .class files -->
+    <property name="classes" value="bin" />
+
+    <!-- Directory for the resulting jar files -->
+    <property name="dist" value="dist" />
+
+    <!-- Result .jar names -->
+    <property name="jar.server" value="mmorts-server" />
+    <property name="jar.common" value="mmorts-common" />
+
+    <!-- Source folders -->
+    <property name="src" value="src" />
+    <property name="slice" value="slice" />
+    <property name="generated" value="generated" />
+
+    <!-- Resource folder -->
+    <property name="resources" value="resources"/>
+
+
+    <!-- Javadoc folder -->
+    <property name="doc" value="doc" />
+
+    <!-- Used libraries -->
+    <path id="lib.path">
+        <fileset dir="lib" includes="**/*.jar" />
+    </path>
+
+    <!-- Ant tasks -->
+    <path id="ant.lib.path">
+        <fileset dir="ant" includes="*.jar" />
+    </path>
+
+    <!-- Used JDK version -->
+    <property name="jdk_version" value="1.6" />
+
+    <!-- Definition of slice2java compilator task -->
+    <taskdef 
+        name="slice2java" 
+        classpathref="ant.lib.path" 
+        classname="Slice2JavaTask" 
+    />
+
+    <!-- Generate .java files from slice -->
+    <target name="slice">
+        <mkdir dir="${generated}" />
+        <slice2java outputdir="${generated}">
+            <includepath>
+                <pathelement location="${env.ICE_HOME}/slice" />
+            </includepath>
+            <fileset dir="${slice}" includes="*.ice" />
+        </slice2java>
+    </target>
+
+    <!-- Compile the whole project -->
+    <target name="compile" depends="slice">
+        <mkdir dir="${classes}" />
+        <javac 
+            srcdir="${src}:${generated}" 
+            destdir="${classes}" 
+            classpathref="lib.path" 
+            includeantruntime="false" 
+            source="${jdk_version}" 
+            target="${jdk_version}" />
+    </target>
+
+    <!-- Create dist directory -->
+    <target name="distdir">
+        <mkdir dir="${dist}" />
+    </target>
+
+    <!-- Creates the jars -->
+    <target name="dist" depends="distdir,compile">
+        <!-- Common jar -->
+        <jar destfile="${dist}/${jar.common}.jar" basedir="${classes}" >
+            <fileset dir="${classes}">
+                <include name="${pkg.dir}/*" />
+                <include name="${pkg.common.dir}/**/*" />
+            </fileset>
+        </jar>
+        <!-- Server jar's classpath -->
+        <manifestclasspath property="lib.list" jarfile="${dist}/${jar.server}.jar">
+            <classpath>
+                <path refid="lib.path" />
+                <pathelement path="${dist}/${jar.common}.jar" />
+                <pathelement path="${resources}"/>
+            </classpath>
+        </manifestclasspath>
+        <!-- Server jar -->
+        <jar 
+            destfile="${dist}/${jar.server}.jar" 
+            basedir="${classes}" 
+            includes="pl/edu/agh/ki/mmorts/server/**/*">
+            <manifest>
+                <attribute name="Main-Class" value="${pkg.server}.Main" />
+                <attribute name="Class-Path" value="${lib.list}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Generate javadoc -->
+    <target name="doc">
+        <javadoc 
+            sourcepath="${src}" 
+            destdir="${doc}" 
+            author="true" 
+            use="true" 
+            windowtitle="MMORTS Platform" 
+        />
+    </target>
+
+
+    <!-- Cleans projet files -->
+    <target name="clean">
+        <delete dir="${generated}" />
+        <delete dir="${classes}" />
+        <delete dir="${dist}" />
+        <delete dir="${doc}" />
+    </target>
+
+
+</project>
