@@ -20,7 +20,6 @@ package pl.edu.agh.ki.mmorts.server.data;
  */
 
 
-//TODO add init!!!
 
 public interface CustomPersistor {
 

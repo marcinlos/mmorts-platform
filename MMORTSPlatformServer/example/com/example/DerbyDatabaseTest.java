@@ -3,24 +3,15 @@ package com.example;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.inject.Module;
-
-import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
+import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManagerImpl;
-import pl.edu.agh.ki.mmorts.server.data.ConnectionCreator;
-import pl.edu.agh.ki.mmorts.server.data.Database;
 import pl.edu.agh.ki.mmorts.server.data.DerbyConnectionCreator;
 import pl.edu.agh.ki.mmorts.server.data.DerbyDatabase;
 import pl.edu.agh.ki.mmorts.server.data.NoConnectionException;
@@ -28,9 +19,13 @@ import pl.edu.agh.ki.mmorts.server.data.PlayerData;
 import pl.edu.agh.ki.mmorts.server.data.PlayerDataImpl;
 import pl.edu.agh.ki.mmorts.server.data.SimpleConnectionPool;
 import pl.edu.agh.ki.mmorts.server.data.utils.QueriesCreator;
+import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
+import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.server.modules.builtin.LoginModule;
 import pl.edu.agh.ki.mmorts.server.util.DI;
+
+import com.google.inject.Module;
 
 public class DerbyDatabaseTest {
 
@@ -38,14 +33,14 @@ public class DerbyDatabaseTest {
 	private static SimpleConnectionPool connPool;
 	// private static QueriesCreator qc = new QueriesCreator();
 	private static ModuleDescriptor md;
-	private static Database database;
+	private static DerbyDatabase database;
 
 	private PlayerData johnData = new PlayerDataImpl("John", "JohnPass",
 			"Master");
 
 	private PlayerData olderJohnData = new PlayerDataImpl(johnData.getName(),
 			"OlderJohnPass", "GrandMaster");
-	
+
 	private ExData exampleData = new ExData(12345, false);
 	private ExData exampleSecData = new ExData(54321, true);
 
@@ -54,14 +49,11 @@ public class DerbyDatabaseTest {
 		try {
 
 			QueriesCreator qc = new QueriesCreator();
-			ModuleDescriptor.Builder mdCreat = ModuleDescriptor.create("Module 1 T_est", LoginModule.class);
-			mdCreat.addProperty("datatype","com.example.ExData");
+			ModuleDescriptor.Builder mdCreat = ModuleDescriptor.create(
+					"Module 1 T_est", LoginModule.class);
+			mdCreat.addProperty("datatype", "com.example.ExData");
 			md = mdCreat.build();
-			
-			
-			
-			
-			
+
 			DerbyConnectionCreator connCreator = new DerbyConnectionCreator();
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 			for (Field f : connCreator.getClass().getDeclaredFields()) {
@@ -83,29 +75,44 @@ public class DerbyDatabaseTest {
 				}
 			}
 
-			ModuleTable mt = new ModuleTable() {
-				List<ModuleDescriptor> mdLIst;
 
-				@Override
-				public Collection<ModuleDescriptor> getModuleDescriptors() {
-					if (mdLIst == null) {
-						mdLIst = new ArrayList<ModuleDescriptor>();
-						mdLIst.add(md);
-					}
-					return mdLIst;
-				}
-			};
-
-			Module mtModule = DI.objectModule(mt, ModuleTable.class);
+			
 			Module connPoolModule = DI.objectModule(connPool,
 					SimpleConnectionPool.class);
 			Module qcModule = DI.objectModule(qc, QueriesCreator.class);
 			Module tmModule = DI.objectModule(tm, TransactionManager.class);
 
-			database = DI.createWith(DerbyDatabase.class, mtModule,
-					connPoolModule, qcModule, tmModule);
+			database = DI.createWith(DerbyDatabase.class, connPoolModule,
+					qcModule, tmModule);
 
 			database.init();
+			ConfiguredModule confModule = new ConfiguredModule(new pl.edu.agh.ki.mmorts.server.modules.Module() {
+				
+				@Override
+				public void started() {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void shutdown() {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void receive(Message message, Context context) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void init() {
+					// TODO Auto-generated method stub
+					
+				}
+			}, md);
+			database.moduleLoaded(confModule);
 			clean();
 
 		} catch (IllegalArgumentException e) {
@@ -125,8 +132,8 @@ public class DerbyDatabaseTest {
 					"DELETE FROM " + QueriesCreator.PLAYER_MAIN_TAB);
 			c.createStatement().execute(
 					"DELETE FROM " + prepareModuleName(md.name));
-			if(!c.getAutoCommit()){
-			c.commit();
+			if (!c.getAutoCommit()) {
+				c.commit();
 			}
 			connPool.returnConnection(c);
 		} catch (NoConnectionException e) {
@@ -144,7 +151,7 @@ public class DerbyDatabaseTest {
 	}
 
 	@Test
-	public void addingPlayerSucc() throws Exception {
+	public void playerAddingSucc() throws Exception {
 		tm.begin();
 		try {
 			database.createPlayer(johnData);
@@ -173,7 +180,7 @@ public class DerbyDatabaseTest {
 	/* Player john is added above */
 
 	@Test(expected = IllegalArgumentException.class)
-	public void addingTheSamePlayer() throws Exception {
+	public void playerAddingTheSame() throws Exception {
 		tm.begin();
 		try {
 			database.createPlayer(johnData);
@@ -185,7 +192,7 @@ public class DerbyDatabaseTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void deletingNonExistingPlayer() throws Exception {
+	public void playerDeletingNonExisting() throws Exception {
 		tm.begin();
 		try {
 			database.deletePlayer("NonExisting");
@@ -199,7 +206,7 @@ public class DerbyDatabaseTest {
 
 	// expect to just invoke without exceptions
 	@Test
-	public void deletingExistingPlayer() throws Exception {
+	public void playerDeletingExisting() throws Exception {
 		tm.begin();
 		try {
 			database.deletePlayer(johnData.getName());
@@ -212,9 +219,8 @@ public class DerbyDatabaseTest {
 		Assert.assertTrue(true);
 	}
 
-
 	@Test
-	public void updateCorrect() throws Exception {
+	public void playerUpdateSucc() throws Exception {
 		clean();
 		tm.begin();
 		try {
@@ -233,7 +239,7 @@ public class DerbyDatabaseTest {
 			throw e;
 		}
 		tm.commit();
-		
+
 		tm.begin();
 		PlayerData rec = null;
 		try {
@@ -250,7 +256,7 @@ public class DerbyDatabaseTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void updateNonExisting() throws Exception {
+	public void playerUpdateNonExisting() throws Exception {
 		clean();
 		tm.begin();
 		try {
@@ -261,9 +267,9 @@ public class DerbyDatabaseTest {
 		}
 		tm.commit();
 	}
-	
+
 	@Test
-	public void receiveNonExistingPlayer() throws Exception {
+	public void playerReceiveNonExisting() throws Exception {
 		clean();
 		tm.begin();
 		PlayerData data = johnData;
@@ -277,9 +283,9 @@ public class DerbyDatabaseTest {
 		tm.commit();
 		Assert.assertNull(data);
 	}
-	
+
 	@Test
-	public void createBindingSucc() throws Exception {
+	public void bindingAddingSucc() throws Exception {
 		clean();
 		tm.begin();
 		try {
@@ -289,24 +295,26 @@ public class DerbyDatabaseTest {
 			throw e;
 		}
 		tm.commit();
-		
+
 		tm.begin();
 		ExData rec = null;
 		try {
-			rec = (ExData)database.receiveBinding(md.name, johnData.getName());
+			rec = (ExData) database.receiveBinding(md.name, johnData.getName());
 		} catch (Exception e) {
 			tm.rollback();
 			throw e;
 		}
 
 		tm.commit();
-		String[] got = { String.valueOf(rec.getBoolObject()), String.valueOf(rec.getIntField())};
-		String[] org = { String.valueOf(exampleData.getBoolObject()), String.valueOf(exampleData.getIntField()) };
+		String[] got = { String.valueOf(rec.getBoolObject()),
+				String.valueOf(rec.getIntField()) };
+		String[] org = { String.valueOf(exampleData.getBoolObject()),
+				String.valueOf(exampleData.getIntField()) };
 		Assert.assertArrayEquals(org, got);
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
-	public void createTheSameBinding() throws Exception {
+	public void bindingAddingTheSame() throws Exception {
 		tm.begin();
 		try {
 			database.createBinding(md.name, johnData.getName(), exampleData);
@@ -316,10 +324,9 @@ public class DerbyDatabaseTest {
 		}
 		tm.commit();
 	}
-	
-	
+
 	@Test
-	public void updateBindingSucc() throws Exception {
+	public void bindingUpdateSucc() throws Exception {
 		tm.begin();
 		try {
 			database.updateBinding(md.name, johnData.getName(), exampleSecData);
@@ -328,24 +335,26 @@ public class DerbyDatabaseTest {
 			throw e;
 		}
 		tm.commit();
-		
+
 		tm.begin();
 		ExData rec = null;
 		try {
-			rec = (ExData)database.receiveBinding(md.name, johnData.getName());
+			rec = (ExData) database.receiveBinding(md.name, johnData.getName());
 		} catch (Exception e) {
 			tm.rollback();
 			throw e;
 		}
 
 		tm.commit();
-		String[] got = { String.valueOf(rec.getBoolObject()), String.valueOf(rec.getIntField())};
-		String[] org = { String.valueOf(exampleSecData.getBoolObject()), String.valueOf(exampleSecData.getIntField()) };
+		String[] got = { String.valueOf(rec.getBoolObject()),
+				String.valueOf(rec.getIntField()) };
+		String[] org = { String.valueOf(exampleSecData.getBoolObject()),
+				String.valueOf(exampleSecData.getIntField()) };
 		Assert.assertArrayEquals(org, got);
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
-	public void updateBindingNonExistingSucc() throws Exception {
+	public void bindingUpdateNonExisting() throws Exception {
 		tm.begin();
 		try {
 			database.updateBinding(md.name, "NonExisting", exampleSecData);
@@ -354,12 +363,11 @@ public class DerbyDatabaseTest {
 			throw e;
 		}
 		tm.commit();
-		}
-	
-	
-	/*Just execute without exception*/
+	}
+
+	/* Just execute without exception */
 	@Test
-	public void deleteExistingBinding() throws Exception {
+	public void bindingDeleteExisting() throws Exception {
 		tm.begin();
 		try {
 			database.deleteBinding(md.name, johnData.getName());
@@ -369,11 +377,10 @@ public class DerbyDatabaseTest {
 		}
 		tm.commit();
 		Assert.assertTrue(true);
-		}
-	
-	
+	}
+
 	@Test(expected = IllegalArgumentException.class)
-	public void deleteNonExistingBinding() throws Exception {
+	public void bindingDeleteNonExisting() throws Exception {
 		tm.begin();
 		try {
 			database.deleteBinding(md.name, "NonExisting");
@@ -382,10 +389,10 @@ public class DerbyDatabaseTest {
 			throw e;
 		}
 		tm.commit();
-		}
-	
+	}
+
 	@Test
-	public void receiveNonExistingBinding() throws Exception {
+	public void bindingReceiveNonExisting() throws Exception {
 		clean();
 		tm.begin();
 		Object o = new Object();
@@ -398,13 +405,11 @@ public class DerbyDatabaseTest {
 		}
 		tm.commit();
 		Assert.assertNull(o);
-		}
-	
-	
+	}
+
 	private static String prepareModuleName(String moduleName) {
 		moduleName = moduleName.replace(" ", "__");
 		return moduleName;
 	}
-	
-	
+
 }

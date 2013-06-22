@@ -1,8 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
-import java.sql.Blob;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,16 +9,20 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.server.core.InitException;
-import pl.edu.agh.ki.mmorts.server.core.ModuleTable;
+import pl.edu.agh.ki.mmorts.server.core.ModuleEventsListener;
+import pl.edu.agh.ki.mmorts.server.core.ModuleEventsNotifier;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.server.data.utils.QueriesCreator;
+import pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+
+
 
 /**
  * Simple implementation of {@link Database} which wraps Apache Derby database.
@@ -31,11 +33,13 @@ import com.google.inject.Inject;
  * <li>One transaction per one thread</li>
  * <li>Connection is returned to pool after either commit or rollback</li>
  * </ul>
+ * Additionally to properly intialize database it is required that database can prepare
+ * schema for loaded modules. So, to achieve this, this class implements {@link ModuleEventsListener} also.
  * 
  * @author drew
  * 
  */
-public class DerbyDatabase implements Database {
+public class DerbyDatabase implements Database, ModuleEventsListener{
 
 	private static final Logger logger = Logger.getLogger(DerbyDatabase.class);
 
@@ -46,19 +50,33 @@ public class DerbyDatabase implements Database {
 	private TransactionManager tm;
 
 	/**
-	 * Contains informations about loaded moduels
+	 * Mapping name of module to class type of it's data
 	 */
-	@Inject
-	private ModuleTable moduleTable;
-	
 	private  HashMap<String, Class<?>> namesObjectMap;
 
+	/**
+	 * Underlying utilities class for constructing SQL queries
+	 */
 	@Inject
 	private QueriesCreator queriesCreator;
 
+	/**
+	 * Connection pool used by this database
+	 */
 	@Inject
 	private SimpleConnectionPool connectionPool;
+	
+	@Inject
+	private ModuleEventsNotifier notifier;
 
+	/**
+	 * As one thread is mapped to one transaction at every moment, this
+	 * field is different per thread and represents current transaction connection.
+	 * It's initialized(every time someone calls get on this variable, look in {@link ThreadLocal} javadoc
+	 * new connection is intialized by {@link DerbyDatabase#initConnection()})
+	 * 
+	 *  @see ThreadLocal
+	 */
 	private ThreadLocal<Connection> perThreadConn = new ThreadLocal<Connection>() {
 		@Override
 		protected Connection initialValue() {
@@ -74,6 +92,9 @@ public class DerbyDatabase implements Database {
 		}
 	};
 
+	/**
+	 * Gson for serializing and deserializing data objects for modules
+	 */
 	private Gson gson = new Gson();
 	
 	/**
@@ -82,7 +103,7 @@ public class DerbyDatabase implements Database {
 	 * <li>Getting connection from pool</li>
 	 * <li>Disabling auto commit for connections</li>
 	 * <li>Adding listeners if transaction is either commited or rolled back.
-	 * Those listeners returns connection</li>
+	 * Those listeners returns connection and remove {@link ThreadLocal} variable</li>
 	 * </ul>
 	 * @return
 	 * 		initialized connection
@@ -139,19 +160,17 @@ public class DerbyDatabase implements Database {
 	}
 	
 	
-	/**
-	 * @param desc
-	 * @return
-	 */
-	private Class<?> getModuleDataClass(ModuleDescriptor desc){
-		return desc.config.get("datatype", Class.class);
-	}
-	
-	
 	
 
 	/**
-	 * Non transactional! Connection handled without transaction!
+	 * Initializes database. In details:
+	 * <ul>
+	 * <li>Initializes connection pool</li>
+	 * <li>Initializes all uninitialized fields of this class</li>
+	 * <li>Initializes(if need) table in database for players</li>
+	 * <li>Adds database as listener to the module events
+	 * 	(see {@link ModuleEventsNotifier} and {@link ModuleEventsListener} )</li>
+	 * </ul>
 	 * 
 	 * @see pl.edu.agh.ki.mmorts.server.data.Database#init()
 	 */
@@ -159,41 +178,38 @@ public class DerbyDatabase implements Database {
 	@OnInit
 	public void init() {
 		logger.debug("Database init started");
-		
-		namesObjectMap = new HashMap<String, Class<?>>();
-		for(ModuleDescriptor desc : moduleTable.getModuleDescriptors()){
-			Class<?> dataTypeClass = getModuleDataClass(desc);
-			if(dataTypeClass!=null){
-				namesObjectMap.put(desc.name, dataTypeClass);
-			}
-		}
-		
 		connectionPool.init();
-		Connection conn = null;
+		namesObjectMap = new HashMap<String, Class<?>>();
+		tm.begin();
+		Statement stm = null;
 		try {
-			conn = connectionPool.getConnection();
-			conn.createStatement().execute(
+			stm = perThreadConn.get().createStatement();
+			stm.execute(
 					queriesCreator.getCreatePlayersTableQuery());
-			for (ModuleDescriptor desc : moduleTable.getModuleDescriptors()) {
-				conn.createStatement().execute(
-						queriesCreator.getCreateCustomTableQuery(desc.name));
-			}
-		} catch (NoConnectionException e) {
-			logger.fatal("Cannot create any, even starting connection to DB!");
-			throw new InitException(e);
 		} catch (SQLException e) {
-
 			// X0Y32 is the error code of "table already exists"
 			if (!e.getSQLState().equals("X0Y32")) {
+				tm.rollback();
 				throw new InitException(e);
 			}
-
-		} finally {
-			connectionPool.returnConnection(conn);
+		}finally{
+			if (stm != null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			} 
 		}
+		tm.commit();
+		notifier.addListener(this);
 		logger.debug("Database init ended");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void createPlayer(PlayerData player) throws IllegalArgumentException {
 		logger.debug("Creating player " + player.getName());
@@ -227,6 +243,9 @@ public class DerbyDatabase implements Database {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public PlayerData receivePlayer(String name) {
 		logger.debug("Receiving player by name: " + name);
@@ -263,7 +282,9 @@ public class DerbyDatabase implements Database {
 		}
 		return playerData;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updatePlayer(String name, PlayerData player)
 			throws IllegalArgumentException {
@@ -294,7 +315,10 @@ public class DerbyDatabase implements Database {
 		}
 
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deletePlayer(String name) throws IllegalArgumentException {
 		logger.debug("Deleting player by name: " + name);
@@ -322,7 +346,9 @@ public class DerbyDatabase implements Database {
 
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void createBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
@@ -354,19 +380,45 @@ public class DerbyDatabase implements Database {
 	}
 
 	
-
+	
+	/**
+	 * Deserializes object from JSON representation
+	 * to plain java Object. Gson needs type of object to
+	 * which string should be deserialized. This type is provided
+	 * by map {@link DerbyDatabase#namesObjectMap}.
+	 * 
+	 * @param moduleName
+	 * 			module name which leads to proper type of deserializng
+	 * @param stringData
+	 * 			gson serialized data
+	 * @return
+	 * 			java {@link Object} which on runtime is needed custom object data
+	 * 				declared by config of module
+	 */
 	private Object deserialize(String moduleName, String stringData) {
 		return gson.fromJson(stringData, namesObjectMap.get(moduleName));
 	}
 	
+	
+	/**
+	 * Serialize given object to JSON using gson
+	 * 
+	 * @param o
+	 * 			object to serialize
+	 * @return
+	 * 			JSON string
+	 */
 	private String serialize(Object o) {
 		return gson.toJson(o);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object receiveBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
-		logger.debug(String.format("Receving data of player %s in module %s", playerName, moduleName));
+		logger.debug(String.format("Receiving data of player %s in module %s", playerName, moduleName));
 		Statement stm = null;
 		Object deserialized = null;
 		try{
@@ -394,6 +446,9 @@ public class DerbyDatabase implements Database {
 	}
 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updateBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
@@ -423,6 +478,9 @@ public class DerbyDatabase implements Database {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
@@ -451,12 +509,99 @@ public class DerbyDatabase implements Database {
 
 	}
 
+	/**
+	 * Removes database from module events listeners. Logs that database is closing
+	 * 
+	 * @see Database
+	 */
 	@Override
 	@OnShutdown
 	public void shutdown() {
 		logger.debug("Closing database");
-		logger.debug("Closing database ended");
+		notifier.removeListener(this);
+	}
 
+	
+	
+	/**
+	 * Implementation is empty
+	 * 
+	 * @see pl.edu.agh.ki.mmorts.server.core.ModuleEventsListener#loadingModule(pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor)
+	 */
+	@Override
+	public void loadingModule(ModuleDescriptor descriptor) {
+		//empty
+	}
+
+	/**
+	 * Database infrastructure(e. g. table for loaded module) is created here
+	 * if it didn't exist. Nothing is done if table to given module exists.
+	 * This means, that if someone wants to update module and change a data storing
+	 * by this module, should delete table manually! Additionally class of module
+	 * data is put into internal map ( {@link DerbyDatabase#namesObjectMap} ) 
+	 * 
+	 * @see pl.edu.agh.ki.mmorts.server.core.ModuleEventsListener#moduleLoaded(pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule)
+	 */
+	@Override
+	public void moduleLoaded(ConfiguredModule module) {
+		logger.debug("Module "+ module.descriptor.name + " initialization at database side");
+		tm.begin();
+		Statement stm = null;
+		try {
+			stm = perThreadConn.get().createStatement();
+			stm.execute(
+					queriesCreator.getCreateCustomTableQuery(module.descriptor.name));
+		} catch (SQLException e) {
+			// X0Y32 is the error code of "table already exists"
+			if (!e.getSQLState().equals("X0Y32")) {
+				logger.warn("Cannot intialize module!");
+				tm.rollback();
+				throw new InitException(e);
+			}
+		}finally{
+			if (stm != null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			} 
+		}
+		tm.commit();
+		namesObjectMap.put(module.descriptor.name, getModuleDataClass(module.descriptor));
+	}
+
+	/**
+     * @param desc
+     * @return
+     */
+    private Class<?> getModuleDataClass(ModuleDescriptor desc){
+            return desc.config.get("datatype", Class.class);
+    }
+	
+	/**
+	 * Implementation ommited
+	 * 
+	 * @see pl.edu.agh.ki.mmorts.server.core.ModuleEventsListener#unloadingModule(pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule)
+	 */
+	@Override
+	public void unloadingModule(ConfiguredModule module) {
+		//ommited
+	}
+
+	/**
+	 * Class of module is removed from internal map ( {@link DerbyDatabase#namesObjectMap} ). 
+	 * <p>
+	 * Disclaimer:
+	 * Any of tables are deleted
+	 * </p>
+	 * @see pl.edu.agh.ki.mmorts.server.core.ModuleEventsListener#moduleUnloaded(pl.edu.agh.ki.mmorts.server.modules.ConfiguredModule)
+	 */
+	@Override
+	public void moduleUnloaded(ConfiguredModule module) {
+		logger.debug("Unloading from database module: " + module.descriptor.name);
+		namesObjectMap.remove(module.descriptor.name);
 	}
 
 }

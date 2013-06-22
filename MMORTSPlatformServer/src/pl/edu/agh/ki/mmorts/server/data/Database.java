@@ -28,8 +28,7 @@ public interface Database {
 	
 	/**
 	 * Performs all initialization processes which should be done.
-	 * Usually everything connected with schema validation and connections
-	 * management.
+	 * Usually everything connected with connections management
 	 * 
 	 * 
 	 * @see OnInit
