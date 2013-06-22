@@ -106,6 +106,7 @@ public class MainActivity extends Activity implements UIListener {
 			Log.e(ID,"Can't access your view? What?",e);
 			endProgram();
 		}
+
 		
 		
 		
