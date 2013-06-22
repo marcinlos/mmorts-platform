@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.server.core.InitException;
 import pl.edu.agh.ki.mmorts.server.core.ModuleEventsListener;
+import pl.edu.agh.ki.mmorts.server.core.ModuleEventsNotifier;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
@@ -64,6 +65,9 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 	 */
 	@Inject
 	private SimpleConnectionPool connectionPool;
+	
+	@Inject
+	private ModuleEventsNotifier notifier;
 
 	/**
 	 * As one thread is mapped to one transaction at every moment, this
@@ -164,8 +168,9 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 	 * <li>Initializes connection pool</li>
 	 * <li>Initializes all uninitialized fields of this class</li>
 	 * <li>Initializes(if need) table in database for players</li>
+	 * <li>Adds database as listener to the module events
+	 * 	(see {@link ModuleEventsNotifier} and {@link ModuleEventsListener} )</li>
 	 * </ul>
-	 *
 	 * 
 	 * @see pl.edu.agh.ki.mmorts.server.data.Database#init()
 	 */
@@ -198,6 +203,7 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 			} 
 		}
 		tm.commit();
+		notifier.addListener(this);
 		logger.debug("Database init ended");
 	}
 
@@ -504,14 +510,15 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Removes database from module events listeners. Logs that database is closing
+	 * 
+	 * @see Database
 	 */
 	@Override
 	@OnShutdown
 	public void shutdown() {
 		logger.debug("Closing database");
-		logger.debug("Closing database ended");
-
+		notifier.removeListener(this);
 	}
 
 	
