@@ -1,8 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.data;
 
-import javax.inject.Inject;
-
-
 /**
  * Implementation of {@link PlayersPersistor} which generally wraps raw {@link Database}
  * to achieve typing. There is nothing special here, except for checking for
@@ -10,20 +7,28 @@ import javax.inject.Inject;
  * and delegating operations to {@link Database} implementation.
  * 
  * Compare javadocs for {@link Database} and {@link PlayersPersistor} for see what 
- * additional checks are done on concrete methods(especially compare exceptions thrown)
+ * additional checks are done on concrete methods.
  * 
  * @author drew
  *
  */
 public class PlayersPersistorImpl implements PlayersPersistor {
-	
+
 	/**
-	 * Underlying {@link Database} implementation.
-	 * Annotated with {@link Inject}
+	 * Underlying {@link Database} implementation
 	 */
-	@Inject
 	private Database db;
 
+	/**
+	 * Constructs {@link PlayersPersistorImpl} which uses concrete {@link Database}
+	 * @param db
+	 * 			database to persist data in
+	 */
+	public PlayersPersistorImpl(Database db) {
+		this.db = db;
+	}
+
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -31,7 +36,7 @@ public class PlayersPersistorImpl implements PlayersPersistor {
 	public void createPlayer(PlayerData player) throws IllegalArgumentException {
 		db.createPlayer(player);
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -50,7 +55,7 @@ public class PlayersPersistorImpl implements PlayersPersistor {
 		if (name.equals(player.getName())) {
 			throw new IllegalArgumentException();
 		}
-		db.updatePlayer(name, player);
+		updatePlayer(name, player);
 	}
 
 	/**
@@ -60,7 +65,5 @@ public class PlayersPersistorImpl implements PlayersPersistor {
 	public void deletePlayer(String name) throws IllegalArgumentException {
 		db.deletePlayer(name);
 	}
-
-
 
 }

@@ -132,7 +132,7 @@ public final class ModuleDescriptor {
      * 
      * @param name
      *            name of the module
-     * @param moduleClass
+     * @param module
      *            Module implementation class
      * @return {@linkplain Builder}
      */

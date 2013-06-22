@@ -41,5 +41,8 @@ public interface Module {
      * button as value
      */
     Map<String,String> getMenus();
+    
+    <T> void setData(T data);
+    <T> T getData();
 
 }

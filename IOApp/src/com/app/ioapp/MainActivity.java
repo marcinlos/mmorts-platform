@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements UIListener {
 	private LinearLayout menu;
 	private Properties boardConfig; //debug only
 	private Map<String,Module> modules;
+	private MainView view;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +61,32 @@ public class MainActivity extends Activity implements UIListener {
 		setContentView(R.layout.activity_main);
 		initialize();
 		modules = initializer.getModules();
-		
+		createMainView();
 		
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+		
+		//this part is debug only
 		boardView = new BoardView(this);
 		board = new InfrastructureModule(boardConfig);
-		boardView.setModuleImpl(board);
+		boardView.init("InfrastructureModule", view);
+		boardView.setOnTouchListener(new View.OnTouchListener() {
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	            if (event.getAction() == MotionEvent.ACTION_DOWN){
+	              //  textView.setText("Touch coordinates : " +
+	              //          String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
+	            	AbstractModuleView view = (AbstractModuleView) v;
+	            	view.iWasClicked(event.getX(),event.getY());
+	            }
+	            return true;
+	        }
+	    });
 		setupBoard();
 		
 		layout.addView(boardView);
+		//end of debugonly part
+		
 		
 		//createMenu(mainLayout);
 		menu = new LinearLayout(this);
@@ -181,6 +199,13 @@ public class MainActivity extends Activity implements UIListener {
 		
 	}
 	
+	private void createMainView(){
+		view = new MainView();
+		for(String s : modules.keySet()){
+			view.addModule(s, modules.get(s));
+		}
+	}
+	
 	/**
 	 * Adds all the buttons needed to the menu. Used only after {@link modules} are filled.
 	 * See {@link 
@@ -194,7 +219,7 @@ public class MainActivity extends Activity implements UIListener {
 			Map<String,String> views = m.getMenus();
 			for(String text : views.keySet()){
 				AbstractModuleView t =(AbstractModuleView) Class.forName(views.get(text)).newInstance();
-				t.setModuleImpl(m);
+				t.init(views.get(text), view);
 				MenuButton b = new MenuButton(this);
 				b.setView(t);
 				b.setText(text);
@@ -248,7 +273,19 @@ public class MainActivity extends Activity implements UIListener {
 
 	
 	public void buttonWasClicked(MenuButton b){
-		View v = b.getView();
+		AbstractModuleView v = b.getView();
+		v.setOnTouchListener(new View.OnTouchListener() {
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	            if (event.getAction() == MotionEvent.ACTION_DOWN){
+	              //  textView.setText("Touch coordinates : " +
+	              //          String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
+	            	AbstractModuleView view = (AbstractModuleView) v;
+	            	view.iWasClicked(event.getX(),event.getY());
+	            }
+	            return true;
+	        }
+	    });
 		setContentView(R.layout.activity_menu);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.menu_layout);
 		TextView a = new TextView(this);

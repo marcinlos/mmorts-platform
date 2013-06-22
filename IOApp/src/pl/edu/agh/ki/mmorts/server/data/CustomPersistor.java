@@ -4,23 +4,16 @@ package pl.edu.agh.ki.mmorts.server.data;
 /**
  * Representing CRUD operations on custom data from custom modules. General
  * interface map player's name to custom data object. Now it's just simple
- * interface which provides returning of valid java Object from database and saving
- * these objects. Now there is no checking of validity. Read below what could be done!
+ * interface which provides returning of valid java objects(as passed to method) from database and saving
+ * these objects. Now there is no checking of validity(except for parametrized method)
  * 
  * <p>
- * Generally, now this interface is created for preserving the symmetry with PlayersPersistor
- * Its created to add flexibility to class hierarchy too
+ * Interface is generally used to preserve server's architecture so both
+ * architectures could be easier to understand. Of course, here could be used
+ * easier hierarchy and methods but we wanted to avoid inconsistency in architecture
  * </p>
  * 
- * Here there could be some magic in the future. By using standarised custom modules data classes
- * (a'la java beans), some reflection and a bit of something like visitor pattern there could be used
- * a scenario: CustomPersistor has some special methods such as increase(), decrease(), divide(), clear()
- * etc. which takes object and do some manipulations on their initial state.(reflection is needed,
- * because we can't call object method from string) 
  */
-
-
-//TODO add init!!!
 
 public interface CustomPersistor {
 
@@ -32,26 +25,29 @@ public interface CustomPersistor {
 	 * 			indicates for which module binding occurs
 	 * @param playerName
 	 * 			object is going to be bound to this player name
-	 * @param data
-	 * 			data object bound
+	 * @param o
+	 * 			object bound
 	 * @throws IllegalArgumentException
 	 * 			thrown when binding with this player name exists in this module in database
 	 */
-	<T> void createBinding(String moduleName, String playerName, T data) throws IllegalArgumentException;
+	void createBinding(String moduleName, String playerName, Object o) throws IllegalArgumentException;
 	
 	/**
 	 * Receives object bound to player name for given module.
 	 * Player name must be bound in this module in database.
+	 * Parameter T indicates the class type which returned object should be of.
 	 * @param moduleName
 	 * 			indicates for which module binding is looked
 	 * @param playerName
 	 * 			indicates player to which object is bound
+	 * @param clazz
+	 * 			indicates what class should be returned instead of plain Object
 	 * @return
-	 * 			Valid Java object(connected with module) bound with player name in given module
+	 * 			Valid Java object bound with player name in given module
 	 * @throws IllegalArgumentException
 	 * 			thrown when player name is not bound in this module
 	 */
-	<T> T receiveBinding(String moduleName, String playerName, Class<T> type) throws IllegalArgumentException;
+	<T> T receiveBinding(String moduleName, String playerName, Class<T> clazz) throws IllegalArgumentException;
 	/**
 	 * Updates object bound to player name for given module.
 	 * Player name must be bound in this module in database earlier.
@@ -65,7 +61,7 @@ public interface CustomPersistor {
 	 * @throws IllegalArgumentException
 	 * 			thrown when player name is not bound in this module 
 	 */
-	<T> void updateBinding(String modulename, String playerName, T data) throws IllegalArgumentException;
+	void updateBinding(String modulename, String playerName, Object o) throws IllegalArgumentException;
 	/**
 	 * Deletes binding in given module.
 	 * Binding must occur in this module in database earlier.

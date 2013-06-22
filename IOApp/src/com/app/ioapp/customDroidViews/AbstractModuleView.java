@@ -7,8 +7,12 @@ import android.view.View;
 
 import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.Module;
+import com.app.ioapp.view.MainView;
 
 public abstract class AbstractModuleView extends View {
+	
+	protected MainView view;
+	protected String moduleName;
 
 	public AbstractModuleView(Context context) {
 		super(context);
@@ -22,11 +26,21 @@ public abstract class AbstractModuleView extends View {
 	public AbstractModuleView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
-	public abstract void setModuleImpl(Module m);
 	
 	/**
 	 * used to force view to update on information it's logic has.
 	 */
 	public abstract void refresh();
+	
+	public abstract void iWasClicked(float x, float y);
+	
+	/**
+	 * 
+	 * @param moduleName name of the module the view will call for data
+	 * @param view facade to separate modules implementation and UI classes. responsible for
+	 * directing calls from UI to impl.
+	 */
+	public abstract void init(String moduleName, MainView view);
+	
 
 }

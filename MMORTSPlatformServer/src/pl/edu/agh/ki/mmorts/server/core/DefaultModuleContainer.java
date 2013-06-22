@@ -21,61 +21,83 @@ import pl.edu.agh.ki.mmorts.server.modules.Module;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleDescriptor;
 
 /**
- * Abstract base dispatcher managing modules.
+ * Component responsible for modules initialization and management.
  * 
  * @author los
  */
-public abstract class AbstractModuleContainer implements ModuleContainer {
+public class DefaultModuleContainer implements ModuleContainer {
 
     public static final Logger logger = Logger
-            .getLogger(AbstractModuleContainer.class);
+            .getLogger(DefaultModuleContainer.class);
 
+    /**
+     * Lock protecting internal structures containing module configuration and
+     * address mappings.
+     */
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
+
+    /** Read lock, used to obtain shared access to the internal structures */
     protected final Lock readLock = rwLock.readLock();
+
+    /** Write lock, used to obtain exclusive access to the internal structures */
     protected final Lock writeLock = rwLock.writeLock();
 
+    /** Name -> Configuration mapping */
     private final Map<String, ConfiguredModule> modules;
+    /** Address -> Module mapping */
     private final Map<String, Module> unicast;
+    /** Address -> Multicast group mapping */
     private final Map<String, Set<Module>> multicast;
-    
 
     /** Implementation of service locator */
     private final ServiceLocator services = new ServiceLocatorDelgate();
-    
+
     /** Version of the server */
     private int version;
 
-    
-    public AbstractModuleContainer() {
+    /**
+     * Creates new {@code DefaultModuleContainer} with empty module list and
+     * mappings
+     */
+    public DefaultModuleContainer() {
         modules = new HashMap<String, ConfiguredModule>();
         unicast = new HashMap<String, Module>();
         multicast = new HashMap<String, Set<Module>>();
     }
 
+    /**
+     * @return {@code Name -> module} info mapping
+     */
     protected Map<String, ConfiguredModule> modules() {
         return modules;
     }
 
+    /**
+     * @return {@code Unicast address -> module} mapping
+     */
     protected Map<String, Module> unicast() {
         return unicast;
     }
 
+    /**
+     * @return {@code Multicast address -> members} mapping
+     */
     protected Map<String, Set<Module>> multicast() {
         return multicast;
     }
-    
+
     /**
      * @return Version of the application
      */
     protected int version() {
         return version;
     }
-    
+
     /**
-     * Updates the version number 
+     * Updates the version number
      */
     protected void updateVersion() {
-        ++ version;
+        ++version;
     }
 
     /**
@@ -218,7 +240,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         }
         logger.debug("Modules shat down");
     }
-    
+
     /**
      * {@inheritDoc}
      * 

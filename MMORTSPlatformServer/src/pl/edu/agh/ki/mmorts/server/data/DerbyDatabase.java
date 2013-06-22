@@ -23,6 +23,15 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 /**
+ * Simple implementation of {@link Database} which wraps Apache Derby database.
+ * Implementation use connection pooling(implemented by {@link SimpleConnectionPool}) 
+ * Implementation is fully trasanctional. Contract for transaction and connection is:
+ * <ul>
+ * <li>One connection per transaction</li>
+ * <li>One transaction per one thread</li>
+ * <li>Connection is returned to pool after either commit or rollback</li>
+ * </ul>
+ * 
  * @author drew
  * 
  */
@@ -30,9 +39,15 @@ public class DerbyDatabase implements Database {
 
 	private static final Logger logger = Logger.getLogger(DerbyDatabase.class);
 
+	/**
+	 * Transaction manager which manages transactions 
+	 */
 	@Inject
 	private TransactionManager tm;
 
+	/**
+	 * Contains informations about loaded moduels
+	 */
 	@Inject
 	private ModuleTable moduleTable;
 	
@@ -61,6 +76,19 @@ public class DerbyDatabase implements Database {
 
 	private Gson gson = new Gson();
 	
+	/**
+	 * Initialize correct connection. Done operations:
+	 * <ul>
+	 * <li>Getting connection from pool</li>
+	 * <li>Disabling auto commit for connections</li>
+	 * <li>Adding listeners if transaction is either commited or rolled back.
+	 * Those listeners returns connection</li>
+	 * </ul>
+	 * @return
+	 * 		initialized connection
+	 * @throws NoConnectionException
+	 * 		when can't get connection from pool
+	 */
 	private Connection initConnection() throws NoConnectionException {
 		logger.debug("Initializing connection");
 		final Connection conn = connectionPool.getConnection();
@@ -103,13 +131,20 @@ public class DerbyDatabase implements Database {
 		return conn;
 	}
 
+	/**
+	 * Just returns connection to pool
+	 */
 	private void connectionReturn() {
 		connectionPool.returnConnection(perThreadConn.get());
 	}
 	
 	
-	private Class<?> getModuleDataClass(ModuleDescriptor d){
-		return Object.class;
+	/**
+	 * @param desc
+	 * @return
+	 */
+	private Class<?> getModuleDataClass(ModuleDescriptor desc){
+		return desc.config.get("datatype", Class.class);
 	}
 	
 	
@@ -127,7 +162,10 @@ public class DerbyDatabase implements Database {
 		
 		namesObjectMap = new HashMap<String, Class<?>>();
 		for(ModuleDescriptor desc : moduleTable.getModuleDescriptors()){
-			namesObjectMap.put(desc.name, getModuleDataClass(desc));
+			Class<?> dataTypeClass = getModuleDataClass(desc);
+			if(dataTypeClass!=null){
+				namesObjectMap.put(desc.name, dataTypeClass);
+			}
 		}
 		
 		connectionPool.init();
@@ -288,7 +326,7 @@ public class DerbyDatabase implements Database {
 	@Override
 	public void createBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
-		logger.debug(String.format("Creating to player %s in module %s", moduleName, playerName));
+		logger.debug(String.format("Creating to player %s in module %s", playerName, moduleName));
 		Statement stm = null;
 		try{
 			String sqlString = queriesCreator.getInsertCustomDataQuery(playerName, moduleName, serialize(o));
@@ -328,11 +366,11 @@ public class DerbyDatabase implements Database {
 	@Override
 	public Object receiveBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
-		logger.debug(String.format("Receving data of player %s in module %s", moduleName, playerName));
+		logger.debug(String.format("Receving data of player %s in module %s", playerName, moduleName));
 		Statement stm = null;
 		Object deserialized = null;
 		try{
-			String sqlString = queriesCreator.getSelectCustomDataQuery(playerName, moduleName);
+			String sqlString = queriesCreator.getSelectCustomDataQuery(moduleName,playerName);
 			stm = perThreadConn.get().createStatement();
 			ResultSet rs = stm.executeQuery(sqlString);
 			while(rs.next()){
@@ -342,7 +380,6 @@ public class DerbyDatabase implements Database {
 		} catch (SQLException e) {
 			logger.warn("Cannot receive data");
 			e.printStackTrace();
-			//TODO
 		} finally {
 			if (stm != null) {
 				try {
@@ -353,9 +390,6 @@ public class DerbyDatabase implements Database {
 				}
 			}
 		}
-		if(deserialized==null){
-			throw new IllegalArgumentException();
-		}
 		return deserialized;
 	}
 
@@ -363,11 +397,12 @@ public class DerbyDatabase implements Database {
 	@Override
 	public void updateBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
-		logger.debug(String.format("Updating data of player %s in module %s", moduleName, playerName));
+		logger.debug(String.format("Updating data of player %s in module %s", playerName, moduleName));
 		Statement stm = null;
 		try {
 			stm = perThreadConn.get().createStatement();
-			stm.executeUpdate(queriesCreator.getUpdateCustomDataQuery(playerName, moduleName, serialize(o)));
+			String query = queriesCreator.getUpdateCustomDataQuery(playerName, moduleName, serialize(o));
+			stm.executeUpdate(query);
 			if (stm.getUpdateCount() == 0) {
 				throw new IllegalArgumentException();
 			}
@@ -391,7 +426,7 @@ public class DerbyDatabase implements Database {
 	@Override
 	public void deleteBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
-		logger.debug(String.format("Deleting binding of player %s in module %s", moduleName, playerName));
+		logger.debug(String.format("Deleting binding of player %s in module %s", playerName, moduleName));
 		Statement stm = null;
 		try {
 			stm = perThreadConn.get().createStatement();

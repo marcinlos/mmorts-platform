@@ -35,7 +35,7 @@ public class MenuButton extends Button {
 		v = view;
 	}
 	
-	public View getView(){
+	public AbstractModuleView getView(){
 		return v;
 	}
 	

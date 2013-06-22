@@ -12,6 +12,7 @@ public class Tile implements ITile {
     private int y;
     private int size_x;
     private int size_y;
+    private Building building;
     
     public Tile(Bitmap bit, int x, int y, int sx, int sy){
     	this.x = x;
@@ -125,5 +126,13 @@ public class Tile implements ITile {
 	public void validity(boolean b){
     	isValid = b;
     }
+	@Override
+	public void setBuilding(Building b) {
+		building = b;		
+	}
+	@Override
+	public Building getBuilding() {
+		return building;
+	}
 
 }

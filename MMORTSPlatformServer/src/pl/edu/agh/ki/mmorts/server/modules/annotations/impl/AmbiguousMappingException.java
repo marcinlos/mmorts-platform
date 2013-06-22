@@ -1,6 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.modules.annotations.impl;
 
 /**
+ * Thrown when there is no single best match for a message.
  * 
  * @author los
  */

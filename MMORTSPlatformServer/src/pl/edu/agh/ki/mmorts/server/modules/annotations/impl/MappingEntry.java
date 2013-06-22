@@ -7,6 +7,8 @@ import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
 
 /**
+ * Association of the annotation describing mapping criteria and the handler to
+ * use if so.
  * 
  * @author los
  */
@@ -23,6 +25,13 @@ final class MappingEntry {
         handler.handle(target, msg, ctx);
     }
 
+    /**
+     * Evaluates the match. TODO: this sux, change it.
+     * 
+     * @param message
+     *            Received message
+     * @return Integer describing match precision
+     */
     int matches(Message message) {
         return new MatchEvaluator(message).run().value();
     }
@@ -31,6 +40,9 @@ final class MappingEntry {
         return Arrays.asList(array).contains(elem);
     }
 
+    /**
+     * Auxilary class to evaluate the match
+     */
     class MatchEvaluator {
 
         int match = 0;
