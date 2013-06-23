@@ -35,8 +35,6 @@ import pl.edu.agh.ki.mmorts.server.util.DI;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
@@ -115,7 +113,7 @@ public class Init {
      * Runtime information about the modules
      */
     private ModuleTable moduleTable;
-    private com.google.inject.Module moduleTableModule;
+    //private com.google.inject.Module moduleTableModule;
 
     /**
      * Creates the {@code Init} object and initializes the server, up to the
@@ -166,11 +164,11 @@ public class Init {
             createTransactionManager();
             createChannel();
             createDispatcher();
-            initModules();
             createDataSource();
             createCustomPersistor();
             createPlayersPersistor();
-            injectPersistors();
+            initModules();
+            // injectPersistors();
             logger.info("Server successfully initialized");
         } catch (Exception e) {
             logger.fatal("Server initialization error");
@@ -232,22 +230,20 @@ public class Init {
                 return modules;
             }
         };
-        moduleTableModule = DI.objectModule(moduleTable, ModuleTable.class);
+        //moduleTableModule = DI.objectModule(moduleTable, ModuleTable.class);
     }
 
     /**
      * Injects persistors (players manager and custom persistor) into the
      * modules. Called at the end of initialization seqnece.
      */
-    private void injectPersistors() {
-        logger.debug("Injecting persistors");
-        Injector injector = Guice.createInjector(customPersistorModule,
-                playersPersistorModule);
-        for (ConfiguredModule conf : dispatcher.getModules()) {
-            injector.injectMembers(conf.module);
-        }
-        logger.debug("Persistors injected");
-    }
+    /*
+     * private void injectPersistors() { logger.debug("Injecting persistors");
+     * Injector injector = Guice.createInjector(customPersistorModule,
+     * playersPersistorModule); for (ConfiguredModule conf :
+     * dispatcher.getModules()) { injector.injectMembers(conf.module); }
+     * logger.debug("Persistors injected"); }
+     */
 
     /**
      * Creates the module described by the {@code desc} and calls @OnInit
@@ -259,6 +255,7 @@ public class Init {
      */
     private Module createModule(final ModuleDescriptor desc) {
         try {
+            dispatcher.beforeLoad(desc);
             Class<? extends Module> cl = desc.moduleClass;
             // Inject config, dispatcher, tx manager and individual module
             // configuration
@@ -270,7 +267,8 @@ public class Init {
             };
             Module module = DI.createWith(cl, configModule, dispatcherModule,
                     DI.objectModule(txManager.getProvider(),
-                            TransactionProvider.class), properties, DI
+                            TransactionProvider.class), properties,
+                    playersPersistorModule, customPersistorModule, DI
                             .objectModule(desc, ModuleDescriptor.class));
             callInit(module);
             return module;
@@ -365,7 +363,7 @@ public class Init {
         logger.debug("Creating database connection");
         Class<? extends Database> cl = config.getDatabaseClass();
         database = DI.createWith(cl, configModule, txManagerModule,
-                moduleTableModule, new AbstractModule() {
+                dispatcherModule, new AbstractModule() {
                     @Override
                     protected void configure() {
                         bind(ConnectionCreator.class).to(
@@ -399,6 +397,7 @@ public class Init {
             protected void configure() {
                 install(DI.objectModule(dispatcher, Gateway.class));
                 install(DI.objectModule(dispatcher, ServiceLocator.class));
+                install(DI.objectModule(dispatcher, ModuleEventsNotifier.class));
             }
         };
         logger.debug("Dispatcher created");

@@ -1,10 +1,12 @@
 package pl.edu.agh.ki.mmorts.server.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -56,6 +58,12 @@ public class DefaultModuleContainer implements ModuleContainer {
     private int version;
 
     /**
+     * List of global module events listeners, used to implement the
+     * {@linkplain ModuleEventsNotifier} interface
+     */
+    private List<ModuleEventsListener> listeners;
+
+    /**
      * Creates new {@code DefaultModuleContainer} with empty module list and
      * mappings
      */
@@ -63,6 +71,13 @@ public class DefaultModuleContainer implements ModuleContainer {
         modules = new HashMap<String, ConfiguredModule>();
         unicast = new HashMap<String, Module>();
         multicast = new HashMap<String, Set<Module>>();
+
+        // Synchronization is necessary only in case of fairly strange usage,
+        // i.e. when the listeners are registered outside the initialization
+        // sequence and module loading.
+        listeners = new ArrayList<ModuleEventsListener>();
+        listeners = Collections.synchronizedList(listeners);
+
     }
 
     /**
@@ -114,7 +129,7 @@ public class DefaultModuleContainer implements ModuleContainer {
     @Override
     public void registerModules(Iterable<ConfiguredModule> modules) {
         for (ConfiguredModule conf : modules) {
-            registerModule(conf);
+            addModule(conf);
         }
         phaseTwo();
     }
@@ -128,12 +143,12 @@ public class DefaultModuleContainer implements ModuleContainer {
     }
 
     /**
-     * Register single module.
+     * Calls module's {@code init()} and add it to internal structures.
      * 
      * @param conf
      *            Configuration & module to register
      */
-    private void registerModule(ConfiguredModule conf) {
+    private void addModule(ConfiguredModule conf) {
         ModuleDescriptor desc = conf.descriptor;
         logger.debug("Registering module " + desc.name);
         logger.debug("Calling init() on " + desc.name);
@@ -218,6 +233,7 @@ public class DefaultModuleContainer implements ModuleContainer {
             Module module = conf.module;
             try {
                 module.started();
+                notifyModuleLoaded(conf);
             } catch (Exception e) {
                 logger.error("Module " + name + " started() has failed", e);
                 removeModule(name);
@@ -274,6 +290,88 @@ public class DefaultModuleContainer implements ModuleContainer {
     @Override
     public <T> T lookup(Class<T> service) {
         return services.lookup(service);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addListener(ModuleEventsListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeListener(ModuleEventsListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Notifies all the registered listeners about the module about to be
+     * loaded.
+     * 
+     * @param descriptor
+     *            Descriptor of module to be loaded
+     */
+    protected void notifyLoadingModule(ModuleDescriptor descriptor) {
+        for (ModuleEventsListener listener : listeners) {
+            listener.loadingModule(descriptor);
+        }
+    }
+
+    /**
+     * Notifies all the registered listeners about the module just loaded.
+     * 
+     * @param module
+     *            Loaded module
+     */
+    protected void notifyModuleLoaded(ConfiguredModule module) {
+        for (ModuleEventsListener listener : listeners) {
+            listener.moduleLoaded(module);
+        }
+    }
+
+    /**
+     * Notifies all the registered listeners before the module unloading.
+     * 
+     * @param module
+     *            Module to be unloaded
+     */
+    protected void notifyUnloadingModule(ConfiguredModule module) {
+        for (ModuleEventsListener listener : listeners) {
+            listener.unloadingModule(module);
+        }
+    }
+
+    /**
+     * Notifies all the registered listeners after the module has been unloaded.
+     * 
+     * @param module
+     *            Module to be unloaded
+     */
+    protected void notifyModuleUnloaded(ConfiguredModule module) {
+        for (ModuleEventsListener listener : listeners) {
+            listener.moduleUnloaded(module);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void beforeLoad(ModuleDescriptor descriptor) {
+        notifyLoadingModule(descriptor);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerModule(ConfiguredModule module) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

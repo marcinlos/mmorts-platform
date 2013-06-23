@@ -59,7 +59,12 @@ public class PropertyMap {
     }
 
     /**
-     * Retrieve value based on a key and a type. If the
+     * Retrieve value based on a key and a type. If the key is missing in the
+     * map or the associated value has incompatible type, {@code null} is
+     * returned.
+     * 
+     * <p>
+     * Note: there is no way to know whether the {@code null} is due to missing value,
      * 
      * @param key
      *            Key
