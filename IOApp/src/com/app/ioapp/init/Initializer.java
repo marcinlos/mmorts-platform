@@ -13,8 +13,10 @@ import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.ConfigReader;
+import com.app.ioapp.modules.ConfiguredModule;
 import com.app.ioapp.modules.Dispatcher;
 import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.SingleThreadedDispatcher;
 
 /**
  * A class responsible for the initialization of the environment.
@@ -46,7 +48,7 @@ public class Initializer {
 	/**
 	 * Map of modules
 	 */
-	private Map<String, Module> modules;
+	private Map<String, ConfiguredModule> modules;
     
     /**
      * Stores properties read from  configuration file
@@ -68,7 +70,7 @@ public class Initializer {
     /**
      * Dispatcher object
      */
-	private Dispatcher dispatcher;
+	private SingleThreadedDispatcher dispatcher;
 	
 	/**
 	 * Stream to read configuration from file
@@ -94,16 +96,16 @@ public class Initializer {
 		this.alreadyRegistered = alreadyRegistered;
 		this.configInput = configInput;
 		this.infoOutput = infoOutput;
-		this.modules = new HashMap<String, Module>();
+		this.modules = new HashMap<String, ConfiguredModule>();
 		
-		//this.dispatcher = new ThreadedDispatcher(config, modules);   //must be initialized before logIn()
+		this.dispatcher = new SingleThreadedDispatcher();
 	}
 	
 	/**
 	 * Returns map of modules
 	 * @return modules
 	 */
-	public Map<String, Module> getModules() {
+	public Map<String, ConfiguredModule> getModules() {
 		return modules;
 	}
 
@@ -146,13 +148,14 @@ public class Initializer {
 			reader = new ConfigReader(configInput);
 			reader.configure();
 			config = reader.getConfig();
+			/*
 			for (String moduleName : modules.keySet()) {
 				(modules.get(moduleName)).init(config.getModuleProperties(moduleName));
 			}
-			//dispatcher.registerModules(modules);
+			dispatcher.registerModules(modules);
 			
 			this.synchronizer = new Synchronizer((Gateway) dispatcher, modules);
-			
+			*/
 			synchronizer.synchronizeState();
 		
 	}
