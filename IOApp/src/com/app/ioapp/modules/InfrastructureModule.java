@@ -1,5 +1,6 @@
 package com.app.ioapp.modules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +9,8 @@ import java.util.Properties;
 import android.util.Log;
 
 import com.app.board.SpaceOccupiedException;
-//<<<<<<< HEAD
-//=======
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.view.MainView;
-//>>>>>>> e677fd1564b1b4fc1b43d424beafd947b4bf5eb9
 
 /**
  * Implementation of concrete module. Extends {@code AbstractCommunicatingModule} so can communicate with
