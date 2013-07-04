@@ -16,6 +16,7 @@ public class ContAdapter implements Continuation {
      * 
      * <p>
      * Empty implementation.
+     * </p>
      */
     @Override
     public void execute(Context context) {
@@ -27,6 +28,7 @@ public class ContAdapter implements Continuation {
      * 
      * <p>
      * Empty implementation.
+     * </p>
      */
     @Override
     public void failure(Throwable e, Context context) {
