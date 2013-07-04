@@ -221,7 +221,7 @@ public abstract class ModuleBase implements Module {
     }
 
     /**
-     * Forwards to {@link Gateway#sendResponse}, convenience method.
+     * Forwards to {@link Gateway#output}, convenience method.
      * 
      * @param response
      *            Response to send
