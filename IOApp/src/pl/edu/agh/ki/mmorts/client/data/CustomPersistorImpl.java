@@ -1,6 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.data;
 
-import android.util.Log;
+import com.google.inject.Inject;
 
 
 
@@ -20,17 +20,8 @@ public class CustomPersistorImpl implements CustomPersistor {
 	/**
 	 *	Represents underlying database to persist the data in
 	 */
+	@Inject
 	private Database db;
-	
-	/**
-	 * Constructs {@link CustomPersistorImpl} which uses concrete {@link Database}
-	 * @param db
-	 * 			database to persist data in
-	 */
-	public CustomPersistorImpl(Database db) {
-		this.db = db;
-	}
-
 	
 	
 	/**

@@ -13,11 +13,14 @@ import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionManagerImpl;
 import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionProvider;
+import pl.edu.agh.ki.mmorts.client.data.CustomPersistor;
+import pl.edu.agh.ki.mmorts.client.data.CustomPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.data.Database;
+import pl.edu.agh.ki.mmorts.client.data.InMemDatabase;
 import pl.edu.agh.ki.mmorts.client.data.PlayersPersistor;
+import pl.edu.agh.ki.mmorts.client.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.util.DI;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
-import android.util.Log;
 
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.communication.Gateway;
@@ -108,7 +111,7 @@ public class Initializer {
      * Custom persistor object created using the class specified in the
      * configuration
      */
-    private Object customPersistor;
+    private CustomPersistor customPersistor;
     private com.google.inject.Module customPersistorModule;
     
     /**
@@ -201,9 +204,9 @@ public class Initializer {
 			createTransactionManager();
 			createChannel();
 			createDispatcher();
-			//createDataSource();               //  <-----------------------------------------
-            //createCustomPersistor();
-            //createPlayersPersistor();
+			createDataSource();               //  <-----------------------------------------
+            createCustomPersistor();
+            createPlayersPersistor();
 			initModules();
 			Log.d(ID, "Server successfully initialized");
 		}
@@ -215,6 +218,40 @@ public class Initializer {
 		
 	}
 
+	
+	private void createDataSource() {
+        //logger.debug("Creating database connection");
+        Class<? extends Database> cl = InMemDatabase.class;
+        database = DI.createWith(cl);
+        callInit(database);
+        databaseModule = DI.objectModule(database, Database.class);
+        //logger.debug("Database connection successfully initialized");
+    }
+	
+	private void createCustomPersistor() {
+        //logger.debug("Creating custom persistor");
+        Class<CustomPersistor> ifcl = CustomPersistor.class;
+        Class<? extends CustomPersistor> cl = CustomPersistorImpl.class;
+        customPersistor = DI.createWith(cl, databaseModule);
+        // Create special module
+        customPersistorModule = DI.objectModule(
+                customPersistor, ifcl);
+        callInit(customPersistor);
+        //logger.debug("Custom persistor created");
+    }
+
+    private void createPlayersPersistor() {
+        //logger.debug("Creating players persistor");
+        Class<? extends PlayersPersistor> cl = PlayersPersistorImpl.class;
+        playersPersistor = DI.createWith(cl, databaseModule);
+        playersPersistorModule = DI.objectModule(playersPersistor,
+                PlayersPersistor.class);
+        callInit(playersPersistor);
+        //logger.debug("Players manager created");
+    }
+	
+	
+	
     private void createTransactionManager() {
         Log.d(ID, "Creating transaction manager");
         Class<? extends TransactionManager> cl = TransactionManagerImpl.class;

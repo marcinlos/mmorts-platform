@@ -3,6 +3,8 @@ package pl.edu.agh.ki.mmorts.client.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
+
 import android.util.Log;
 
 /**
@@ -33,6 +35,7 @@ public class InMemDatabase implements Database {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@OnInit
 	public void init() {
 		Log.d(ID, "Initialization started");
 		playersTable = new HashMap<String, PlayerData>();

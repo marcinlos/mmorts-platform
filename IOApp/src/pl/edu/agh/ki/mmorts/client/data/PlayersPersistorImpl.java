@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.data;
 
+import com.google.inject.Inject;
+
 /**
  * Implementation of {@link PlayersPersistor} which generally wraps raw {@link Database}
  * to achieve typing. There is nothing special here, except for checking for
@@ -16,16 +18,8 @@ public class PlayersPersistorImpl implements PlayersPersistor {
 	/**
 	 * Underlying {@link Database} implementation
 	 */
+	@Inject
 	private Database db;
-
-	/**
-	 * Constructs {@link PlayersPersistorImpl} which uses concrete {@link Database}
-	 * @param db
-	 * 			database to persist data in
-	 */
-	public PlayersPersistorImpl(Database db) {
-		this.db = db;
-	}
 
 	
 	/**
