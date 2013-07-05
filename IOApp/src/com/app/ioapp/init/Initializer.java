@@ -22,6 +22,8 @@ import pl.edu.agh.ki.mmorts.client.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.util.DI;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
 
+import android.util.Log;
+
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.communication.MessageOutputChannel;
@@ -204,7 +206,7 @@ public class Initializer {
 			createTransactionManager();
 			createChannel();
 			createDispatcher();
-			createDataSource();               //  <-----------------------------------------
+			createDataSource();              
             createCustomPersistor();
             createPlayersPersistor();
 			initModules();
@@ -220,16 +222,16 @@ public class Initializer {
 
 	
 	private void createDataSource() {
-        //logger.debug("Creating database connection");
+        Log.d(ID, "Creating database connection");
         Class<? extends Database> cl = InMemDatabase.class;
         database = DI.createWith(cl);
         callInit(database);
         databaseModule = DI.objectModule(database, Database.class);
-        //logger.debug("Database connection successfully initialized");
+        Log.d(ID, "Database connection successfully initialized");
     }
 	
 	private void createCustomPersistor() {
-        //logger.debug("Creating custom persistor");
+        Log.d(ID, "Creating custom persistor");
         Class<CustomPersistor> ifcl = CustomPersistor.class;
         Class<? extends CustomPersistor> cl = CustomPersistorImpl.class;
         customPersistor = DI.createWith(cl, databaseModule);
@@ -237,17 +239,17 @@ public class Initializer {
         customPersistorModule = DI.objectModule(
                 customPersistor, ifcl);
         callInit(customPersistor);
-        //logger.debug("Custom persistor created");
+        Log.d(ID, "Custom persistor created");
     }
 
     private void createPlayersPersistor() {
-        //logger.debug("Creating players persistor");
+        Log.d(ID, "Creating players persistor");
         Class<? extends PlayersPersistor> cl = PlayersPersistorImpl.class;
         playersPersistor = DI.createWith(cl, databaseModule);
         playersPersistorModule = DI.objectModule(playersPersistor,
                 PlayersPersistor.class);
         callInit(playersPersistor);
-        //logger.debug("Players manager created");
+        Log.d(ID, "Players manager created");
     }
 	
 	
