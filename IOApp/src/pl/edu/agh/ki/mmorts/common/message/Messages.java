@@ -20,7 +20,6 @@ import java.io.OutputStream;
  * Helper class for creation and serialization/deserialization of system message
  * objects.
  * 
- * @author los
  * @see Message
  */
 public final class Messages {
@@ -73,7 +72,7 @@ public final class Messages {
      * @param out
      *            Output stream to serialize the message to
      * @param message
-     *            Messge to be serialized
+     *            Message to be serialized
      * @throws NonSerializableContentException
      *             If the message content cannot be java-serialized
      * @throws MessageSerializationException

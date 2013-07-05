@@ -9,7 +9,6 @@ package pl.edu.agh.ki.mmorts.client.data;
  * Compare javadocs for {@link Database} and {@link PlayersPersistor} for see what 
  * additional checks are done on concrete methods.
  * 
- * @author drew
  *
  */
 public class PlayersPersistorImpl implements PlayersPersistor {

@@ -14,8 +14,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import android.util.Log;
 
-import pl.edu.agh.ki.mmorts.client.communication.ServiceLocator;
-import pl.edu.agh.ki.mmorts.client.communication.ServiceLocatorDelgate;
 
 /**
  * Abstract base dispatcher managing modules.

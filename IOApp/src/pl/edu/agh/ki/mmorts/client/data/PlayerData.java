@@ -7,7 +7,6 @@ package pl.edu.agh.ki.mmorts.client.data;
  * there is no way to provide kind style(easily configurable, flexible and type-checked) of creating such an interface even
  * with an ORM.
  * 
- *  @author drew
  */
 public interface PlayerData {
 

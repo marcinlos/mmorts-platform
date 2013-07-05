@@ -1,4 +1,7 @@
-package com.app.ioapp.modules;
+package com.app.ioapp.communication;
+
+import com.app.ioapp.communication.AbstractDispatcher;
+import com.app.ioapp.modules.TransactionExecutor;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;

@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.core.transaction;
 
+
 /**
  * Class designed to provide simple transactionality of message processing. It
  * works by providing simple begin/commit/rollback interface and a possibility
@@ -52,5 +53,10 @@ public interface TransactionManager {
      *             If there is no currently active transaction
      */
     void rollback();
+    
+    /**
+     * @return {@code TransactionProvider} for this manager
+     */
+    TransactionProvider getProvider();
 
 }

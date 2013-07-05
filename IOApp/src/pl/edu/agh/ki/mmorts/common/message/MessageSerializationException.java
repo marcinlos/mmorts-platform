@@ -5,7 +5,6 @@ package pl.edu.agh.ki.mmorts.common.message;
  * non-serializable object in the message's content, invalid binary data,
  * invalid/unknown data class etc.
  * 
- * @author los
  */
 public class MessageSerializationException extends MessageException {
 

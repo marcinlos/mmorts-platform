@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.communication;
+package com.app.ioapp.communication;
 
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 
@@ -23,7 +23,7 @@ public interface ResponseCallback {
      * Invoked when the message delivery/processing has failed at some point.
      * 
      * @param e
-     *            Exception that occured during message processing
+     *            Exception that occurred during message processing
      */
     void failed(Exception e);
 

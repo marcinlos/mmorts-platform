@@ -1,16 +1,20 @@
-package com.app.ioapp.modules;
+package com.app.ioapp.communication;
 
 import javax.inject.Inject;
 
-import pl.edu.agh.ki.mmorts.client.communication.MessageOutputChannel;
 import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
 import android.util.Log;
 
-import com.app.ioapp.communication.MessageReceiver;
-import com.app.ioapp.communication.TargetNotExistsException;
 import com.app.ioapp.config.Config;
+import com.app.ioapp.modules.AbstractModuleContainer;
+import com.app.ioapp.modules.CommunicatingModule;
+import com.app.ioapp.modules.ContAdapter;
+import com.app.ioapp.modules.Context;
+import com.app.ioapp.modules.Continuation;
+import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.TransactionExecutor;
 
 /**
  * Partial implementation of a message dispatcher.

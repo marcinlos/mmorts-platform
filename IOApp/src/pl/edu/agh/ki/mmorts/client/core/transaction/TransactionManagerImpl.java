@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 /**
  * Concrete implementation of {@linkplain TransactionManager}, using
  * {@linkplain SequentialTM} as per-thread local managers.
@@ -32,6 +33,15 @@ public class TransactionManagerImpl implements TransactionManager {
     
     // and one transaction
     private Transaction transaction;
+    
+    /** Transaction provider implementation */
+    private TransactionProvider provider = new TransactionProvider() {
+        
+        @Override
+        public Transaction getCurrent() {
+            return getCurrent();
+        }
+    };
 
     /**
      * Creates the transaction manager instance.
@@ -115,6 +125,14 @@ public class TransactionManagerImpl implements TransactionManager {
         } else {
             throw new TransactionStateException("No transaction to rollback");
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TransactionProvider getProvider() {
+        return provider;
     }
 
 }

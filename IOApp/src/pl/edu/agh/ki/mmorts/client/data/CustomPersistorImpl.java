@@ -12,7 +12,6 @@ import android.util.Log;
  * Compare javadocs for {@link Database} and {@link CustomPersistor} for see what 
  * additional checks are done on concrete methods.
  * 
- * @author drew
  *
  */
 public class CustomPersistorImpl implements CustomPersistor {

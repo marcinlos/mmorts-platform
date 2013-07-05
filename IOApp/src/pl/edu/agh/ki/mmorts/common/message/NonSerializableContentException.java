@@ -11,7 +11,6 @@ package pl.edu.agh.ki.mmorts.common.message;
  * to use non-serializable objects as message's {@code data} field value, as
  * long as this message is not sent accross dispatcher boundaries.
  * 
- * @author los
  */
 public class NonSerializableContentException extends
         MessageSerializationException {

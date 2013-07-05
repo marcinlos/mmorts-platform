@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.communication;
+package com.app.ioapp.communication;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;

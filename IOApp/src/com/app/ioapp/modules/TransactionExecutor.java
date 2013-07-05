@@ -15,7 +15,7 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * transactions.
  * 
  */
-class TransactionExecutor {
+public class TransactionExecutor {
 
 
 

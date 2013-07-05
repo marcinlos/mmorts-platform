@@ -13,7 +13,7 @@ import java.io.Serializable;
  * <li><b>source</b> - address of the component that issued a message, or
  * alternatively - an address to send a reply to. (Note: this two meanings could
  * have been separated to provide for easier message flow control, but were
- * choosen not to, since no significant use cases emerged so far)
+ * chosen not to, since no significant use cases emerged so far)
  * 
  * <li><b>target</b> - address of the component/multicast group that the message
  * is to be delivered to
@@ -47,11 +47,10 @@ import java.io.Serializable;
  * 
  * <p>
  * The message is intended to be serializable. It is vital for the messages sent
- * accross the dispatcher bounds (i.e. by the network) to carry serializable
+ * across the dispatcher bounds (i.e. by the network) to carry serializable
  * data as a {@code data} field, since network communication uses java
  * serialization. For local-only communication serialization is not required.
  * 
- * @author los
  */
 public class Message implements Serializable {
 

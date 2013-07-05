@@ -3,6 +3,8 @@ package pl.edu.agh.ki.mmorts.client.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.util.Log;
+
 /**
  * Implementation of {@link Database} which uses Maps to storing information.
  * For client usage, which shouldn't be more than remembering state of player
@@ -10,12 +12,10 @@ import java.util.Map;
  * 
  * No situation when client tries to remember more data is considered!
  * 
- * @author drew
  *
  */
 public class InMemDatabase implements Database {
 
-	// TODO logging, or i will create it while i'll download ADT
 	private static final String ID = InMemDatabase.class.getName();
 
 	
@@ -34,6 +34,7 @@ public class InMemDatabase implements Database {
 	 */
 	@Override
 	public void init() {
+		Log.d(ID, "Initialization started");
 		playersTable = new HashMap<String, PlayerData>();
 		modulesDataTable = new HashMap<String, Map<String, Object>>();
 
@@ -44,7 +45,9 @@ public class InMemDatabase implements Database {
 	 */
 	@Override
 	public void createPlayer(PlayerData player) throws IllegalArgumentException {
+		Log.d(ID, "Creating new player: " + player.getName());
 		if (playersTable.containsKey(player.getName())) {
+			Log.e(ID, "Player already exists");
 			throw new IllegalArgumentException();
 		}
 		playersTable.put(player.getName(), player);
@@ -55,6 +58,7 @@ public class InMemDatabase implements Database {
 	 */
 	@Override
 	public PlayerData receivePlayer(String name) {
+		Log.d(ID, "Receiving player: " + name);
 		return playersTable.get(name);
 	}
 
@@ -64,7 +68,9 @@ public class InMemDatabase implements Database {
 	@Override
 	public void updatePlayer(String name, PlayerData player)
 			throws IllegalArgumentException {
+		Log.d(ID, "Updating player: " + name);
 		if (playersTable.containsKey(name) == false) {
+			Log.e(ID, "Player: " + name + " does not exists");
 			throw new IllegalArgumentException();
 		}
 		playersTable.put(player.getName(), player);
@@ -76,7 +82,9 @@ public class InMemDatabase implements Database {
 	 */
 	@Override
 	public void deletePlayer(String name) throws IllegalArgumentException {
+		Log.d(ID, "Deleting player: " + name);
 		if (playersTable.containsKey(name) == false) {
+			Log.e(ID, "Player: " + name + " does not exists");
 			throw new IllegalArgumentException();
 		}
 		playersTable.remove(name);
@@ -88,6 +96,8 @@ public class InMemDatabase implements Database {
 	@Override
 	public void createBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
+		Log.d(ID, "Creating binding in module: " + moduleName + 
+				" between object: " + o.toString() + " and player: " + playerName);
 		Map<String, Object> moduleMap;
 		if(modulesDataTable.containsKey(moduleName)==false){
 			moduleMap = new HashMap<String, Object>();
@@ -96,6 +106,7 @@ public class InMemDatabase implements Database {
 			moduleMap = modulesDataTable.get(moduleName);
 		}
 		if(moduleMap.containsKey(playerName)){
+			Log.e(ID, "Player is already bound");
 			throw new IllegalArgumentException();
 		}
 		moduleMap.put(playerName, o);
@@ -106,6 +117,7 @@ public class InMemDatabase implements Database {
 	 */
 	@Override
 	public Object receiveBinding(String moduleName, String playerName) {
+		Log.d(ID, "Receiving binding for player: " + playerName + " in module: " + moduleName);
 		Map<String, Object> moduleMap = modulesDataTable.get(moduleName);
 		if(moduleMap==null){
 			return null;
@@ -119,8 +131,10 @@ public class InMemDatabase implements Database {
 	@Override
 	public void updateBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
+		Log.d(ID, "Updating binding for player: " + playerName + " in module: " + moduleName);
 		Map<String, Object> moduleMap = modulesDataTable.get(moduleName);
 		if(moduleMap==null || moduleMap.containsKey(playerName)==false){
+			Log.e(ID, "Updating failed");
 			throw new IllegalArgumentException();
 		}
 		moduleMap.put(playerName, o);
@@ -132,6 +146,7 @@ public class InMemDatabase implements Database {
 	@Override
 	public void deleteBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
+		Log.d(ID, "Deleting binding for player: " + playerName + " in module: " + moduleName);
 		Map<String, Object> moduleMap = modulesDataTable.get(moduleName);
 		if(moduleMap==null || moduleMap.containsKey(playerName)==false){
 			throw new IllegalArgumentException();

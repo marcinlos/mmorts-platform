@@ -48,7 +48,7 @@ public class Synchronizer {
 					moduleProperties.put(propertyKey, properties.get(propertyKey));
 				}
 			}
-			(modules.get(moduleName)).setSynchronizedState(moduleProperties);
+			//(modules.get(moduleName)).setSynchronizedState(moduleProperties);
 		}
 	}
 	

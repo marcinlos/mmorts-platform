@@ -10,5 +10,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/Ice.jar"/>
 	<classpathentry kind="lib" path="libs/javax.inject.jar"/>
 	<classpathentry kind="var" path="ICE_JAR_HOME/Ice.jar" sourcepath="ICE_JAR_HOME/Ice.jar"/>
+	<classpathentry kind="lib" path="libs/guice-2.0-no_aop.jar"/>
+	<classpathentry kind="lib" path="libs/guice-2.0-src.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

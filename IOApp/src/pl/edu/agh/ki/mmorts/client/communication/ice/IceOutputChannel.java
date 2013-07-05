@@ -1,11 +1,12 @@
 package pl.edu.agh.ki.mmorts.client.communication.ice;
 
+import com.app.ioapp.communication.MessageOutputChannel;
+import com.app.ioapp.communication.ResponseCallback;
+
 import pl.edu.agh.ki.mmorts.Callback_Dispatcher_deliver;
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
 import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
 import pl.edu.agh.ki.mmorts.Response;
-import pl.edu.agh.ki.mmorts.client.communication.MessageOutputChannel;
-import pl.edu.agh.ki.mmorts.client.communication.ResponseCallback;
 import pl.edu.agh.ki.mmorts.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;

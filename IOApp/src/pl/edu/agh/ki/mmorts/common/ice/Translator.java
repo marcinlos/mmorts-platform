@@ -16,7 +16,6 @@ import pl.edu.agh.ki.mmorts.common.message.Messages;
  * collections, arrays of messages and {@code Response}s to and from Ice types
  * to system messages.
  * 
- * @author los
  */
 public final class Translator {
 
