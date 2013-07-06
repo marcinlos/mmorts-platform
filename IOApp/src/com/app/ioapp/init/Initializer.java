@@ -34,6 +34,8 @@ import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
 import com.app.ioapp.customDroidViews.AbstractModuleView;
+import com.app.ioapp.login.LogInException;
+import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
@@ -53,8 +55,7 @@ import com.google.inject.name.Names;
  * Methods should be called in the following order:
  * 1. {@code initialize()}
  * 2. {@code logIn()}
- * 3. {@code synchronizeState()}
- * 4. {@code getMainView}
+ * 3. {@code getMainView()}
  */
 public class Initializer {
 	/**
@@ -118,6 +119,11 @@ public class Initializer {
      */
     private Database database;
     private com.google.inject.Module databaseModule;
+    
+    /**
+     * Module which enables logging in and registering
+     */
+    private LoginModule loginModule;
 	
 	/**
 	 * Stream to read configuration from file
@@ -165,7 +171,7 @@ public class Initializer {
 	 * Exceptions must be handled by phone application
 	 * @throws LogInxception
 	 */
-	/*public void logIn(String mail, String password, boolean alreadyRegistered) throws LogInException {
+	public void logIn(String mail, String password, boolean alreadyRegistered) throws LogInException {
 		try {
 			Log.d(ID,"Logging in started");
 			if (alreadyRegistered) {
@@ -186,7 +192,7 @@ public class Initializer {
 			throw new LogInException(e.getMessage());
 		}
 		
-	}*/
+	}
 	
 
 
