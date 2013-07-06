@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
  * Argument mapper factory returning {@linkplain TrivialArgMapper} regardless of
  * passed method.
  * 
- * @author los
  */
 public class TrivialMapperFactory implements ArgMapperFactory {
 

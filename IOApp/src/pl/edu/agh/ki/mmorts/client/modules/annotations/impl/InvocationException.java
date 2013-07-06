@@ -3,7 +3,6 @@ package pl.edu.agh.ki.mmorts.client.modules.annotations.impl;
 /**
  * Thrown upon a failure of the invocation.
  * 
- * @author los
  */
 public class InvocationException extends MappingException {
 

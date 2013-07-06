@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
  * when the resources should be released. This is usually during the shutdown
  * sequence.
  * 
- * @author los
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

@@ -3,7 +3,6 @@ package pl.edu.agh.ki.mmorts.client.util.reflection;
 /**
  * Exception thrown to indicate failed reflective method invocation.
  * 
- * @author los
  */
 public class InvocationException extends RuntimeException {
 

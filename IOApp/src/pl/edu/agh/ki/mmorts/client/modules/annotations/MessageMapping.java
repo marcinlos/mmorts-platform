@@ -12,7 +12,6 @@ import pl.edu.agh.ki.mmorts.common.message.Mode;
  * cleaner message handling, as the details of inner message dispatching are
  * handled by the external piece of code.
  * 
- * @author los
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

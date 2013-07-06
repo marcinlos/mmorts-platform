@@ -11,7 +11,6 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * Default {@linkplain Handler} implementation, uses a method object and an
  * argument mapper to perform invocations.
  * 
- * @author los
  */
 public class HandlerImpl implements Handler {
 

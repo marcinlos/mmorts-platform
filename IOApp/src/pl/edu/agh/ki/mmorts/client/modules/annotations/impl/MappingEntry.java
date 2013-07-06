@@ -11,7 +11,6 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * Association of the annotation describing mapping criteria and the handler to
  * use if so.
  * 
- * @author los
  */
 final class MappingEntry {
     public final MessageMapping desc;

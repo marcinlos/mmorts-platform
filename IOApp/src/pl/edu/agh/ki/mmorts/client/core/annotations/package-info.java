@@ -16,7 +16,6 @@
  * discouraged, as there is no way to specify invocation order, and failure in
  * one invocation ends the invocation sequence.
  * 
- * @author los
  */
 package pl.edu.agh.ki.mmorts.client.core.annotations;
 

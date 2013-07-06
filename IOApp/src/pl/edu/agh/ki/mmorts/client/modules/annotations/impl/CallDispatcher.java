@@ -14,7 +14,6 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 
 /**
  * 
- * @author los
  */
 public class CallDispatcher implements Handler {
 

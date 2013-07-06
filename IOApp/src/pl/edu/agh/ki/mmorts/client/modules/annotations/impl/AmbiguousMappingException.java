@@ -3,7 +3,6 @@ package pl.edu.agh.ki.mmorts.client.modules.annotations.impl;
 /**
  * Thrown when there is no single best match for a message.
  * 
- * @author los
  */
 public class AmbiguousMappingException extends MappingException {
 

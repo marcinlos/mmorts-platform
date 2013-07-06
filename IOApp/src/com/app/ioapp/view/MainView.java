@@ -1,13 +1,57 @@
 package com.app.ioapp.view;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import android.util.Log;
+
+import com.app.ioapp.customDroidViews.AbstractModuleView;
+import com.app.ioapp.modules.ConfiguredModule;
 import com.app.ioapp.modules.Module;
+import com.google.inject.Inject;
 
 
-public class MainView {
+/**
+ * Implements facade between android module views and modules
+ *
+ */
+public class MainView implements View{
+	
+	private static final String ID = "MainView";
+	
+	/**
+	 * Map of modules
+	 */
+	@Inject
+	private Map<String, ConfiguredModule> modules;
+	
+	/**
+	 * Mapping of modules and moduleViews which are interested in changes in these modules
+	 */
+	private Map<String, List<Class<? extends AbstractModuleView>>> registeredViews = 
+			new HashMap<String, List<Class<? extends AbstractModuleView>>>();
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void register(Class<? extends AbstractModuleView> moduleView,
+			String moduleName) {
+		if (!modules.containsKey(moduleName)) {
+			Log.e(ID, "Registering view to a module that doesn't exist");
+			throw new ModuleNotExists();
+		}
+		if (!registeredViews.containsKey(moduleName)) {
+			registeredViews.put(moduleName, new ArrayList<Class<? extends AbstractModuleView>>());
+		}
+		registeredViews.get(moduleName).add(moduleView);		
+	}
+	
+}
 	/*
-	private Map<String,CommunicatingModule> modules;
 	private UIListener listener;
 	private PlayersContext context;
 	
@@ -39,7 +83,7 @@ public class MainView {
 	 * invoked by MenuManager when a button has been clicked.
 	 * @param menuNameClicked module it needs to be directed to
 	 */
-	Map<String,Module> modules;
+/*	Map<String,Module> modules;
 	
 	private Module findModule(String name){
 		for(String n : modules.keySet()){

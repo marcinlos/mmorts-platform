@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
  * some other criteria may be taken into account). Represents a strategy of
  * argument mapping.
  * 
- * @author los
  */
 public interface ArgMapperFactory {
 

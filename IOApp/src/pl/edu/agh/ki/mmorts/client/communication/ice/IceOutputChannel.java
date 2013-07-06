@@ -32,8 +32,10 @@ public class IceOutputChannel implements MessageOutputChannel {
      * 
      * @param args
      */
-    public IceOutputChannel(String[] args) {
-        ice = Util.initialize(args);
+    public IceOutputChannel(Ice.Properties iceProperties) {
+    	Ice.InitializationData id = new Ice.InitializationData();
+    	id.properties = iceProperties;
+    	ice = Ice.Util.initialize(id);
         // get the dispatcher - hardcoded property name
         String str = ice.getProperties().getProperty("MMORTSServer.Proxy");
         ObjectPrx obj = ice.stringToProxy(str);

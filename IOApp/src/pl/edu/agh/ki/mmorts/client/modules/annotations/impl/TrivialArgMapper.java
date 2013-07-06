@@ -7,7 +7,6 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 /**
  * Trivial argument mapper, does not perform any transformation of arguments.
  * 
- * @author los
  */
 public class TrivialArgMapper implements ArgMapper {
 

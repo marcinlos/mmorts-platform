@@ -4,7 +4,6 @@ package pl.edu.agh.ki.mmorts.client.modules.annotations.impl;
  * Thrown when the message does not match criteria of any message handler in the
  * module.
  * 
- * @author los
  */
 public class NoMappingException extends MappingException {
 

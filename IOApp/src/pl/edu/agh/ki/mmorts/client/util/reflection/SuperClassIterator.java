@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
  * Iterator yielding all the superclasses of a given class (including this 
  * class itself). 
  * 
- * @author los
  */
 public class SuperClassIterator implements Iterator<Class<?>> {
     

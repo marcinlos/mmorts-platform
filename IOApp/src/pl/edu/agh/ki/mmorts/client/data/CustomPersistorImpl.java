@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.data;
 
+import android.util.Log;
+
 import com.google.inject.Inject;
 
 
@@ -30,7 +32,7 @@ public class CustomPersistorImpl implements CustomPersistor {
 	@Override
 	public void createBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
-		Log.e(ID, "create binding: " + moduleName + ", " + playerName);
+		Log.d(ID, "create binding: " + moduleName + ", " + playerName);
 		db.createBinding(moduleName, playerName, o);
 
 	}
@@ -41,7 +43,7 @@ public class CustomPersistorImpl implements CustomPersistor {
 	@Override
 	public <T> T receiveBinding(String moduleName, String playerName, Class<T> clazz)
 			throws IllegalArgumentException {
-		Log.e(ID, "receive binding: " + moduleName + ", " + playerName);
+		Log.d(ID, "receive binding: " + moduleName + ", " + playerName);
 		return clazz.cast(db.receiveBinding(moduleName, playerName));
 	}
 
@@ -51,7 +53,7 @@ public class CustomPersistorImpl implements CustomPersistor {
 	@Override
 	public void updateBinding(String moduleName, String playerName, Object o)
 			throws IllegalArgumentException {
-		Log.e(ID, "update binding: " + moduleName + ", " + playerName);
+		Log.d(ID, "update binding: " + moduleName + ", " + playerName);
 		db.updateBinding(moduleName, playerName, o);
 	}
 
@@ -61,7 +63,7 @@ public class CustomPersistorImpl implements CustomPersistor {
 	@Override
 	public void deleteBinding(String moduleName, String playerName)
 			throws IllegalArgumentException {
-		Log.e(ID, "delete binding: " + moduleName + ", " + playerName);
+		Log.d(ID, "delete binding: " + moduleName + ", " + playerName);
 		db.deleteBinding(moduleName, playerName);
 	}
 

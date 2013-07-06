@@ -17,7 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.app.ioapp.init.Checker;
+import com.app.ioapp.init.RegisteringChecker;
 
 /**
  * Activity which displays a login screen to the user
@@ -91,7 +91,7 @@ public class LoginActivity extends Activity {
 		} catch (FileNotFoundException e) {
 			Log.e(ID,"SHOULD NOT HAPPEN",e);
 		}
-		Checker chk = new Checker(loginconf);
+		RegisteringChecker chk = new RegisteringChecker(loginconf);
 		Properties p;
 		if(chk.checkIfAccountExists()){
 			Log.d(ID,"Got valid things from file, gonna start the program");

@@ -3,6 +3,7 @@ package com.app.ioapp.init;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import pl.edu.agh.ki.mmorts.client.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.util.DI;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
 
+import Ice.Util;
 import android.util.Log;
 
 import com.app.ioapp.communication.Dispatcher;
@@ -31,6 +33,8 @@ import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
+import com.app.ioapp.login.LogInException;
+import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
@@ -60,26 +64,12 @@ public class Initializer {
 	public static final String ID = "Initializer";
 	
 	/**
-	 * Tells if player should be logged in or registered
-	 */
-	private boolean alreadyRegistered;
-	
-	/**
-	 * Identifies player
-	 */
-	private String mail;
-	/**
-	 * Player's password
-	 */
-	private String password;
-	
-	/**
 	 * Facade between phone application and module views
 	 */
 	private MainView view;
     
     /**
-     * Stores properties read from  configuration file
+     * Stores properties read from configuration file
      */
     private Config config;
     private com.google.inject.Module configModule;
@@ -88,14 +78,11 @@ public class Initializer {
      * Reads configuration
      */
     private ConfigReader reader;
-	/**
-	 * Synchronizes state with server
-	 */
-	private Synchronizer synchronizer;
+
 	/**
 	 * Responsible for logging in, logging out and registering
 	 */
-	private LoginModule loginModule;
+	//private LoginModule loginModule;
 	
     /**
      * Dispatcher object
@@ -137,9 +124,14 @@ public class Initializer {
 	 */
 	private InputStream moduleConfigInput;
 	/**
+	 * Stream to read ice configuration
+	 */
+	private InputStream iceConfigInput;
+	
+	/**
 	 * Stream to write player information if he is not registered yet
 	 */
-	private FileOutputStream infoOutput;
+	private OutputStream infoOutput;
 
 	/**
 	 * Transaction manager object
@@ -149,48 +141,48 @@ public class Initializer {
 	
 	
 	/**
-	 * @param mail
-	 * @param password
-	 * @param alreadyRegistered true if player has been registered (a file with mail and password exists and is correct) 
 	 * @param configInput to read configuration from file
 	 * @param infoOutput to write players info to file if he has not been registered yet. If he has, it is {@code null}
 	 */
 	public Initializer
-	(String mail, String password, boolean alreadyRegistered, InputStream configInput, 
-			InputStream moduleConfigInput, FileOutputStream infoOutput)  {
-		this.mail = mail;
-		this.password = password;
-		this.alreadyRegistered = alreadyRegistered;
+	(InputStream configInput, InputStream moduleConfigInput, InputStream iceConfigInput, OutputStream infoOutput)  {
 		this.configInput = configInput;
 		this.moduleConfigInput = moduleConfigInput;
+		this.iceConfigInput = iceConfigInput;
 		this.infoOutput = infoOutput;
 	}
 
 	
 	/**
 	 * Called after initializing the rest of environment
+	 * @param mail
+	 * @param password
+	 * @param alreadyRegistered true if player has been registered (a file with mail and password exists and is correct) 
 	 * Exceptions must be handled by phone application
-	 * @throws IOException
-	 * @throws RegisterException
+	 * @throws LogInxception
 	 */
-	public void logIn() throws IOException, RegisterException, LogInException {
-		Log.e(ID,"Logging in started");
-		this.loginModule = new LoginModule(dispatcher, mail, password);
-		if (alreadyRegistered) {
-			Log.e(ID,"User has already been registered");
-			loginModule.logIn();
-		}
-		else {
-			Log.e(ID,"User needs to be registered");
-			Properties ps = new Properties();
-			ps.setProperty("mail", mail);
-			ps.setProperty("password", password);
-			Log.e(ID,"User's data stored in a file");
-			ps.store(infoOutput, null);
-			loginModule.register(mail, password);
+	/*public void logIn(String mail, String password, boolean alreadyRegistered) throws LogInException {
+		try {
+			Log.d(ID,"Logging in started");
+			if (alreadyRegistered) {
+				Log.d(ID,"User has already been registered");
+				loginModule.logIn();
+			}
+			else {
+				Log.d(ID,"User needs to be registered");
+				Properties ps = new Properties();
+				ps.setProperty("mail", mail);
+				ps.setProperty("password", password);
+				Log.d(ID,"User's data stored in a file");
+				ps.store(infoOutput, null);
+				loginModule.register(mail, password);
+			}
+		} catch (Exception e) {
+			Log.e(ID, "Exception during logging in");
+			throw new LogInException(e.getMessage());
 		}
 		
-	}
+	}*/
 	
 
 
@@ -201,7 +193,7 @@ public class Initializer {
  */
 	public void initialize() throws InitException{
 		try {
-			Log.e(ID,"Initializing environment started");
+			Log.d(ID,"Initializing environment started");
 			readConfig();
 			createTransactionManager();
 			createChannel();
@@ -210,6 +202,8 @@ public class Initializer {
             createCustomPersistor();
             createPlayersPersistor();
 			initModules();
+			initMainView();
+			initModuleViews();
 			Log.d(ID, "Server successfully initialized");
 		}
 		catch (Exception e) {
@@ -221,6 +215,8 @@ public class Initializer {
 	}
 
 	
+
+
 	private void createDataSource() {
         Log.d(ID, "Creating database connection");
         Class<? extends Database> cl = InMemDatabase.class;
@@ -284,13 +280,28 @@ public class Initializer {
 }
 
 
-    private void createChannel() {
+    private void createChannel() throws IOException {
         Log.d(ID, "Creating message channel");
-        Class<? extends MessageOutputChannel> cl = IceOutputChannel.class;
-        channel = DI.createWith(cl, configModule);
+        Ice.Properties iceProperties = readIceProperties();
+        channel = new IceOutputChannel(iceProperties);
         callInit(channel);
         channelModule = DI.objectModule(channel, MessageOutputChannel.class);
         Log.d(ID, "Message channel created");
+    }
+    
+    private Ice.Properties readIceProperties() throws IOException {
+    	try {
+	    	Properties properties = new Properties();
+	    	properties.load(iceConfigInput);
+	    	Ice.Properties iceProperties = Util.createProperties();
+	    	for (Object p : properties.keySet()) {
+	    		iceProperties.setProperty((String)p, properties.getProperty((String)p));
+	    	}
+	    	return iceProperties;
+    	} catch (IOException e) {
+    		Log.e(ID, "Error while reading file with ice configuration");
+    		throw e;
+    	}
     }
     
     private void createDispatcher() {
@@ -368,13 +379,17 @@ public class Initializer {
 	}
 	
 	
-	/**
-	 * Synchronizes local state with server state
-	 */
-	public void synchronizeState() {
-		Log.d(ID, "Synchronizing state began");
-		synchronizer.synchronizeState();
-	}
+	private void initModuleViews() {
+	// TODO Auto-generated method stub
+	
+}
+
+
+	private void initMainView() {
+	// TODO Auto-generated method stub
+	
+}
+
 	
 	/**
 	 * A method which will be needed by phone application to get the MainView
@@ -382,6 +397,10 @@ public class Initializer {
 	 */
 	public MainView getMainView() {
 		return view;
+	}
+	
+	public MessageOutputChannel getChannel() {
+		return channel;
 	}
 	
 

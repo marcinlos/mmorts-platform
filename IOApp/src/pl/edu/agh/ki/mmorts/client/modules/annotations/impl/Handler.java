@@ -7,7 +7,6 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 /**
  * General message receive invocation handler.
  * 
- * @author los
  */
 public interface Handler {
 

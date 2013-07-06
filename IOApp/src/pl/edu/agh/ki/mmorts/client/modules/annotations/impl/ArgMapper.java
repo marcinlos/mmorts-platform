@@ -8,7 +8,6 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
  * Transforms usual {@link Module#receive} arguments into some other argument
  * list.
  * 
- * @author los
  */
 public interface ArgMapper {
 

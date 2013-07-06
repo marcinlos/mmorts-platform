@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
  * to be called by the application after object creation, when non-constructor
  * injected dependencies are present.
  * 
- * @author los
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

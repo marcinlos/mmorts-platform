@@ -7,10 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Utility class containint various methods facilitating working reflectively
+ * Utility class containing various methods facilitating working reflectively
  * with methods.
  * 
- * @author los
  */
 public class Methods {
 
@@ -42,7 +41,7 @@ public class Methods {
      *            Class to extract methods from
      * @param annotation
      *            Class of a desired annotation
-     * @return {@linkplain Iterable} containing all the annotaded methods.
+     * @return {@linkplain Iterable} containing all the annotated methods.
      * @see #all(Class)
      */
     public static Iterable<Method> annotated(Class<?> clazz,
