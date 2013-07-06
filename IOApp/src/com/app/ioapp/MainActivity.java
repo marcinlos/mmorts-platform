@@ -176,7 +176,6 @@ public class MainActivity extends Activity implements UIListener {
 			Log.e(ID,"Initializer can't initialize",e);
 			endProgram();
 		}
-		initializer.g
 		
 		
 	}
