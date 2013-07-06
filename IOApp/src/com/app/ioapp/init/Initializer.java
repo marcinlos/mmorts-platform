@@ -388,6 +388,13 @@ public class Initializer {
 	// TODO Auto-generated method stub
 	
 }
+	/**
+	 * Returns MainView for Module Views
+	 * @return MainView object
+	 */
+	public MainView getMainView() {
+		return view;
+	}
 
 	
 	public MessageOutputChannel getChannel() {
