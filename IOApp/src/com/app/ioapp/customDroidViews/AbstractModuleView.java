@@ -8,9 +8,11 @@ import android.view.View;
 import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.view.MainView;
+import com.google.inject.Inject;
 
 public abstract class AbstractModuleView extends View {
 	
+	@Inject
 	protected MainView view;
 	protected String moduleName;
 

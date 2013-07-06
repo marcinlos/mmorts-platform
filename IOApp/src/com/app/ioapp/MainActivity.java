@@ -34,6 +34,7 @@ import com.app.ioapp.customDroidViews.AdditionalViewA;
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.customDroidViews.MenuButton;
 import com.app.ioapp.customDroidViews.AbstractModuleView;
+import com.app.ioapp.init.InitException;
 import com.app.ioapp.init.Initializer;
 import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.RegisterException;
@@ -140,8 +141,12 @@ public class MainActivity extends Activity implements UIListener {
 		boolean fileExists = intent.getBooleanExtra(LoginActivity.FILEEXISTS,false);
 		FileOutputStream fos = null;
 		InputStream i=null;
+		InputStream iceConfigStream = null;
+		InputStream jsonConfigStream = null;
 		try {
 			i = getResources().getAssets().open(CONFIG_FILE);
+			iceConfigStream = getResources().getAssets().open("iceClient.config");
+			jsonConfigStream = getResources().getAssets().open("modules.json");
 			boardConfig = StaticPropertiesLoader.load(i); //debug only action
 			
 		} catch (IOException e) {
@@ -158,44 +163,20 @@ public class MainActivity extends Activity implements UIListener {
 		}
 		
 		try {
-			initializer = new Initializer(mail, pass, fileExists, i, fos);
+			initializer = new Initializer(i, jsonConfigStream, iceConfigStream, fos);
 		} catch (ConfigException e) {
 			Log.e(ID,"Initializer is bad",e);
-			endProgram();
-		}
-		try{
-			initializer.logIn();
-		}
-		catch(RegisterException e){
-			//email belonging to someone who is already a player or something
-			//this should lead to re-inserting email and password
-			//we leave that to UI developers
-			Log.e(ID,"Register unsuccesfull",e);
-			endProgram();
-		}
-		catch (LogInException e) {
-			// someone messed up their file with logging info
-			//or lack of internet connection
-			//exit program or something
-			Log.e(ID,"Login unsuccesfull",e);
-			endProgram();
-		} catch (IOException e) {
-			// Someone messed up with file
-			Log.e(ID,"Login info file messed or somethin",e);
 			endProgram();
 		}
 		
 		try {
 			initializer.initialize();
-		} catch (ConfigException e) {
-			// couldn't read config file to initialize, inform user to reinstall or something
-			Log.e(ID,"Initializer can't initialize - config wrong",e);
-			endProgram();
-		} catch (IOException e) {
-			// something bad happened to config file, reinstall
-			Log.e(ID,"Initializer can't initialize, IOExc?",e);
+		} catch (InitException e) {
+			// initializing didn't work, it's sad. Tell the user to go to the corner and cry.
+			Log.e(ID,"Initializer can't initialize",e);
 			endProgram();
 		}
+		initializer.g
 		
 		
 	}

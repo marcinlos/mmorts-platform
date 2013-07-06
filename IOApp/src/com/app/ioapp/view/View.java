@@ -1,5 +1,7 @@
 package com.app.ioapp.view;
 
+import java.util.Collection;
+
 import com.app.ioapp.customDroidViews.AbstractModuleView;
 
 /**
@@ -14,5 +16,6 @@ public interface View {
 	 * @param moduleName
 	 */
 	void register(Class<? extends AbstractModuleView> moduleView, String moduleName);
+	
 
 }

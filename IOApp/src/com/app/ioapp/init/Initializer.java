@@ -1,13 +1,14 @@
 package com.app.ioapp.init;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import pl.edu.agh.ki.mmorts.client.communication.ice.IceOutputChannel;
 import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
@@ -22,7 +23,6 @@ import pl.edu.agh.ki.mmorts.client.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.client.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.util.DI;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
-
 import Ice.Util;
 import android.util.Log;
 
@@ -33,8 +33,7 @@ import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
-import com.app.ioapp.login.LogInException;
-import com.app.ioapp.login.LoginModule;
+import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.modules.ConfiguredModule;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
@@ -67,6 +66,11 @@ public class Initializer {
 	 * Facade between phone application and module views
 	 */
 	private MainView view;
+	
+	/**
+	 * Collection of Module Views
+	 */
+	private Set<Class<? extends AbstractModuleView>> moduleViews;
     
     /**
      * Stores properties read from configuration file
@@ -392,11 +396,11 @@ public class Initializer {
 
 	
 	/**
-	 * A method which will be needed by phone application to get the MainView
-	 * @return MainView object
+	 * A method which will be needed by phone application to get the Module Views
+	 * @return collection of Module Views
 	 */
-	public MainView getMainView() {
-		return view;
+	public Collection<Class<? extends AbstractModuleView>> getModuleViews() {
+		return moduleViews;
 	}
 	
 	public MessageOutputChannel getChannel() {

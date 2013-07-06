@@ -1,6 +1,7 @@
 package com.app.ioapp.view;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,9 @@ public class MainView implements View{
 		}
 		registeredViews.get(moduleName).add(moduleView);		
 	}
+
+
+
 	
 }
 	/*
