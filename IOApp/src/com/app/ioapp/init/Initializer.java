@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -68,10 +67,6 @@ public class Initializer {
 	 */
 	private MainView view;
 	
-	/**
-	 * Collection of Module Views
-	 */
-	private Set<Class<? extends AbstractModuleView>> moduleViews;
     
     /**
      * Stores properties read from configuration file
@@ -213,7 +208,6 @@ public class Initializer {
             createPlayersPersistor();
 			initModules();
 			initMainView();
-			initModuleViews();
 			Log.d(ID, "Server successfully initialized");
 		}
 		catch (Exception e) {
@@ -388,26 +382,20 @@ public class Initializer {
 	    }
 	}
 	
-	
-	private void initModuleViews() {
-	// TODO Auto-generated method stub
-	
-}
 
 
 	private void initMainView() {
 	// TODO Auto-generated method stub
 	
 }
-
-	
 	/**
-	 * A method which will be needed by phone application to get the Module Views
-	 * @return collection of Module Views
+	 * Returns MainView for Module Views
+	 * @return MainView object
 	 */
-	public Collection<Class<? extends AbstractModuleView>> getModuleViews() {
-		return moduleViews;
+	public MainView getMainView() {
+		return view;
 	}
+
 	
 	public MessageOutputChannel getChannel() {
 		return channel;
