@@ -15,6 +15,7 @@ public abstract class AbstractModuleView extends View {
 	@Inject
 	protected MainView view;
 	protected String moduleName;
+	public boolean isButton;
 
 	public AbstractModuleView(Context context) {
 		super(context);

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.app.ioapp.view.MainView;
 
 public class MainActivity extends Activity implements UIListener {
 	
+	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = "MainActivity";
 	private static final String CONFIG_FILE = "client.properties";
 	private Initializer initializer;
@@ -59,10 +61,11 @@ public class MainActivity extends Activity implements UIListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		fillViewsList();
 		setContentView(R.layout.activity_main);
 		initialize();
 		modules = initializer.getModules();
-		createMainView();
+		getMainView();
 		
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
@@ -114,6 +117,9 @@ public class MainActivity extends Activity implements UIListener {
 		
 	}
 	
+	private void fillViewsList(){
+		arbitraryViewsList.add("BoardView");
+	}
 	/**
 	 * receives intent that created this activity and reads it
 	 * creates Initializer properly (in compliance with {@link #Initializer} constructor)
@@ -176,15 +182,19 @@ public class MainActivity extends Activity implements UIListener {
 			Log.e(ID,"Initializer can't initialize",e);
 			endProgram();
 		}
+		try{
+			initializer.logIn(mail, pass, fileExists);
+		} catch(LogInException e){
+			Log.e(ID,"Login failure, dunno");
+			//you cooould come back to Login Activity if you'd really like here, it would be appropiate.
+			endProgram();
+		}
 		
 		
 	}
 	
-	private void createMainView(){
-		view = new MainView();
-		for(String s : modules.keySet()){
-			view.addModule(s, modules.get(s));
-		}
+	private void getMainView(){
+		view = initializer.getMainView();
 	}
 	
 	/**
@@ -194,6 +204,7 @@ public class MainActivity extends Activity implements UIListener {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
+	
 	private void fillMenu() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		for(String s : modules.keySet()){
 			Module m = modules.get(s);
