@@ -1,5 +1,7 @@
 package com.app.ioapp.customDroidViews;
 
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -43,7 +45,7 @@ public abstract class AbstractModuleView extends View {
 	 * @param view facade to separate modules implementation and UI classes. responsible for
 	 * directing calls from UI to impl.
 	 */
-	public abstract void init(String moduleName, MainView view);
+	public abstract void init(List<String> moduleNames, MainView view);
 	
 
 }

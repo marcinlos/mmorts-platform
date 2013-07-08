@@ -36,6 +36,7 @@ import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
+import com.app.ioapp.modules.IModule;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
 import com.app.ioapp.modules.ModuleInitException;
@@ -342,7 +343,7 @@ public class Initializer {
             for (ModuleDescriptor desc : loaded.values()) {
                 Log.d(ID, "Creating module " + desc.name);
                 try {
-                    Module m = createModule(desc);
+                    IModule m = createModule(desc);
                     Log.d(ID, "Module " + desc.name + " created");
                     modules.add(new ConfiguredModule(m, desc));
                 } catch (ModuleInitException e) {
@@ -359,7 +360,7 @@ public class Initializer {
         }
     }
 	
-	private Module createModule(final ModuleDescriptor desc) {
+	private IModule createModule(final ModuleDescriptor desc) {
 	    try {
 	        Class<? extends Module> cl = desc.moduleClass;
 	        // Inject config, dispatcher, tx manager and individual module
@@ -370,7 +371,7 @@ public class Initializer {
 	                Names.bindProperties(binder(), desc.config.asMap());
 	            }
 	        };
-	        Module module = DI.createWith(cl, configModule, dispatcherModule,
+	        IModule module = DI.createWith(cl, configModule, dispatcherModule,
 	                DI.objectModule(txManager.getProvider(),
 	                        TransactionProvider.class), properties,
 	                playersPersistorModule, customPersistorModule, DI
@@ -399,6 +400,12 @@ public class Initializer {
 	
 	public MessageOutputChannel getChannel() {
 		return channel;
+	}
+
+
+	public List<String> getModules() {
+		// TODO Kasiaa, uzupe³nij t¹ metodê
+		return null;
 	}
 	
 

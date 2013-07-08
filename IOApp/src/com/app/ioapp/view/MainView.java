@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.modules.ConfiguredModule;
+import com.app.ioapp.modules.IModule;
 import com.app.ioapp.modules.Module;
 import com.google.inject.Inject;
 
@@ -31,16 +32,19 @@ public class MainView implements View{
 	/**
 	 * Mapping of modules and moduleViews which are interested in changes in these modules
 	 */
-	private Map<String, List<Class<? extends AbstractModuleView>>> registeredViews = 
-			new HashMap<String, List<Class<? extends AbstractModuleView>>>();
+	//private Map<String, List<Class<? extends AbstractModuleView>>> registeredViews = 
+	//		new HashMap<String, List<Class<? extends AbstractModuleView>>>();
+	private Map<String, List<AbstractModuleView>> registeredViews = new HashMap<String, List<AbstractModuleView>>();
 	
 
 	/**
 	 * {@inheritDoc}
 	 */
+	//TODO Kasia, zmieñ to tam ¿eby
 	@Override
-	public void register(Class<? extends AbstractModuleView> moduleView,
-			String moduleName) {
+	//public void register(Class<? extends AbstractModuleView> moduleView,
+	//		String moduleName) {
+	public void register(AbstractModuleView moduleView, String moduleName){
 		if (!modules.containsKey(moduleName)) {
 			Log.e(ID, "Registering view to a module that doesn't exist");
 			throw new ModuleNotExists();
@@ -49,6 +53,35 @@ public class MainView implements View{
 			registeredViews.put(moduleName, new ArrayList<Class<? extends AbstractModuleView>>());
 		}
 		registeredViews.get(moduleName).add(moduleView);		
+	}
+	
+	public void refreshViews(String moduleName){
+		for(AbstractModuleView a : registeredViews.get(moduleName)){
+			a.postInvalidate();
+		}
+	}
+	public void addModule(String n, Module m){
+		modules.put(n, m);
+	}
+	
+	public boolean stateChanged(String moduleName){
+		IModule m = findModule(moduleName);
+		if(m != null) return m.stateChanged();
+		return false;
+	}
+	public void stateReceived(String moduleName){
+		IModule m = findModule(moduleName);
+		if(m != null) m.stateReceived();
+	}
+	public <T> T getData(String moduleName, Class<T> returnType){
+		IModule m = findModule(moduleName);
+		if(m != null) return m.getData();
+		return null;
+	}
+	
+	public <T> void setData(String moduleName, T data){
+		IModule m = findModule(moduleName);
+		if(m != null) m.setData(data);
 	}
 
 
@@ -97,29 +130,7 @@ public class MainView implements View{
 		return null;
 	}
 	
-	public void addModule(String n, Module m){
-		modules.put(n, m);
-	}
 	
-	public boolean stateChanged(String moduleName){
-		Module m = findModule(moduleName);
-		if(m != null) return m.stateChanged();
-		return false;
-	}
-	public void stateReceived(String moduleName){
-		Module m = findModule(moduleName);
-		if(m != null) m.stateReceived();
-	}
-	public <T> T getData(String moduleName, Class<T> returnType){
-		Module m = findModule(moduleName);
-		if(m != null) return m.getData();
-		return null;
-	}
-	
-	public <T> void setData(String moduleName, T data){
-		Module m = findModule(moduleName);
-		if(m != null) m.setData(data);
-	}
 }
 	
 	/*

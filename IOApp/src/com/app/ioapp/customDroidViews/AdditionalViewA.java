@@ -1,5 +1,7 @@
 package com.app.ioapp.customDroidViews;
 
+import java.util.List;
+
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.view.MainView;
 
@@ -42,7 +44,7 @@ public class AdditionalViewA extends AbstractModuleView {
 		
 	}
 	@Override
-	public void init(String moduleName, MainView view) {
+	public void init(List<String> moduleNames, MainView view) {
 		// TODO Auto-generated method stub
 		
 	}

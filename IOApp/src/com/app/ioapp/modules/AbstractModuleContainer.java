@@ -110,7 +110,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         Log.e(ID, "Registering module" + desc.name);
         Log.e(ID, "Calling init() on " + desc.name);
         try {
-            Module module = conf.module;
+            IModule module = conf.module;
 //            module.init();
             Log.e(ID, "Adding to internal map structures");
             modules.put(desc.name, conf);
@@ -135,10 +135,10 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      */
     private void registerUnicast(String address, ConfiguredModule conf) {
         ModuleDescriptor desc = conf.descriptor;
-        Module module = conf.module;
+        IModule module = conf.module;
         Log.e(ID, "Module " + desc.name + " registered as " + address);
         // TODO: EVIL CAST, fix it
-        Module prev = unicast.put(address, (CommunicatingModule) module);
+        IModule prev = unicast.put(address, (CommunicatingModule) module);
         if (prev != null) {
             for (Entry<String, ConfiguredModule> e : modules.entrySet()) {
                 if (e.getValue().module == module) {
@@ -189,7 +189,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         for (String name : moduleNames) {
             ConfiguredModule conf = modules.get(name);
             Log.e(ID, "Calling started() on " + name);
-            Module module = conf.module;
+            IModule module = conf.module;
             try {
 //                module.started();
             } catch (Exception e) {
