@@ -17,7 +17,7 @@ import com.app.ioapp.view.MainView;
  * other modules and server site
  *
  */
-public class InfrastructureModule extends AbstractCommunicatingModule {
+public class InfrastructureModule extends ModuleBase {
 	
 	private final static String ID = "Board";
 	private Properties pr;
@@ -30,11 +30,9 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 	public ITile[][] getMap(){
 		return map;
 	}
-	@Override
-	public boolean stateChanged(){
+	public boolean isStateChanged(){
 		return stateChanged;
 	}
-	@Override
 	public void stateReceived(){
 		stateChanged = false;
 	}
@@ -177,32 +175,33 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 		return true;
 	}
 
+	
+	
+	
+	
+	
+	
+	// TODO
+	//I don't know what two methods below do or why are they here or methods from where do they override
+
 	/** 
 	 * Initializes module with properties from configuration.
 	 * @see com.app.ioapp.modules.Module#init(java.util.Properties)
-	 */
+	 *//*
 	@Override
 	public void init(Properties properties) {
 		//TODO
 	}
 
-	/**
+	*//**
 	 * Updates state
 	 * @see com.app.ioapp.modules.Module#setSynchronizedState(java.util.Properties)
-	 */
+	 *//*
 	@Override
 	public void setSynchronizedState(Properties properties) {
 		// TODO
 		
-	}
-
-	@Override
-	public Map<String,String> getMenus() {
-		Map<String,String> m = new HashMap<String,String>();
-		
-		m.put(this.getClass().getSimpleName(), "BoardView");
-		return m;
-	}
+	}*/
 	
 	/**
 	 * example to show that something happens, true implementation should do something
@@ -214,12 +213,10 @@ public class InfrastructureModule extends AbstractCommunicatingModule {
 		map[x][y] = null;
 		stateChanged = true;
 	}
-@Override
 public <T> void setData(T data) {
 	// TODO Auto-generated method stub
 	
 }
-@Override
 public <T> T getData() {
 	// TODO Auto-generated method stub
 	return null;

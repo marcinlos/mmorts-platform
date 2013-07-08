@@ -7,12 +7,12 @@ package com.app.ioapp.modules;
 public final class ConfiguredModule {
 
     /** Module object */
-    public final IModule module;
+    public final Module module;
     
     /** Module descriptor */
     public final ModuleDescriptor descriptor;
 
-    public ConfiguredModule(IModule module, ModuleDescriptor descriptor) {
+    public ConfiguredModule(Module module, ModuleDescriptor descriptor) {
         this.module = module;
         this.descriptor = descriptor;
     }

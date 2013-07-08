@@ -154,7 +154,7 @@ public class BoardView extends AbstractModuleView{
 		view = v;
 		moduleName = modules.get(0);
 		currentData = view.getData(moduleName, InfrastructureModuleData.class);
-		view.register(this.getClass(), moduleName);
+		view.register(this, moduleName);
 		this.mapWidth = currentData.mapWidth;
 		this.mapHeight = currentData.mapHeight;
 		//TODO set tile size to somethin, based on phone specifics or somethin?
