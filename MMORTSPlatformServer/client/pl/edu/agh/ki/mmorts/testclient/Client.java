@@ -15,6 +15,9 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
+import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.RequestType;
+import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.DetailedMessage;
+import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.SimpleMessage;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
 
 /**
@@ -40,7 +43,7 @@ public class Client implements Interpreter {
     }
 
     /**
-     * Parses the message in the format <tt>address (U|M) type</tt> from the
+     * Parses the message in the format <tt>address (U|M|) [Map C|F|P|R [player] [[row] [col]]{only for C,R,P}] type</tt> from the
      * given scanner.
      * 
      * @param scanner
@@ -50,18 +53,52 @@ public class Client implements Interpreter {
     private Message parseMessage(Scanner scanner) {
         String address = scanner.next();
         String m = scanner.next();
-        Mode mode;
+        Mode mode = null;
         if (m.equals("U")) {
             mode = Mode.UNICAST;
-        } else {
+        } else if(m.equals("M")) {
             mode = Mode.MULTICAST;
         }
-        String type = scanner.next();
+        String typeOrMap = scanner.next();
+        if(typeOrMap.equals("Map")){
+        	return parseMapMessage(scanner, address, mode);
+        }
+        String type = typeOrMap;
         Message msg = new Message(66, "source", address, mode, type, "Content");
         return msg;
     }
 
-    /**
+    private Message parseMapMessage(Scanner scanner, String address, Mode mode) {
+		String messgType = scanner.next();
+		String player = scanner.next();
+		Message toSendMessage = null;
+		SimpleMessage messg = null;
+		String reqString = null;
+		if(messgType.equals("C")){
+			int row = scanner.nextInt();
+			int col = scanner.nextInt();
+			messg = new DetailedMessage(player, row, col);
+			reqString = RequestType.CHECK.getMessg();
+		}else if(messgType.equals("F")){
+			messg = new SimpleMessage(player);
+			reqString = RequestType.FULL.getMessg();
+		}else if(messgType.equals("R")){
+			int row = scanner.nextInt();
+			int col = scanner.nextInt();
+			messg = new DetailedMessage(player, row, col);
+			reqString = RequestType.REL_AT.getMessg();
+		}else if(messgType.equals("P")){
+			int row = scanner.nextInt();
+			int col = scanner.nextInt();
+			messg = new DetailedMessage(player, row, col);
+			reqString = RequestType.PUT_ON.getMessg();
+		}
+		System.out.println("message creating");
+		toSendMessage = new Message(2, "test", address, mode, reqString , messg);
+		return toSendMessage;
+	}
+
+	/**
      * Sends a single message as read from the input scanner.
      * 
      * @param scanner
@@ -74,8 +111,11 @@ public class Client implements Interpreter {
             System.out.println("version: " + response.version);
             for (Message message : response.messages) {
                 System.out.println("* + " + message);
+                System.out.println("===Messg===");
+                System.out.println(message.get(Object.class));
             }
         } catch (NoSuchElementException e) {
+        	e.printStackTrace();
             System.err.println("usage: msg address (U|M) type");
         }
     }

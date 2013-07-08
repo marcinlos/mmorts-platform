@@ -1,6 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol;
 
-public class DetailedMessage extends SimpleMessage{
+
+public class DetailedMessage extends SimpleMessage {
 	private int row;
 	private int col;
 	

@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.map.commons;
 
+import java.io.Serializable;
+
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.Board;
 
 
@@ -11,13 +13,13 @@ import pl.edu.agh.ki.mmorts.server.modules.basic.map.Board;
  * @author drew
  *
  */
-public class MapModuleData {
+public class MapModuleData implements Serializable{
 		/**
 		 * Board of player
 		 */
-		ImmutableBoard board;
+		Board board;
 
-		private MapModuleData(ImmutableBoard board) {
+		public MapModuleData(Board board) {
 			this.board = board;
 		}
 

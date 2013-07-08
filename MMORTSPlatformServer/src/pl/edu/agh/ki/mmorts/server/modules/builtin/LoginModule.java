@@ -11,6 +11,7 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
 import java.util.Random;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
@@ -37,6 +38,8 @@ public class LoginModule extends ModuleBase {
     @Inject(optional = true)
     @Named("login.number")
     private int number;
+    
+
     
     @MessageMapping("auth")
     public void handleAuth(Message message, Context ctx) {

@@ -15,16 +15,16 @@ import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.ImmutableBoard;
  * @author drew
  * 
  */
-public class Board implements ImmutableBoard{
+public class Board implements ImmutableBoard {
 
 	private static final BoardFactory BoardFactory = new BoardFactory();
 	/**
 	 * Map representation as list of lists of {@link FieldContent}
 	 */
 	private List<List<FieldContent>> fieldContents;
-	
+
 	/**
-	 * Started map to properly do realease on the field 
+	 * Started map to properly do realease on the field
 	 */
 	private List<List<FieldContent>> startingContents;
 
@@ -37,11 +37,12 @@ public class Board implements ImmutableBoard{
 		this.fieldContents = fieldContents;
 		this.startingContents = makeShallowCopy(fieldContents);
 	}
-	
-	private List<List<FieldContent>> makeShallowCopy(List<List<FieldContent>> fieldContents){
+
+	private List<List<FieldContent>> makeShallowCopy(
+			List<List<FieldContent>> fieldContents) {
 		List<List<FieldContent>> shallowCopy = new ArrayList<List<FieldContent>>();
-		Iterator<List<FieldContent>> rowsIterator= fieldContents.iterator();
-		while(rowsIterator.hasNext()){
+		Iterator<List<FieldContent>> rowsIterator = fieldContents.iterator();
+		while (rowsIterator.hasNext()) {
 			shallowCopy.add(new ArrayList<FieldContent>(rowsIterator.next()));
 		}
 		return shallowCopy;
@@ -52,10 +53,10 @@ public class Board implements ImmutableBoard{
 	}
 
 	public void putAt(int row, int col) {
-		fieldContents.get(row).set(col, FieldContent.OTHER);
+		fieldContents.get(row).set(col, FieldContent.O);
 	}
-	
-	public void realeaseAt(int row, int col){
+
+	public void realeaseAt(int row, int col) {
 		fieldContents.get(row).set(col, startingContents.get(row).get(col));
 	}
 
@@ -70,7 +71,7 @@ public class Board implements ImmutableBoard{
 		private static final int ROAD_COL = 10;
 		private static final int ROAD_ROW = 10;
 
-		/**
+/**
 		 * Create standard board with given size constructed typically. That means that
 		 * wherever {@code row % 10 == 9 && column % 10 == 9) there is road.
 		 * 
@@ -84,15 +85,11 @@ public class Board implements ImmutableBoard{
 		public Board getTypicalBoard(int rows, int cols) {
 			List<List<FieldContent>> newBoard = new ArrayList<List<FieldContent>>();
 			for (int r = 0; r < rows; ++r) {
+				newBoard.add(new ArrayList<FieldContent>());
 				for (int c = 0; c < cols; ++c) {
-					if (newBoard.get(r) == null) {
-						List<FieldContent> colList = new ArrayList<FieldContent>();
-						newBoard.set(r, colList);
-					}
 					newBoard.get(r)
-							.set(c,
-									(isRoadBecauseOfColumn(c) || isRoadBecauseOfRow(r)) ? FieldContent.ROAD
-											: FieldContent.GRASS);
+							.add((isRoadBecauseOfColumn(c) || isRoadBecauseOfRow(r)) ? FieldContent.R
+									: FieldContent.G);
 				}
 			}
 			return new Board(newBoard);

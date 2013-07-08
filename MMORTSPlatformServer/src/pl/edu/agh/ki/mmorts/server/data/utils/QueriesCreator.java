@@ -44,7 +44,7 @@ public class QueriesCreator {
 		moduleName = prepareModuleName(moduleName);
 		return String.format("CREATE TABLE %s " + " (" + PLAYER_NAME_COL
 				+ " VARCHAR(255) NOT NULL, " + PLAYER_CUST_DATA_COL
-				+ " VARCHAR(4096), PRIMARY KEY(player_name))", moduleName);
+				+ " VARCHAR(10000), PRIMARY KEY(player_name))", moduleName);
 	}
 
 	

@@ -36,7 +36,13 @@ public class IceOutputChannel implements MessageOutputChannel {
     public IceOutputChannel(String[] args) {
         ice = Util.initialize(args);
         // get the dispatcher - hardcoded property name
+        
         String str = ice.getProperties().getProperty("MMORTSServer.Proxy");
+        if(str.equals("")){
+        	System.out.println("\nNo MMORTSServer.Proxy. Did you provided correct config?");
+            shutdown();
+            throw new RuntimeException("No MMORTSServer.Proxy. Did you privede correct config?");
+        }
         ObjectPrx obj = ice.stringToProxy(str);
         System.out.print("Obtaining server reference...");
         System.out.flush();

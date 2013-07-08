@@ -24,17 +24,6 @@ public class CustomPersistorImpl implements CustomPersistor {
 	private Database db;
 	
 	/**
-	 * Constructs {@link CustomPersistorImpl} which uses concrete {@link Database}
-	 * @param db
-	 * 			database to persist data in
-	 */
-	public CustomPersistorImpl(Database db) {
-		this.db = db;
-	}
-
-	
-	
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override

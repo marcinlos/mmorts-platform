@@ -1,8 +1,7 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.map.commons;
 
 public enum RequestType {
-	CHECK("check");
-	
+	CHECK("check"),FULL("full"),PUT_ON("putOn"), REL_AT("releaseAt");
 	private String messg;
 
 	private RequestType(String messg) {

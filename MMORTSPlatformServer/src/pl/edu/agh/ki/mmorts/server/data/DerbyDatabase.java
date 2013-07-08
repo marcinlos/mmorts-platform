@@ -425,9 +425,11 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 			String sqlString = queriesCreator.getSelectCustomDataQuery(moduleName,playerName);
 			stm = perThreadConn.get().createStatement();
 			ResultSet rs = stm.executeQuery(sqlString);
-			while(rs.next()){
+			if(rs.next()){
 				String stringData = rs.getString(QueriesCreator.PLAYER_CUST_DATA_COL);
 				deserialized = deserialize(moduleName, stringData);
+			}else{
+				throw new IllegalArgumentException();
 			}
 		} catch (SQLException e) {
 			logger.warn("Cannot receive data");
