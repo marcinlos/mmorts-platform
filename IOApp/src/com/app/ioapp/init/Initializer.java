@@ -173,12 +173,14 @@ public class Initializer {
 			}
 			else {
 				Log.d(ID,"User needs to be registered");
+				Log.d(ID,"Registering");
+				loginModule.register(mail, password);
+				Log.d(ID,"Writing mail and password to file");
 				Properties ps = new Properties();
 				ps.setProperty("mail", mail);
 				ps.setProperty("password", password);
-				Log.d(ID,"User's data stored in a file");
 				ps.store(infoOutput, null);
-				loginModule.register(mail, password);
+				Log.d(ID,"User's data stored in a file");
 			}
 		} catch (Exception e) {
 			Log.e(ID, "Exception during logging in");
