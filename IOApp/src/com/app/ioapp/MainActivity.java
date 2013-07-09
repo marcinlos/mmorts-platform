@@ -48,6 +48,7 @@ public class MainActivity extends Activity implements UIListener {
 	private Properties boardConfig; //debug only
 	private List<String> modules;
 	private MainView view;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +162,9 @@ public class MainActivity extends Activity implements UIListener {
 		
 		try {
 			initializer = new Initializer(i, jsonConfigStream, iceConfigStream, fos);
+			
+			initializer.settEmPoRary(this);
+			
 		} catch (ConfigException e) {
 			Log.e(ID,"Initializer is bad",e);
 			endProgram();
@@ -176,8 +180,9 @@ public class MainActivity extends Activity implements UIListener {
 		try{
 			initializer.logIn(mail, pass, fileExists);
 		} catch(LogInException e){
-			Log.e(ID,"Login failure, dunno");
+			Log.e(ID,"Login failure, dunno: " + e.getCause());
 			//you cooould come back to Login Activity if you'd really like here, it would be appropiate.
+			
 			endProgram();
 		}
 		

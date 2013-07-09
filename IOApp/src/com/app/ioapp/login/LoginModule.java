@@ -30,7 +30,7 @@ public class LoginModule extends ModuleBase{
 	 * @throws RegisterException
 	 */
 	public void register(String mail, String password) throws RegisterException{
-		Log.e(ID,"Registering user");
+		Log.d(ID,"Registering user");
 		this.userMail = mail;
 		this.password = password;
 	}
@@ -40,7 +40,7 @@ public class LoginModule extends ModuleBase{
 	 * @throws LogInException
 	 */
 	public void logIn() throws LogInException{
-		Log.e(ID,"Logging in user");
+		Log.d(ID,"Logging in user");
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class LoginModule extends ModuleBase{
 	 * @throws LogOutException
 	 */
 	public void logOut() throws LogOutException{
-		Log.e(ID,"Logging out user");
+		Log.d(ID,"Logging out user");
 	}
 	
 

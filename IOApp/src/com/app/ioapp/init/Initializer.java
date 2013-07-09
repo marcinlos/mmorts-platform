@@ -22,11 +22,15 @@ import pl.edu.agh.ki.mmorts.client.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.util.DI;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
 import Ice.Util;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.util.Log;
+import android.widget.PopupWindow;
 
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.communication.MessageOutputChannel;
+import com.app.ioapp.communication.SingleThreadedDispatcher;
 import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
@@ -116,7 +120,7 @@ public class Initializer {
     /**
      * Module which enables logging in and registering
      */
-    private LoginModule loginModule;
+    private LoginModule loginModule =  new LoginModule();
 	
 	/**
 	 * Stream to read configuration from file
@@ -143,6 +147,21 @@ public class Initializer {
 	private com.google.inject.Module txManagerModule;
 	
 	
+	private Context tEmPoRary;
+	
+	
+	
+	
+	public Context gettEmPoRary() {
+		return tEmPoRary;
+	}
+
+
+	public void settEmPoRary(Context tEmPoRary) {
+		this.tEmPoRary = tEmPoRary;
+	}
+
+
 	/**
 	 * @param configInput to read configuration from file
 	 * @param infoOutput to write players info to file if he has not been registered yet. If he has, it is {@code null}
@@ -184,7 +203,7 @@ public class Initializer {
 			}
 		} catch (Exception e) {
 			Log.e(ID, "Exception during logging in");
-			throw new LogInException(e.getMessage());
+			throw new LogInException(e);
 		}
 		
 	}
@@ -283,6 +302,8 @@ public class Initializer {
 		reader = new ConfigReader(configInput);
 		reader.configure();
 		config = reader.getConfig();
+		configModule = DI.objectModule(config, Config.class);
+		Log.d(ID, "Read: " + config);
 }
 
 
@@ -312,8 +333,8 @@ public class Initializer {
     
     private void createDispatcher() {
         Log.d(ID, "Creating dispatcher");
-        Class<? extends Dispatcher> cl = Dispatcher.class;
-        dispatcher = DI.createWith(cl/*, configModule*/, channelModule,
+        Class<? extends Dispatcher> cl = SingleThreadedDispatcher.class;
+        dispatcher = DI.createWith(cl, configModule, channelModule,
                 txManagerModule);
         callInit(dispatcher);
         dispatcherModule = new AbstractModule() {
@@ -372,7 +393,7 @@ public class Initializer {
 	                Names.bindProperties(binder(), desc.config.asMap());
 	            }
 	        };
-	        Module module = DI.createWith(cl/*, configModule*/, dispatcherModule,
+	        Module module = DI.createWith(cl, configModule, dispatcherModule,
 	                DI.objectModule(txManager.getProvider(),
 	                        TransactionProvider.class), properties,
 	                playersPersistorModule, customPersistorModule, DI

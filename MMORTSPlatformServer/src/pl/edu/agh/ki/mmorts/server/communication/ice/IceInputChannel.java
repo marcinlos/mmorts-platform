@@ -22,6 +22,7 @@ import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import Ice.Current;
 import Ice.Identity;
+import Ice.ObjectPrx;
 
 import com.google.inject.name.Named;
 
@@ -92,7 +93,8 @@ public class IceInputChannel extends AbstractChannel {
             adapter = ice.createObjectAdapter(adapterName);
             logger.debug("Ice adapter initialized (" + adapterName + ")");
             Identity id = ice.stringToIdentity("Dispatcher");
-            adapter.add(impl, id);
+            ObjectPrx prx = adapter.add(impl, id);
+            logger.info(ice.proxyToString(prx));
             logger.debug("Servant added");
         } catch (Ice.LocalException e) {
             fatalShutdown(e);

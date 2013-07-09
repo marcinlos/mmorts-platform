@@ -48,17 +48,19 @@ public class IceOutputChannel implements MessageOutputChannel {
             if (dispatcher == null) {
                 System.err.println("Failed to obtain dispatcher reference");
                 //TODO: TEMPORARILY!!!
-                //System.exit(1);
+                System.exit(1);
             }
             System.out.println("done");
         } catch (Ice.ConnectionRefusedException e) {
             System.out.println("\nConnection refused, is server running?");
+            
             //TODO: TEMPORARILY!!!
             
-            //shutdown();
-            //throw new RuntimeException(e);
+            shutdown();
+            throw new RuntimeException(e);
         }
         */
+        
     }
 
     /**

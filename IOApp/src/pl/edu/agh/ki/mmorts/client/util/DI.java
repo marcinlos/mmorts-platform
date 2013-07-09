@@ -92,6 +92,7 @@ public class DI {
     public static <T> T createWith(Class<T> clazz,
             Iterable<? extends Module> modules) {
         Injector injector = Guice.createInjector(modules);
+        System.out.println(clazz);
         return injector.getInstance(clazz);
     }
 
