@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.data;
 
+import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
+
 
 /**
  * Database wrapper of some storage mechanisms - it's like DAO

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
-
 import android.util.Log;
 
 /**

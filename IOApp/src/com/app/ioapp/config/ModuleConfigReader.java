@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import pl.edu.agh.ki.mmorts.client.util.GsonUtil;
-
-
 import android.util.Log;
 
 import com.app.ioapp.modules.Module;

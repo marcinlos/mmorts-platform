@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import pl.edu.agh.ki.mmorts.client.communication.ice.IceOutputChannel;
 import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
@@ -32,11 +31,9 @@ import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
-import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
-import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
 import com.app.ioapp.modules.ModuleInitException;
@@ -257,8 +254,10 @@ public class Initializer {
 	
     private void createTransactionManager() {
         Log.d(ID, "Creating transaction manager");
-        Class<? extends TransactionManager> cl = TransactionManagerImpl.class;
-        txManager = DI.createWith(cl, configModule);
+       // Class<? extends TransactionManager> cl = TransactionManagerImpl.class;
+        
+        //txManager = DI.createWith(cl, configModule);
+        txManager = new TransactionManagerImpl();
         callInit(txManager);
         txManagerModule = DI.objectModule(txManager, TransactionManager.class);
         Log.d(ID, "Transaction manager successfully initialized");
@@ -312,7 +311,7 @@ public class Initializer {
     private void createDispatcher() {
         Log.d(ID, "Creating dispatcher");
         Class<? extends Dispatcher> cl = Dispatcher.class;
-        dispatcher = DI.createWith(cl, configModule, channelModule,
+        dispatcher = DI.createWith(cl/*, configModule*/, channelModule,
                 txManagerModule);
         callInit(dispatcher);
         dispatcherModule = new AbstractModule() {
@@ -371,7 +370,7 @@ public class Initializer {
 	                Names.bindProperties(binder(), desc.config.asMap());
 	            }
 	        };
-	        Module module = DI.createWith(cl, configModule, dispatcherModule,
+	        Module module = DI.createWith(cl/*, configModule*/, dispatcherModule,
 	                DI.objectModule(txManager.getProvider(),
 	                        TransactionProvider.class), properties,
 	                playersPersistorModule, customPersistorModule, DI
@@ -386,9 +385,8 @@ public class Initializer {
 
 
 	private void initMainView() {
-	// TODO Auto-generated method stub
-	
-}
+		
+	}
 	/**
 	 * Returns MainView for Module Views
 	 * @return MainView object

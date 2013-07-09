@@ -1,8 +1,5 @@
 package pl.edu.agh.ki.mmorts.client.communication.ice;
 
-import com.app.ioapp.communication.MessageOutputChannel;
-import com.app.ioapp.communication.ResponseCallback;
-
 import pl.edu.agh.ki.mmorts.Callback_Dispatcher_deliver;
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
 import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
@@ -12,7 +9,9 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import Ice.LocalException;
 import Ice.ObjectPrx;
-import Ice.Util;
+
+import com.app.ioapp.communication.MessageOutputChannel;
+import com.app.ioapp.communication.ResponseCallback;
 
 /**
  * Example implementation of the client side message source.
@@ -38,22 +37,28 @@ public class IceOutputChannel implements MessageOutputChannel {
     	ice = Ice.Util.initialize(id);
         // get the dispatcher - hardcoded property name
         String str = ice.getProperties().getProperty("MMORTSServer.Proxy");
+        System.out.println("@@@@@@@@@-->" + str);
         ObjectPrx obj = ice.stringToProxy(str);
         System.out.print("Obtaining server reference...");
         System.out.flush();
+        /*
         try {
             dispatcher = DispatcherPrxHelper.checkedCast(obj);
             // if cast fails, the result is null - no exception!
             if (dispatcher == null) {
                 System.err.println("Failed to obtain dispatcher reference");
-                System.exit(1);
+                //TODO: TEMPORARILY!!!
+                //System.exit(1);
             }
             System.out.println("done");
         } catch (Ice.ConnectionRefusedException e) {
             System.out.println("\nConnection refused, is server running?");
-            shutdown();
-            throw new RuntimeException(e);
+            //TODO: TEMPORARILY!!!
+            
+            //shutdown();
+            //throw new RuntimeException(e);
         }
+        */
     }
 
     /**

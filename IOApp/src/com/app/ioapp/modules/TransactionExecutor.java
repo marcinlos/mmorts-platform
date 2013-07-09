@@ -1,14 +1,13 @@
 package com.app.ioapp.modules;
 
-import android.annotation.SuppressLint;
-import android.util.Log;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
+import android.annotation.SuppressLint;
+import android.util.Log;
 
 /**
  * Helper class containing per-thread state necessary for conducting

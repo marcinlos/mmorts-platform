@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.app.ioapp.modules.Context;
-
 import pl.edu.agh.ki.mmorts.client.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.common.message.Message;
+
+import com.app.ioapp.modules.Context;
 
 /**
  * 

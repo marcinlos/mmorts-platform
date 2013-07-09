@@ -1,7 +1,5 @@
 package com.app.ioapp.view;
 
-import java.util.Collection;
-
 import com.app.ioapp.customDroidViews.AbstractModuleView;
 
 /**

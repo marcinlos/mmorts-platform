@@ -1,8 +1,9 @@
 package pl.edu.agh.ki.mmorts.client.core.transaction;
 
-import android.annotation.SuppressLint;
 import java.util.ArrayDeque;
 import java.util.Deque;
+
+import android.annotation.SuppressLint;
 
 /**
  * "One-thread" transaction manager. Simple implementation designed to be used

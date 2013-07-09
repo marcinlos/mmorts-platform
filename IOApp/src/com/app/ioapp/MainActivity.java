@@ -1,20 +1,15 @@
 package com.app.ioapp;
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-
-import javax.security.auth.login.LoginException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,23 +20,19 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.config.StaticPropertiesLoader;
-import com.app.ioapp.customDroidViews.AdditionalViewA;
+import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.customDroidViews.BoardView;
 import com.app.ioapp.customDroidViews.MenuButton;
-import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.init.InitException;
 import com.app.ioapp.init.Initializer;
 import com.app.ioapp.login.LogInException;
-import com.app.ioapp.login.RegisterException;
-import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.ITile;
-import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
 

@@ -1,8 +1,8 @@
 package com.app.ioapp.login;
 
-import com.app.ioapp.modules.ModuleBase;
-
 import android.util.Log;
+
+import com.app.ioapp.modules.ModuleBase;
 
 /**
  * Module responsible for registering, logging in and logging out

@@ -2,12 +2,10 @@ package com.app.ioapp.customDroidViews;
 
 import java.util.List;
 
-import com.app.ioapp.modules.Module;
-import com.app.ioapp.view.MainView;
-
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
+
+import com.app.ioapp.view.MainView;
 
 /**
  * Used to show additional choice after pressing menu button. Each module might have it's own

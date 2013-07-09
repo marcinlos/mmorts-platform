@@ -3,7 +3,6 @@ package com.app.ioapp.customDroidViews;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Timer;
 
 import android.content.Context;
@@ -15,12 +14,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.app.ioapp.R;
-import com.app.ioapp.config.ConfigException;
 import com.app.ioapp.modules.Building;
 import com.app.ioapp.modules.ITile;
-import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.InfrastructureModuleData;
-import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.Tile;
 import com.app.ioapp.view.MainView;
 

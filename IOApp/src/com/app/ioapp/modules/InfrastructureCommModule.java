@@ -1,6 +1,5 @@
 package com.app.ioapp.modules;
 
-import android.util.Log;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
 public class InfrastructureCommModule implements GUICommModule {

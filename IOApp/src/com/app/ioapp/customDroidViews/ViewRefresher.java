@@ -1,7 +1,5 @@
 package com.app.ioapp.customDroidViews;
 
-import android.view.View;
-
 import java.util.TimerTask;
 
 /**

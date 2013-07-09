@@ -1,11 +1,10 @@
 package com.app.ioapp.customDroidViews;
 
-import com.app.ioapp.MainActivity;
-
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Button;
+
+import com.app.ioapp.MainActivity;
 
 public class MenuButton extends Button {
 

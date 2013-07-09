@@ -2,14 +2,12 @@ package com.app.ioapp.modules;
 
 import java.util.Collection;
 
-
 import pl.edu.agh.ki.mmorts.client.core.transaction.Transaction;
 import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionProvider;
 import pl.edu.agh.ki.mmorts.client.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.client.modules.annotations.impl.TrivialMapperFactory;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Messages;
-
 import android.util.Log;
 
 import com.app.ioapp.communication.Gateway;

@@ -1,7 +1,6 @@
 package com.app.ioapp.view;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,7 @@ import android.util.Log;
 
 import com.app.ioapp.customDroidViews.AbstractModuleView;
 import com.app.ioapp.modules.ConfiguredModule;
-import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.GUICommModule;
 import com.google.inject.Inject;
 
 
@@ -30,7 +29,7 @@ public class MainView implements View{
 	 * Map of modules
 	 */
 	@Inject
-	private Map<String, ConfiguredModule> modules;
+	private Map<String, GUICommModule> modules;
 	
 	/**
 	 * Mapping of modules and moduleViews which are interested in changes in these modules
@@ -62,17 +61,19 @@ public class MainView implements View{
 			a.postInvalidate();
 		}
 	}
+	/*
 	public void addModule(String n, ConfiguredModule m){
 		modules.put(n, m);
 	}
+	*/
 	/**
 	 * @see com.app.ioapp.module.GUICommModule
 	 * @param moduleName
 	 * @return
 	 */
 	public boolean stateChanged(String moduleName){
-		ConfiguredModule m = modules.get(moduleName);
-		if(m != null) return m.stateChanged();
+		GUICommModule m = modules.get(moduleName);
+		if(m != null) return m.isStateChanged();
 		return false;
 	}
 	/**
@@ -80,7 +81,7 @@ public class MainView implements View{
 	 * @param moduleName
 	 */
 	public void stateReceived(String moduleName){
-		ConfiguredModule m = modules.get(moduleName);
+		GUICommModule m = modules.get(moduleName);
 		if(m != null) m.stateReceived();
 	}
 	/**
@@ -90,7 +91,7 @@ public class MainView implements View{
 	 * @return
 	 */
 	public <T> T getData(String moduleName, Class<T> returnType){
-		ConfiguredModule m = modules.get(moduleName);
+		GUICommModule m = modules.get(moduleName);
 		if(m != null) return m.getData();
 		return null;
 	}
@@ -101,7 +102,7 @@ public class MainView implements View{
 	 * @param data
 	 */
 	public <T> void setData(String moduleName, T data){
-		ConfiguredModule m = modules.get(moduleName);
+		GUICommModule m = modules.get(moduleName);
 		if(m != null) m.setData(data);
 	}
 

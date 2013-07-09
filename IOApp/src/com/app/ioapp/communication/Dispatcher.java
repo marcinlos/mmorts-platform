@@ -1,6 +1,5 @@
 package com.app.ioapp.communication;
 
-import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.modules.ModuleContainer;
 
 

@@ -2,9 +2,9 @@ package com.app.ioapp.communication;
 
 import javax.inject.Inject;
 
+import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.common.message.Message;
-
 import android.util.Log;
 
 import com.app.ioapp.config.Config;
