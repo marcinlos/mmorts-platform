@@ -15,7 +15,8 @@ public interface View {
 	 * @param moduleView
 	 * @param moduleName
 	 */
-	void register(Class<? extends AbstractModuleView> moduleView, String moduleName);
+	//void register(Class<? extends AbstractModuleView> moduleView, String moduleName);
+	void register(AbstractModuleView moduleView, String moduleName);
 	
 
 }

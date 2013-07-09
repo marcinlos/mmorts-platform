@@ -37,6 +37,7 @@ import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
 import com.app.ioapp.modules.Module;
+import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
 import com.app.ioapp.modules.ModuleInitException;
 import com.app.ioapp.modules.ServiceLocator;
@@ -399,6 +400,12 @@ public class Initializer {
 	
 	public MessageOutputChannel getChannel() {
 		return channel;
+	}
+
+
+	public List<String> getModules() {
+		// TODO Kasiaa, uzupe³nij t¹ metodê
+		return null;
 	}
 	
 

@@ -83,7 +83,7 @@ import com.google.inject.name.Named;
  * @see Context
  * @see Message
  */
-public interface Module {
+public interface Module{
 
     /**
      * Called in the first phase of moduleClass initailization, before the

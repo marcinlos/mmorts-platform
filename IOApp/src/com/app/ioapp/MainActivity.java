@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.app.ioapp.view.MainView;
 
 public class MainActivity extends Activity implements UIListener {
 	
+	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = "MainActivity";
 	private static final String CONFIG_FILE = "client.properties";
 	private Initializer initializer;
@@ -53,22 +55,23 @@ public class MainActivity extends Activity implements UIListener {
 	private BoardView boardView;
 	private LinearLayout menu;
 	private Properties boardConfig; //debug only
-	private Map<String,Module> modules;
+	private List<String> modules;
 	private MainView view;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		fillViewsList();
 		setContentView(R.layout.activity_main);
 		initialize();
 		modules = initializer.getModules();
-		createMainView();
+		getMainView();
 		
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
 		
 		//this part is debug only
-		boardView = new BoardView(this);
+		/*boardView = new BoardView(this);
 		board = new InfrastructureModule(boardConfig);
 		boardView.init("InfrastructureModule", view);
 		boardView.setOnTouchListener(new View.OnTouchListener() {
@@ -87,16 +90,21 @@ public class MainActivity extends Activity implements UIListener {
 		
 		layout.addView(boardView);
 		//end of debugonly part
+		 */
 		
 		
-		//createMenu(mainLayout);
+		createMenu(mainLayout);
+		
+	}
+	
+	private void createMenu(LinearLayout mainLayout){
 		menu = new LinearLayout(this);
 		menu.setWeightSum(1);
 		menu.setOrientation(LinearLayout.VERTICAL);
 		menu.setBackgroundColor(Color.CYAN);
 		mainLayout.addView(menu);
 		try {
-			fillMenu();
+			initializeUI();
 		} catch (ClassNotFoundException e) {
 			Log.e(ID,"No View with that name implemented - do it!",e);
 			endProgram();
@@ -107,13 +115,11 @@ public class MainActivity extends Activity implements UIListener {
 			Log.e(ID,"Can't access your view? What?",e);
 			endProgram();
 		}
-
-		
-		
-		
-		
 	}
 	
+	private void fillViewsList(){
+		arbitraryViewsList.add("BoardView");
+	}
 	/**
 	 * receives intent that created this activity and reads it
 	 * creates Initializer properly (in compliance with {@link #Initializer} constructor)
@@ -176,52 +182,55 @@ public class MainActivity extends Activity implements UIListener {
 			Log.e(ID,"Initializer can't initialize",e);
 			endProgram();
 		}
-		initializer.g
+		try{
+			initializer.logIn(mail, pass, fileExists);
+		} catch(LogInException e){
+			Log.e(ID,"Login failure, dunno");
+			//you cooould come back to Login Activity if you'd really like here, it would be appropiate.
+			endProgram();
+		}
 		
 		
 	}
 	
-	private void createMainView(){
-		view = new MainView();
-		for(String s : modules.keySet()){
-			view.addModule(s, modules.get(s));
-		}
+	private void getMainView(){
+		view = initializer.getMainView();
 	}
 	
 	/**
+	 * Initialises all the views in arbitraryViewsList.
 	 * Adds all the buttons needed to the menu. Used only after {@link modules} are filled.
-	 * See {@link 
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private void fillMenu() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		for(String s : modules.keySet()){
-			Module m = modules.get(s);
-			Map<String,String> views = m.getMenus();
-			for(String text : views.keySet()){
-				AbstractModuleView t =(AbstractModuleView) Class.forName(views.get(text)).newInstance();
-				t.init(views.get(text), view);
-				MenuButton b = new MenuButton(this);
-				b.setView(t);
-				b.setText(text);
-				OnClickListener ocl = new OnClickListener(){
-				    @Override
-				    public void onClick(View v){
-				        if(v instanceof MenuButton){
-				        	MenuButton b = (MenuButton) v;
-				        	b.iWasClicked();
-				        }
-				        else{
-				        	Log.e(ID,"Button bahaving weirdly");
-				        }
-				    }
-				};
-				b.setOnClickListener(ocl);
-				menu.addView(b);
-				menu.invalidate();
+	
+	private void initializeUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+			for(String text : arbitraryViewsList){
+				AbstractModuleView t =(AbstractModuleView) Class.forName(text).newInstance();
+				t.init(modules, view);
+				if(t.isButton){
+					MenuButton b = new MenuButton(this);
+					b.setView(t);
+					b.setText(text);
+					OnClickListener ocl = new OnClickListener(){
+					    @Override
+					    public void onClick(View v){
+					        if(v instanceof MenuButton){
+					        	MenuButton b = (MenuButton) v;
+					        	b.iWasClicked();
+					        }
+					        else{
+					        	Log.e(ID,"Button bahaving weirdly");
+					        }
+					    }
+					};
+					b.setOnClickListener(ocl);
+					menu.addView(b);
+					menu.invalidate();
+				}
+				
 			}
-		}
 	}
 	
 	

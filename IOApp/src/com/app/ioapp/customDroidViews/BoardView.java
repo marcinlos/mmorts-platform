@@ -27,6 +27,7 @@ import com.app.ioapp.view.MainView;
 public class BoardView extends AbstractModuleView{
 
 	private static final String ID = "BoardView";
+	private String moduleName;
 	private List<ITile> fields;
 	private int imageSize = 50;
 	//private int mapSize = 25;
@@ -149,10 +150,11 @@ public class BoardView extends AbstractModuleView{
 	}
 
 	@Override
-	public void init(String s, MainView v){
+	public void init(List<String> modules, MainView v){
 		view = v;
-		moduleName = s;
-		currentData = view.getData(s, InfrastructureModuleData.class);
+		moduleName = modules.get(0);
+		currentData = view.getData(moduleName, InfrastructureModuleData.class);
+		view.register(this, moduleName);
 		this.mapWidth = currentData.mapWidth;
 		this.mapHeight = currentData.mapHeight;
 		//TODO set tile size to somethin, based on phone specifics or somethin?

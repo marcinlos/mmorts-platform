@@ -17,6 +17,10 @@ import com.google.inject.Inject;
 /**
  * Implements facade between android module views and modules
  *
+ *TODO About communication methods - this here needs some magic. I'm not sure about the flow of info during config
+ *or anything like that, but it would seem that after config we're going to be using some fancy stuff
+ *with annotations, to make available GUICommModule implementations (like InfrastructureCommModule) created from
+ *ConfiguredModule map we hold and use them instead of the insides of ConfiguredModule. In doubt ask Andrew.
  */
 public class MainView implements View{
 	
@@ -31,101 +35,76 @@ public class MainView implements View{
 	/**
 	 * Mapping of modules and moduleViews which are interested in changes in these modules
 	 */
-	private Map<String, List<Class<? extends AbstractModuleView>>> registeredViews = 
-			new HashMap<String, List<Class<? extends AbstractModuleView>>>();
+	//private Map<String, List<Class<? extends AbstractModuleView>>> registeredViews = 
+	//		new HashMap<String, List<Class<? extends AbstractModuleView>>>();
+	private Map<String, List<AbstractModuleView>> registeredViews = new HashMap<String, List<AbstractModuleView>>();
 	
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void register(Class<? extends AbstractModuleView> moduleView,
-			String moduleName) {
+	//public void register(Class<? extends AbstractModuleView> moduleView,
+	//		String moduleName) {
+	public void register(AbstractModuleView moduleView, String moduleName){
 		if (!modules.containsKey(moduleName)) {
 			Log.e(ID, "Registering view to a module that doesn't exist");
 			throw new ModuleNotExists();
 		}
 		if (!registeredViews.containsKey(moduleName)) {
-			registeredViews.put(moduleName, new ArrayList<Class<? extends AbstractModuleView>>());
+			registeredViews.put(moduleName, new ArrayList<AbstractModuleView>());
 		}
 		registeredViews.get(moduleName).add(moduleView);		
 	}
-
-
-
 	
-}
-	/*
-	private UIListener listener;
-	private PlayersContext context;
-	
-	public MainView(Map<String,CommunicatingModule> modules, PlayersContext context){
-		this.modules = modules;
-		this.context = context;
-	}
-	
-	public void setListener(UIListener l){
-		listener = l;
-	}
-	
-	public void updateModules(Map<String,CommunicatingModule> modules){       // bo te same moduly sa tez w innych miejscach
-		this.modules = modules;
-	}
-	
-	
-	public void StuffHappened(Object wtf){
-		listener.stuffHappened(wtf);
-	}
-	
-	//public Object getModuleData(String moduleName){
-		
-	//}
-	
-	
-	
-	/**
-	 * invoked by MenuManager when a button has been clicked.
-	 * @param menuNameClicked module it needs to be directed to
-	 */
-/*	Map<String,Module> modules;
-	
-	private Module findModule(String name){
-		for(String n : modules.keySet()){
-			if(n.equals(name))
-				 return modules.get(name);
+	public void refreshViews(String moduleName){
+		for(AbstractModuleView a : registeredViews.get(moduleName)){
+			a.postInvalidate();
 		}
-		return null;
 	}
-	
-	public void addModule(String n, Module m){
+	public void addModule(String n, ConfiguredModule m){
 		modules.put(n, m);
 	}
-	
+	/**
+	 * @see com.app.ioapp.module.GUICommModule
+	 * @param moduleName
+	 * @return
+	 */
 	public boolean stateChanged(String moduleName){
-		Module m = findModule(moduleName);
+		ConfiguredModule m = modules.get(moduleName);
 		if(m != null) return m.stateChanged();
 		return false;
 	}
+	/**
+	 * @see com.app.ioapp.module.GUICommModule
+	 * @param moduleName
+	 */
 	public void stateReceived(String moduleName){
-		Module m = findModule(moduleName);
+		ConfiguredModule m = modules.get(moduleName);
 		if(m != null) m.stateReceived();
 	}
+	/**
+	 * @see com.app.ioapp.module.GUICommModule
+	 * @param moduleName
+	 * @param returnType
+	 * @return
+	 */
 	public <T> T getData(String moduleName, Class<T> returnType){
-		Module m = findModule(moduleName);
+		ConfiguredModule m = modules.get(moduleName);
 		if(m != null) return m.getData();
 		return null;
 	}
 	
+	/**
+	 * @see com.app.ioapp.module.GUICommModule
+	 * @param moduleName
+	 * @param data
+	 */
 	public <T> void setData(String moduleName, T data){
-		Module m = findModule(moduleName);
+		ConfiguredModule m = modules.get(moduleName);
 		if(m != null) m.setData(data);
 	}
+
 }
-	
-	/*
-	public void handleMenuAction(String moduleName){
-		//TODO
-	}
-*/
 
 
