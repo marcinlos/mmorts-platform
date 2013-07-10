@@ -1,5 +1,7 @@
 package com.app.ioapp.init;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +30,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.PopupWindow;
 
+import com.app.ioapp.LoginActivity;
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.communication.MessageOutputChannel;
@@ -36,6 +39,7 @@ import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
+import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
@@ -123,6 +127,7 @@ public class Initializer {
      */
     private LoginModule loginModule =  new LoginModule();
 	
+	private static final String CONFIG_FILE = "client.properties";
 	/**
 	 * Stream to read configuration from file
 	 */
@@ -148,18 +153,45 @@ public class Initializer {
 	private com.google.inject.Module txManagerModule;
 	
 	
-	private Context tEmPoRary;
+	private Context context;
 	
 	
 	
 	
 	public Context gettEmPoRary() {
-		return tEmPoRary;
+		return context;
 	}
 
 
 	public void settEmPoRary(Context tEmPoRary) {
-		this.tEmPoRary = tEmPoRary;
+		this.context = tEmPoRary;
+	}
+	
+	public Initializer(Context context) {
+		this.context = context;
+		/*
+		FileOutputStream infoOutput = null;
+		InputStream configInput=null;
+		InputStream iceConfigInput = null;
+		InputStream moduleConfigInput = null;
+		try {
+			configInput = context.getResources().getAssets().open(CONFIG_FILE);
+			iceConfigInput = context.getResources().getAssets().open("iceClient.config");
+			moduleConfigInput = context.getResources().getAssets().open("modules.json");
+			
+		} catch (IOException e) {
+			Log.e(ID,"config file error",e);
+		}
+		try{
+			if(!fileExists){
+				 fos = openFileOutput(LoginActivity.loginFile,MODE_PRIVATE);
+			}
+		}
+		catch(FileNotFoundException e){
+			Log.e(ID,"Directory for apps internal files not existing or something... it's bad",e);
+			endProgram();
+		}
+		*/
 	}
 
 
@@ -167,6 +199,7 @@ public class Initializer {
 	 * @param configInput to read configuration from file
 	 * @param infoOutput to write players info to file if he has not been registered yet. If he has, it is {@code null}
 	 */
+	
 	public Initializer
 	(InputStream configInput, InputStream moduleConfigInput, InputStream iceConfigInput, OutputStream infoOutput)  {
 		this.configInput = configInput;
@@ -227,7 +260,7 @@ public class Initializer {
             createCustomPersistor();
             createPlayersPersistor();
 			initModules();
-			initMainView();
+			initModulesBroker();
 			Log.d(ID, "Server successfully initialized");
 		}
 		catch (Exception e) {
@@ -408,14 +441,14 @@ public class Initializer {
 	
 
 
-	private void initMainView() {
+	private void initModulesBroker() {
 		view=new ModulesBroker();
 	}
 	/**
 	 * Returns MainView for Module Views
 	 * @return MainView object
 	 */
-	public ModulesBroker getMainView() {
+	public ModulesBroker getModulesBroker() {
 		return view;
 	}
 

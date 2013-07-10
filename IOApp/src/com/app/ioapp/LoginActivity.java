@@ -30,7 +30,7 @@ public class LoginActivity extends Activity {
 	// Values for email and password at the time of the login attempt.
 	private String mEmail;
 	private String mPassword;
-	public static final String loginFile = "client.login";
+	public static final String loginFile = "info.properties";
 	private final static String ID = "LoginActivity";
 	public static final String PROPERTIES = "java.util.Properties";
 	public static final String FILEEXISTS = "file_exists";
@@ -51,43 +51,47 @@ public class LoginActivity extends Activity {
 		f.delete();*/ //uncomment this if you want to see how it goes before first login again
 		File file = getFileStreamPath(loginFile);
 		if(file.exists())
+		{
 			loginFromFile();
+		}
+			
 		// so, file does not exist - first start of app
 		
 		
 		
-
+		else {
 		// Set up the login form.
-		mEmailView = (EditText) findViewById(R.id.email);
-		mEmailView.setText(mEmail);
-
-		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
+			mEmailView = (EditText) findViewById(R.id.email);
+			mEmailView.setText(mEmail);
+	
+			mPasswordView = (EditText) findViewById(R.id.password);
+			mPasswordView
+					.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+						@Override
+						public boolean onEditorAction(TextView textView, int id,
+								KeyEvent keyEvent) {
+							if (id == R.id.login || id == EditorInfo.IME_NULL) {
+								attemptLogin();
+								return true;
+							}
+							return false;
 						}
-						return false;
-					}
-				});
-
-		findViewById(R.id.sign_in_button).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						attemptLogin();
-					}
-				});
+					});
+	
+			findViewById(R.id.sign_in_button).setOnClickListener(
+					new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							attemptLogin();
+						}
+					});
+		}
 	}
 	
 	private void loginFromFile(){
 		FileInputStream loginconf=null;
 		try {
-			loginconf = openFileInput("client.login");
+			loginconf = openFileInput(loginFile);
 		} catch (FileNotFoundException e) {
 			Log.e(ID,"SHOULD NOT HAPPEN",e);
 		}
@@ -98,7 +102,7 @@ public class LoginActivity extends Activity {
 			p = chk.getProperties();
 			Intent i = new Intent(this,MainActivity.class);
 			if(p == null){
-				Log.e(ID,"dupa");
+				Log.e(ID,"Invalid login file content");
 			}
 			i.putExtra(PROPERTIES, p);
 			i.putExtra(FILEEXISTS, true);
@@ -169,7 +173,7 @@ public class LoginActivity extends Activity {
 			Properties p = new Properties();
 			p.put("mail", mEmail);
 			p.put("password", mPassword);
-			Intent i = new Intent(this,MainActivity.class);
+			Intent i = new Intent(this,RunActivity.class);
 			i.putExtra(PROPERTIES, p);
 			i.putExtra(FILEEXISTS, false);
 			startActivity(i);
