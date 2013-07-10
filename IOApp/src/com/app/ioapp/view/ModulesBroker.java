@@ -21,7 +21,7 @@ import com.google.inject.Inject;
  *with annotations, to make available GUICommModule implementations (like InfrastructureCommModule) created from
  *ConfiguredModule map we hold and use them instead of the insides of ConfiguredModule. In doubt ask Andrew.
  */
-public class MainView implements View{
+public class ModulesBroker implements View{
 	
 	private static final String ID = "MainView";
 	
@@ -92,7 +92,7 @@ public class MainView implements View{
 	 */
 	public <T> T getData(String moduleName, Class<T> returnType){
 		GUICommModule m = modules.get(moduleName);
-		if(m != null) return m.getData();
+		if(m != null) return m.getData(returnType);
 		return null;
 	}
 	
@@ -101,9 +101,9 @@ public class MainView implements View{
 	 * @param moduleName
 	 * @param data
 	 */
-	public <T> void setData(String moduleName, T data){
+	public <T> void setData(String moduleName, T data, Class<T> clazz){
 		GUICommModule m = modules.get(moduleName);
-		if(m != null) m.setData(data);
+		if(m != null) m.setData(data, clazz);
 	}
 
 }

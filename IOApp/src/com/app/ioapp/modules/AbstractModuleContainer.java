@@ -107,8 +107,8 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      */
     private void registerModule(ConfiguredModule conf) {
         ModuleDescriptor desc = conf.descriptor;
-        Log.e(ID, "Registering module" + desc.name);
-        Log.e(ID, "Calling init() on " + desc.name);
+        Log.d(ID, "Registering module" + desc.name);
+        Log.d(ID, "Calling init() on " + desc.name);
         try {
             Module module = conf.module;
 //            module.init();
@@ -136,7 +136,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
     private void registerUnicast(String address, ConfiguredModule conf) {
         ModuleDescriptor desc = conf.descriptor;
         Module module = conf.module;
-        Log.e(ID, "Module " + desc.name + " registered as " + address);
+        Log.d(ID, "Module " + desc.name + " registered as " + address);
         // TODO: EVIL CAST, fix it
         Module prev = unicast.put(address, (CommunicatingModule) module);
         if (prev != null) {
@@ -156,7 +156,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      * Subscribes a module to a given multicast group.
      */
     private void registerMulticast(String group, CommunicatingModule module) {
-    	Log.e(ID, "Module " + module + " added to [" + group + "]");
+    	Log.d(ID, "Module " + module + " added to [" + group + "]");
         Set<CommunicatingModule> set = multicast.get(group);
         if (set == null) {
             set = new HashSet<CommunicatingModule>();
@@ -184,7 +184,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      * {@code started()} methods.
      */
     private void phaseTwo() {
-    	Log.e(ID, "Second phase of module initialization");
+    	Log.d(ID, "Second phase of module initialization");
         Set<String> moduleNames = new HashSet<String>(modules.keySet());
         for (String name : moduleNames) {
             ConfiguredModule conf = modules.get(name);
@@ -203,7 +203,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      * Shuts down all the modules, logging exceptions thrown in the process.
      */
     protected void shutdownModules() {
-    	Log.e(ID, "Shutting down modules");
+    	Log.d(ID, "Shutting down modules");
         for (ConfiguredModule conf : modules.values()) {
             try {
 //                conf.module.shutdown();
@@ -223,7 +223,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      */
     @Override
     public <T> void register(Class<? super T> service, T provider) {
-        Log.e(ID, "Registering " + provider.getClass() + " as " + service);
+        Log.d(ID, "Registering " + provider.getClass() + " as " + service);
         services.register(service, provider);
     }
 
@@ -235,7 +235,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
      */
     @Override
     public <T> void registerIfAbsent(Class<? super T> service, T provider) {
-        Log.e(ID, "Registering " + provider.getClass() + " as " + service);
+        Log.d(ID, "Registering " + provider.getClass() + " as " + service);
         services.registerIfAbsent(service, provider);
     }
 

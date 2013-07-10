@@ -6,12 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -34,7 +36,7 @@ import com.app.ioapp.login.LogInException;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.InfrastructureModule;
 import com.app.ioapp.modules.Tile;
-import com.app.ioapp.view.MainView;
+import com.app.ioapp.view.ModulesBroker;
 
 public class MainActivity extends Activity implements UIListener {
 	
@@ -47,8 +49,8 @@ public class MainActivity extends Activity implements UIListener {
 	private LinearLayout menu;
 	private Properties boardConfig; //debug only
 	private List<String> modules;
-	private MainView view;
-	
+	private ModulesBroker view;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +108,14 @@ public class MainActivity extends Activity implements UIListener {
 		} catch (IllegalAccessException e) {
 			Log.e(ID,"Can't access your view? What?",e);
 			endProgram();
+		} catch (Exception e) {
+			Log.e(ID,"Problem with reflection!",e);
+			endProgram();
 		}
 	}
 	
 	private void fillViewsList(){
-		arbitraryViewsList.add("BoardView");
+		arbitraryViewsList.add("com.app.ioapp.customDroidViews.BoardView");
 	}
 	/**
 	 * receives intent that created this activity and reads it
@@ -199,11 +204,14 @@ public class MainActivity extends Activity implements UIListener {
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
 	
-	private void initializeUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+	private void initializeUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException{
 			for(String text : arbitraryViewsList){
-				AbstractModuleView t =(AbstractModuleView) Class.forName(text).newInstance();
+				AbstractModuleView t =(AbstractModuleView) Class.forName(text).getConstructor(Context.class).newInstance((Context)this);
 				t.init(modules, view);
 				if(t.isButton){
 					MenuButton b = new MenuButton(this);

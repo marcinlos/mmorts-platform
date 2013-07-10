@@ -39,7 +39,7 @@ public class MenuButton extends Button {
 	}
 	
 	public void iWasClicked(){
-		//TODO
+		System.out.println("Clicked!!!");
 	}
 
 }

@@ -4,11 +4,11 @@ import android.util.Log;
 
 public class TempModuleViewer {
 	
-	private static MainView main;
+	private static ModulesBroker main;
 	private static final String ID = "TempModuleViewer";
 	
 	
-	public static void setMainView (MainView v){
+	public static void setMainView (ModulesBroker v){
 		main = v;
 	}
 	

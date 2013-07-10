@@ -1,21 +1,28 @@
 package com.app.ioapp.modules;
 
+import android.util.Log;
+import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
 public class InfrastructureCommModule implements GUICommModule {
 	
+	private static final String ID = InfrastructureModule.class.getName();
+	
 	private InfrastructureModule m;
+	
 	
 	public InfrastructureCommModule(Module m){
 		this.m = (InfrastructureModule) m;
 	}
+	
 
 	/**
      * {@inheritDoc}
      */
+	@OnInit
     @Override
     public void init() {
-        //TODO dunno
+        Log.d(ID, "Initialized");
     }
 
     /**
@@ -23,7 +30,7 @@ public class InfrastructureCommModule implements GUICommModule {
      */
     @Override
     public void started() {
-        //TODO dunno
+    	Log.d(ID, "Started");
     }
 
     /**
@@ -52,13 +59,13 @@ public class InfrastructureCommModule implements GUICommModule {
 	}
 
 	@Override
-	public <T> void setData(T data) {
+	public <T> void setData(T data, Class<T> clazz) {
 		m.setData(data);
 
 	}
 
 	@Override
-	public <T> T getData() {
+	public <T> T getData(Class<T> clazz) {
 		return m.getData();
 	}
 

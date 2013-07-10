@@ -8,21 +8,12 @@
 		"login.number" : 3
 	}
 }, {
-	"name" : "BuildingModule",
-	"class" : "com.example.BuildingModule",
-	"unicast" : [ "build_mod" ],
-	"groups" : [ "cool_modules" ],
-	"properties" : {}
-}, {
-	"name" : "MoneyModule",
-	"class" : "com.example.MoneyModule",
-	"unicast" : [ "money_mod", "account_mod" ],
-	"groups" : [ "core", "cool_modules" ],
-	"properties" : {}
-}, {
-	"name" : "IncrementorModule",
-	"class" : "com.example.IncrementorModule",
-	"unicast" : [ "inc_mod" ],
-	"groups" : [],
-	"properties" : {}
-} ]
+	"name" : "ExampleModule",
+	"class" : "com.app.ioapp.modules.example.ExampleModuleComm",
+	"unicast" : [ "ex_mod" ],
+	"groups" : [ "ex_mod_group" ],
+	"properties" : {
+		"datatype" : "com.app.ioapp.modules.example.ExampleData"
+		"example.number" : 3
+	}
+}]

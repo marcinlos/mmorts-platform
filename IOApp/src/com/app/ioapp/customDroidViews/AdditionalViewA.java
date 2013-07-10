@@ -5,7 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.app.ioapp.view.MainView;
+import com.app.ioapp.view.ModulesBroker;
 
 /**
  * Used to show additional choice after pressing menu button. Each module might have it's own
@@ -42,7 +42,7 @@ public class AdditionalViewA extends AbstractModuleView {
 		
 	}
 	@Override
-	public void init(List<String> moduleNames, MainView view) {
+	public void init(List<String> moduleNames, ModulesBroker view) {
 		// TODO Auto-generated method stub
 		
 	}

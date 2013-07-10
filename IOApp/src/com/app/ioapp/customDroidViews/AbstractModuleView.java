@@ -7,13 +7,13 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.app.ioapp.view.MainView;
+import com.app.ioapp.view.ModulesBroker;
 import com.google.inject.Inject;
 
 public abstract class AbstractModuleView extends View {
 	
 	@Inject
-	protected MainView view;
+	protected ModulesBroker view;
 	protected String moduleName;
 	public boolean isButton;
 
@@ -43,7 +43,7 @@ public abstract class AbstractModuleView extends View {
 	 * @param view facade to separate modules implementation and UI classes. responsible for
 	 * directing calls from UI to impl.
 	 */
-	public abstract void init(List<String> moduleNames, MainView view);
+	public abstract void init(List<String> moduleNames, ModulesBroker view);
 	
 
 }

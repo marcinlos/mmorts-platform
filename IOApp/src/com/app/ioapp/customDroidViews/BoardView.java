@@ -18,7 +18,7 @@ import com.app.ioapp.modules.Building;
 import com.app.ioapp.modules.ITile;
 import com.app.ioapp.modules.InfrastructureModuleData;
 import com.app.ioapp.modules.Tile;
-import com.app.ioapp.view.MainView;
+import com.app.ioapp.view.ModulesBroker;
 
 public class BoardView extends AbstractModuleView{
 
@@ -146,7 +146,7 @@ public class BoardView extends AbstractModuleView{
 	}
 
 	@Override
-	public void init(List<String> modules, MainView v){
+	public void init(List<String> modules, ModulesBroker v){
 		view = v;
 		moduleName = modules.get(0);
 		currentData = view.getData(moduleName, InfrastructureModuleData.class);

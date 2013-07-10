@@ -16,12 +16,12 @@ public interface GUICommModule extends Module {
      * @param data arbitrary data structure that identifies operation and arguments. Needs to be consistent
      * only in DroidView-Module pair, each pair can have independent implementation.
      */
-    public abstract <T> void setData(T data);
+    public abstract <T> void setData(T data, Class<T> clazz);
     /**
      * DroidView by calling this requests the state of data within the module to use it instead of it's
      * own outdated one.
      * @return arbitrary data structure (Object) holding all the relevant info. Needs to be consistent
      * only in DroidView-Module pair, each pair can have independent implementation.
      */
-    public abstract <T> T getData();
+    public abstract <T> T getData(Class<T> clazz);
 }

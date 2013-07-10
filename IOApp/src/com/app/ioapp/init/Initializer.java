@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -42,7 +43,7 @@ import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
 import com.app.ioapp.modules.ModuleInitException;
 import com.app.ioapp.modules.ServiceLocator;
-import com.app.ioapp.view.MainView;
+import com.app.ioapp.view.ModulesBroker;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
@@ -67,7 +68,7 @@ public class Initializer {
 	/**
 	 * Facade between phone application and module views
 	 */
-	private MainView view;
+	private ModulesBroker view;
 	
     
     /**
@@ -408,13 +409,13 @@ public class Initializer {
 
 
 	private void initMainView() {
-		
+		view=new ModulesBroker();
 	}
 	/**
 	 * Returns MainView for Module Views
 	 * @return MainView object
 	 */
-	public MainView getMainView() {
+	public ModulesBroker getMainView() {
 		return view;
 	}
 
@@ -426,7 +427,7 @@ public class Initializer {
 
 	public List<String> getModules() {
 		// TODO Kasiaa, uzupe³nij t¹ metodê
-		return null;
+		return Arrays.asList(new String[]{"JEDNE", "DRUGIE"});
 	}
 	
 
