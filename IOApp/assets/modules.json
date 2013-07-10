@@ -13,7 +13,6 @@
 	"unicast" : [ "ex_mod" ],
 	"groups" : [ "ex_mod_group" ],
 	"properties" : {
-		"datatype" : "com.app.ioapp.modules.example.ExampleData"
 		"example.number" : 3
 	}
 }]

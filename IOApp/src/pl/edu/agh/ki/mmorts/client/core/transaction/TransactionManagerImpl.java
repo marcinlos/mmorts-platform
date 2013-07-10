@@ -4,135 +4,121 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
 /**
  * Concrete implementation of {@linkplain TransactionManager}, using
  * {@linkplain SequentialTM} as per-thread local managers.
  */
 public class TransactionManagerImpl implements TransactionManager {
 
+	/**
+	 * List of global listeners. Should provide fast reads, otherwise it may be
+	 * a bottleneck. It is initialized with a {@linkplain CopyOnWriteArrayList}.
+	 */
+	private List<TransactionsBeginListener> listeners;
 
-    /**
-     * List of global listeners. Should provide fast reads, otherwise it may be
-     * a bottleneck. It is initialized with a {@linkplain CopyOnWriteArrayList}.
-     */
-    private List<TransactionsBeginListener> listeners;
+	/** Local transaction manager */
+	private SequentialTM localManager = new SequentialTM();
 
-    /** Per-thread local transaction manager */
-/*    private static final ThreadLocal<SequentialTM> localManager = new ThreadLocal<SequentialTM>() {
-        @Override
-        protected SequentialTM initialValue() {
-            return new SequentialTM();
-        }
-    };*/
-    // now it's just one local manager
-    private SequentialTM localManager = new SequentialTM();
+	private Transaction transaction;
 
-    ///** Per-thread current transaction */
-    //private static final ThreadLocal<Transaction> transaction = new ThreadLocal<Transaction>();
-    
-    // and one transaction
-    private Transaction transaction;
-    
-    /** Transaction provider implementation */
-    private TransactionProvider provider = new TransactionProvider() {
-        
-        @Override
-        public Transaction getCurrent() {
-            return getCurrent();
-        }
-    };
+	/** Transaction provider implementation */
+	private TransactionProvider provider = new TransactionProvider() {
+		@Override
+		public Transaction getCurrent() {
+			return getCurrent();
+		}
+	};
 
-    /**
-     * Creates the transaction manager instance.
-     */
-    public TransactionManagerImpl() {
-        listeners = new ArrayList<TransactionsBeginListener>();
-    }
-    
-    /**
-     * @return Local transaction manager
-     */
-    private SequentialTM getManager() {
-        return localManager;
-    }
+	/**
+	 * Creates the transaction manager instance.
+	 */
+	public TransactionManagerImpl() {
+		listeners = new ArrayList<TransactionsBeginListener>();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addListener(TransactionsBeginListener listener) {
-        listeners.add(listener);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeListener(TransactionsBeginListener listener) {
-        listeners.remove(listener);
-    }
+	/**
+	 * @return Local transaction manager
+	 */
+	private SequentialTM getManager() {
+		return localManager;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Transaction getCurrent() {
-        return transaction;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addListener(TransactionsBeginListener listener) {
+		listeners.add(listener);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Transaction begin() {
-        if (getCurrent() == null) {
-            Transaction t = getManager().createTx();
-            transaction = t;
-            // Notify all listeners
-            for (TransactionsBeginListener listener : listeners) {
-                listener.begin(t);
-            }
-            return t;
-        } else {
-            throw new TransactionStateException("Cannot nest transactions");
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeListener(TransactionsBeginListener listener) {
+		listeners.remove(listener);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void commit() {
-        if (getCurrent() != null) {
-            SequentialTM tm = getManager();
-            tm.commit();
-            transaction = null;
-        } else {
-            throw new TransactionStateException("No transaction to commit");
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Transaction getCurrent() {
+		return transaction;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void rollback() {
-        if (getCurrent() != null) {
-            SequentialTM tm = getManager();
-            tm.rollback();
-            transaction = null;
-        } else {
-            throw new TransactionStateException("No transaction to rollback");
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TransactionProvider getProvider() {
-        return provider;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Transaction begin() {
+		if (getCurrent() == null) {
+			Transaction t = getManager().createTx();
+			transaction = t;
+			// Notify all listeners
+			for (TransactionsBeginListener listener : listeners) {
+				listener.begin(t);
+			}
+			return t;
+		} else {
+			throw new TransactionStateException("Cannot nest transactions");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void commit() {
+		if (getCurrent() != null) {
+			SequentialTM tm = getManager();
+			tm.commit();
+			transaction = null;
+		} else {
+			throw new TransactionStateException("No transaction to commit");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void rollback() {
+		if (getCurrent() != null) {
+			SequentialTM tm = getManager();
+			tm.rollback();
+			transaction = null;
+		} else {
+			throw new TransactionStateException("No transaction to rollback");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TransactionProvider getProvider() {
+		return provider;
+	}
 
 }

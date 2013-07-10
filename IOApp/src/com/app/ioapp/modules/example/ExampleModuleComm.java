@@ -3,9 +3,13 @@ package com.app.ioapp.modules.example;
 import android.util.Log;
 
 import com.app.ioapp.modules.GUICommModule;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 public class ExampleModuleComm extends ExampleModule implements GUICommModule{
 
+	
+	
 	@Override
 	public boolean isStateChanged() {
 		Log.d(ID, "Is state changed");

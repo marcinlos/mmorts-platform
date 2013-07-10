@@ -167,9 +167,6 @@ public class MainActivity extends Activity implements UIListener {
 		
 		try {
 			initializer = new Initializer(i, jsonConfigStream, iceConfigStream, fos);
-			
-			initializer.settEmPoRary(this);
-			
 		} catch (ConfigException e) {
 			Log.e(ID,"Initializer is bad",e);
 			endProgram();
@@ -214,9 +211,9 @@ public class MainActivity extends Activity implements UIListener {
 				AbstractModuleView t =(AbstractModuleView) Class.forName(text).getConstructor(Context.class).newInstance((Context)this);
 				t.init(modules, view);
 				if(t.isButton){
-					MenuButton b = new MenuButton(this);
-					b.setView(t);
-					b.setText(text);
+					MenuButton button = new MenuButton(this);
+					button.setView(t);
+					button.setText(text);
 					OnClickListener ocl = new OnClickListener(){
 					    @Override
 					    public void onClick(View v){
@@ -229,8 +226,8 @@ public class MainActivity extends Activity implements UIListener {
 					        }
 					    }
 					};
-					b.setOnClickListener(ocl);
-					menu.addView(b);
+					button.setOnClickListener(ocl);
+					menu.addView(button);
 					menu.invalidate();
 				}
 				

@@ -37,11 +37,13 @@ public class Config {
 		return properties.getProperty(key);
 	}
 	
+	
+	
 	/**
 	 * Returns properties which are connected with specified module
 	 * @param moduleName
 	 * @return properties
-	 */
+	 *//*
 	public Properties getModuleProperties(String moduleName) {
 		Properties toReturn = new Properties();
 		for (Object propertyKey : properties.keySet()) {
@@ -50,7 +52,7 @@ public class Config {
 			}
 		}
 		return toReturn;
-	}
+	}*/
 	
 
 }
