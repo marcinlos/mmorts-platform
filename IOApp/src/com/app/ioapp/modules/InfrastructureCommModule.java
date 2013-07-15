@@ -1,5 +1,7 @@
 package com.app.ioapp.modules;
 
+import com.app.ioapp.modules.InfMod.InfrastructureModule;
+
 import android.util.Log;
 import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.common.message.Message;

@@ -1,12 +1,11 @@
 package com.app.ioapp.init;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -25,12 +24,9 @@ import pl.edu.agh.ki.mmorts.client.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.util.DI;
 import pl.edu.agh.ki.mmorts.client.util.reflection.Methods;
 import Ice.Util;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
-import android.widget.PopupWindow;
 
-import com.app.ioapp.LoginActivity;
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.communication.MessageOutputChannel;
@@ -39,14 +35,15 @@ import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
-import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
+import com.app.ioapp.modules.GUICommModule;
 import com.app.ioapp.modules.Module;
 import com.app.ioapp.modules.ModuleDescriptor;
 import com.app.ioapp.modules.ModuleInitException;
 import com.app.ioapp.modules.ServiceLocator;
+import com.app.ioapp.store.Storage;
 import com.app.ioapp.view.ModulesBroker;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
@@ -71,7 +68,7 @@ public class Initializer {
 	/**
 	 * Facade between phone application and module views
 	 */
-	private ModulesBroker view;
+	private ModulesBroker modulesBroker;
 
 	/**
 	 * Stores properties read from configuration file
@@ -120,8 +117,6 @@ public class Initializer {
 	private Database database;
 	private com.google.inject.Module databaseModule;
 
-	private com.google.inject.Module modulesConfigurationModule;
-	
 	/**
 	 * Module which enables logging in and registering
 	 */
@@ -150,6 +145,10 @@ public class Initializer {
 	 */
 	private TransactionManager txManager;
 	private com.google.inject.Module txManagerModule;
+	
+	private List<ConfiguredModule> configuredModules;
+	
+	
 	private Context context;
 
 	/**
@@ -176,6 +175,7 @@ public class Initializer {
 	public void initialize() throws InitException {
 		try {
 			Log.d(ID, "Initializing environment started");
+			openFiles();
 			readConfig();
 			createTransactionManager();
 			createChannel();
@@ -184,13 +184,25 @@ public class Initializer {
 			createCustomPersistor();
 			createPlayersPersistor();
 			initModules();
-			initMainView();
-			Log.d(ID, "Server successfully initialized");
+			initModulesBroker();
+			Log.d(ID, "Successfully initialized");
 		} catch (Exception e) {
 			Log.e(ID, "Error during initialization");
 			throw new InitException(e);
 		}
 
+	}
+
+	private void openFiles() {
+		try {
+			iceConfigInput = context.getAssets().open("iceClient.config");
+			configInput = context.getAssets().open("client.properties");
+			moduleConfigInput = context.getAssets().open("modules.json");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void readConfig() {
@@ -282,27 +294,42 @@ public Initializer(Context context) {
 			Log.d(ID, "Loaded module configuration");
 			// initialize
 			Map<String, ModuleDescriptor> loaded = confReader.getModules();
-			List<ConfiguredModule> modules = new ArrayList<ConfiguredModule>();
+			configuredModules = new ArrayList<ConfiguredModule>();
 			Log.d(ID, "Creating modules");
 			for (ModuleDescriptor desc : loaded.values()) {
 				Log.d(ID, "Creating module " + desc.name);
 				try {
 					Module m = createModule(desc);
 					Log.d(ID, "Module " + desc.name + " created");
-					modules.add(new ConfiguredModule(m, desc));
+					configuredModules.add(new ConfiguredModule(m, desc));
 				} catch (ModuleInitException e) {
 					Log.e(ID, "Module " + desc.name + " creation failed", e);
 				}
 			}
 			// register with the dispatcher
 			Log.d(ID, "Registering modules with a dispatcher");
-			dispatcher.registerModules(modules);
-			modulesConfigurationModule = DI.objectModule(modules, List.class);
+			dispatcher.registerModules(configuredModules);
+			Storage.getStorage().setLoadedModules(configuredModules);
 		} catch (ModuleConfigException e) {
 			Log.e(ID, "Error while readin module configuration");
 			Log.e(ID, e.getMessage());
 			throw new InitException(e);
 		}
+	}
+	
+	private void initModulesBroker() {
+		Log.d(ID, "Initiliazing broker and his modules");
+		Map<String, GUICommModule> communicatingModules = new HashMap<String, GUICommModule>();
+		for(ConfiguredModule module :configuredModules){
+			try {
+				communicatingModules.put(module.descriptor.name, (GUICommModule)module.module);
+			} catch (Exception e) {
+				Log.e(ID, module.descriptor.name + " cannot be load as communicating module");
+			}
+		}
+		modulesBroker = new ModulesBroker(communicatingModules, configuredModules);
+		Storage.getStorage().setBroker(modulesBroker);
+		Log.d(ID, "Broker initialized");
 	}
 
 
@@ -395,9 +422,7 @@ public Initializer(Context context) {
 		}
 	}
 
-	private void initModulesBroker() {
-		view = new ModulesBroker();
-	}
+	
 
 	/**
 	 * Returns MainView for Module Views
@@ -405,7 +430,7 @@ public Initializer(Context context) {
 	 * @return MainView object
 	 */
 	public ModulesBroker getModulesBroker() {
-		return view;
+		return modulesBroker;
 	}
 
 	public MessageOutputChannel getChannel() {

@@ -1,4 +1,4 @@
-package com.app.ioapp.modules;
+package com.app.ioapp.modules.InfMod;
 
 import android.graphics.Bitmap;
 

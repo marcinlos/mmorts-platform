@@ -13,6 +13,16 @@
 	"unicast" : [ "ex_mod" ],
 	"groups" : [ "ex_mod_group" ],
 	"properties" : {
-		"example.number" : 3
+		"example.number" : 3,
+		"presenter" : "com.app.ioapp.modules.example.ExampleModulePresenter"
+	}
+}, {
+	"name" : "InfrastructureModule",
+	"class" : "com.app.ioapp.modules.InfMod.InfrastructureModule",
+	"unicast" : [ "i_mod" ],
+	"groups" : [ "i_mod_group" ],
+	"properties" : {
+		"example.number" : 3,
+		"presenter" : "com.app.ioapp.modules.InfMod.InfrastructureModulePresenter"
 	}
 }]

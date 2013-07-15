@@ -14,10 +14,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.app.ioapp.R;
-import com.app.ioapp.modules.Building;
-import com.app.ioapp.modules.ITile;
-import com.app.ioapp.modules.InfrastructureModuleData;
 import com.app.ioapp.modules.Tile;
+import com.app.ioapp.modules.InfMod.ITile;
+import com.app.ioapp.modules.InfMod.InfrastructureModuleData;
 import com.app.ioapp.view.ModulesBroker;
 
 public class BoardView extends AbstractModuleView{
@@ -75,10 +74,10 @@ public class BoardView extends AbstractModuleView{
 				ITile tile = virtual_map[i][j];
 				if(tile != null && tile.isValid()){
 					//TODO wybieranie obrazka na podstawie budynku który tam jest a nie
-					Building b = tile.getBuilding();
-					if(b == null){
-						Log.e(ID,"Tile is valid but no building is built here, hmm");
-					}
+					//Building b = tile.getBuilding();
+					//if(b == null){
+					//	Log.e(ID,"Tile is valid but no building is built here, hmm");
+					//}
 					
 					if (tile.getBitmap() == null){
 						int id = getResources().getIdentifier(tile.getBitmapID(), "drawable", "com.app.ioapp");
@@ -111,9 +110,9 @@ public class BoardView extends AbstractModuleView{
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		if(view.stateChanged(moduleName)){
-			view.stateReceived(moduleName);
-			currentData = view.getData(moduleName, InfrastructureModuleData.class);
+		if(modulesBroker.stateChanged(moduleName)){
+			modulesBroker.stateReceived(moduleName);
+			currentData = modulesBroker.getData(moduleName, InfrastructureModuleData.class);
 			refresh();
 		}
 		super.onDraw(canvas);
@@ -147,10 +146,10 @@ public class BoardView extends AbstractModuleView{
 
 	@Override
 	public void init(List<String> modules, ModulesBroker v){
-		view = v;
+		modulesBroker = v;
 		moduleName = modules.get(0);
-		currentData = view.getData(moduleName, InfrastructureModuleData.class);
-		view.register(this, moduleName);
+		currentData = modulesBroker.getData(moduleName, InfrastructureModuleData.class);
+		modulesBroker.register(this, moduleName);
 		this.mapWidth = currentData.mapWidth;
 		this.mapHeight = currentData.mapHeight;
 		//TODO set tile size to somethin, based on phone specifics or somethin?

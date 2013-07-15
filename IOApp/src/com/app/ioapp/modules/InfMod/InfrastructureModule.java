@@ -1,4 +1,4 @@
-package com.app.ioapp.modules;
+package com.app.ioapp.modules.InfMod;
 
 import java.util.List;
 import java.util.Properties;
@@ -6,13 +6,16 @@ import java.util.Properties;
 import android.util.Log;
 
 import com.app.board.SpaceOccupiedException;
+import com.app.ioapp.modules.GUICommModule;
+import com.app.ioapp.modules.ModuleBase;
+import com.app.ioapp.modules.Tile;
 
 /**
  * Implementation of concrete module. Extends {@code AbstractCommunicatingModule} so can communicate with
  * other modules and server site
  *
  */
-public class InfrastructureModule extends ModuleBase {
+public class InfrastructureModule extends ModuleBase implements GUICommModule{
 	
 	private final static String ID = "Board";
 	private Properties pr;
@@ -30,6 +33,10 @@ public class InfrastructureModule extends ModuleBase {
 	}
 	public void stateReceived(){
 		stateChanged = false;
+	}
+	
+	
+	public InfrastructureModule() {
 	}
 	
 	public InfrastructureModule(Properties p){
@@ -213,6 +220,16 @@ public <T> void setData(T data) {
 	
 }
 public <T> T getData() {
+	// TODO Auto-generated method stub
+	return null;
+}
+@Override
+public <T> void setData(T data, Class<T> clazz) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public <T> T getData(Class<T> clazz) {
 	// TODO Auto-generated method stub
 	return null;
 }

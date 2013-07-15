@@ -13,7 +13,8 @@ import com.google.inject.Inject;
 public abstract class AbstractModuleView extends View {
 	
 	@Inject
-	protected ModulesBroker view;
+	protected ModulesBroker modulesBroker;
+	
 	protected String moduleName;
 	public boolean isButton;
 

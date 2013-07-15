@@ -28,9 +28,28 @@ public class ModulesBroker implements View{
 	/**
 	 * Map of modules
 	 */
-	@Inject
+	//temporarily not injected
 	private Map<String, GUICommModule> modules;
 	
+	private List<ConfiguredModule> configuredModules;
+	
+	
+	
+	public Map<String, GUICommModule> getModules() {
+		return modules;
+	}
+
+	public List<ConfiguredModule> getConfiguredModules() {
+		return configuredModules;
+	}
+
+	public ModulesBroker(Map<String, GUICommModule> modules,
+			List<ConfiguredModule> configuredModules) {
+		super();
+		this.modules = modules;
+		this.configuredModules = configuredModules;
+	}
+
 	/**
 	 * Mapping of modules and moduleViews which are interested in changes in these modules
 	 */

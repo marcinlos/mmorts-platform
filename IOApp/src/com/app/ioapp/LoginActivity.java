@@ -18,6 +18,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.app.ioapp.init.RegisteringChecker;
+import com.app.ioapp.store.Storage;
+
+
+
 
 /**
  * Activity which displays a login screen to the user
@@ -26,7 +30,19 @@ import com.app.ioapp.init.RegisteringChecker;
  * Boolean keyed LoginActivity.FILEEXISTS whether the info was read from existing file or not (true if file existed)
  */
 public class LoginActivity extends Activity {
+	
+	private int test;
+	
+	
+	
 
+	public int getTest() {
+		return test;
+	}
+
+	public void setTest(int test) {
+		this.test = test;
+	}
 	// Values for email and password at the time of the login attempt.
 	private String mEmail;
 	private String mPassword;
@@ -44,7 +60,6 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_login);
 		/*File dir = getFilesDir();
 		File f = new File(dir, loginFile);

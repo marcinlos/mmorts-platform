@@ -18,9 +18,17 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.app.ioapp.RunActivity"
+            android:name="com.app.ioapp.MainActivity"
             android:label="@string/app_name" >
             
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.app.ioapp.RunActivity"
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.app.ioapp.GridActivity"
@@ -34,11 +42,7 @@
             android:name="com.app.ioapp.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
     </application>
 

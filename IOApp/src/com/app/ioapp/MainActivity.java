@@ -1,4 +1,4 @@
-package com.app.ioapp;
+ package com.app.ioapp;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -15,13 +15,18 @@ import android.util.Log;
 
 public class MainActivity extends Activity{
 	
-	private static final String ID = "StartActivity";
+	private static final String ID = MainActivity.class.getName();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		initialize();
+		setContentView(R.layout.activity_main);
+		
+		Intent intentRun = new Intent(this, LoginActivity.class);
+		startActivity(intentRun);
+		finish();
 		
 	}
 
@@ -64,9 +69,7 @@ public class MainActivity extends Activity{
 			}
 		}
 		
-		Intent intentRun = new Intent(this, RunActivity.class);
-		startActivity(intentRun);
-		finish();
+		
 		
 	}
 	

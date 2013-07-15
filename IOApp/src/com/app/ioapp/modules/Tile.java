@@ -1,6 +1,9 @@
 package com.app.ioapp.modules;
 
 
+import com.app.ioapp.modules.InfMod.Building;
+import com.app.ioapp.modules.InfMod.ITile;
+
 import android.graphics.Bitmap;
 
 public class Tile implements ITile {
@@ -12,7 +15,6 @@ public class Tile implements ITile {
     private int y;
     private int size_x;
     private int size_y;
-    private Building building;
     
     public Tile(Bitmap bit, int x, int y, int sx, int sy){
     	this.x = x;
@@ -128,11 +130,13 @@ public class Tile implements ITile {
     }
 	@Override
 	public void setBuilding(Building b) {
-		building = b;		
+		// TODO Auto-generated method stub
+		
 	}
 	@Override
 	public Building getBuilding() {
-		return building;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

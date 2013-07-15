@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.edu.agh.ki.mmorts.client.util.GsonUtil;
+
+import com.google.gson.JsonParseException;
+
 /**
  * Simple immutable property map, allowing conversion to a precise type at
  * retrieval.
@@ -68,12 +72,12 @@ public class PropertyMap {
     public <T> T get(String key, Class<T> clazz) {
         String str = map.get(key);
         if (str != null) {
-//            try {
-//                return GsonUtil.gson.fromJson(str, clazz);
-//            } catch (JsonParseException e) {
-//                // swallowed exception - on purpose!
+          try {
+                return GsonUtil.gson.fromJson(str, clazz);
+            } catch (JsonParseException e) {
+                //swallowed exception - on purpose!
                 return null;
-//            }
+            }
         } else {
             return null;
         }
