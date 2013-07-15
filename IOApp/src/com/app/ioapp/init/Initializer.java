@@ -1,5 +1,7 @@
 package com.app.ioapp.init;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +30,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.PopupWindow;
 
+import com.app.ioapp.LoginActivity;
 import com.app.ioapp.communication.Dispatcher;
 import com.app.ioapp.communication.Gateway;
 import com.app.ioapp.communication.MessageOutputChannel;
@@ -36,6 +39,7 @@ import com.app.ioapp.config.Config;
 import com.app.ioapp.config.ConfigReader;
 import com.app.ioapp.config.ModuleConfigException;
 import com.app.ioapp.config.ModuleConfigReader;
+import com.app.ioapp.config.StaticPropertiesLoader;
 import com.app.ioapp.login.LogInException;
 import com.app.ioapp.login.LoginModule;
 import com.app.ioapp.modules.ConfiguredModule;
@@ -146,6 +150,7 @@ public class Initializer {
 	 */
 	private TransactionManager txManager;
 	private com.google.inject.Module txManagerModule;
+	private Context context;
 
 	/**
 	 * @param configInput
@@ -214,6 +219,11 @@ public class Initializer {
 		channelModule = DI.objectModule(channel, MessageOutputChannel.class);
 		Log.d(ID, "Message channel created");
 	}
+
+public Initializer(Context context) {
+		this.context = context;
+	}
+
 
 	private void createDispatcher() {
 		Log.d(ID, "Creating dispatcher");
@@ -385,7 +395,7 @@ public class Initializer {
 		}
 	}
 
-	private void initMainView() {
+	private void initModulesBroker() {
 		view = new ModulesBroker();
 	}
 
@@ -394,7 +404,7 @@ public class Initializer {
 	 * 
 	 * @return MainView object
 	 */
-	public ModulesBroker getMainView() {
+	public ModulesBroker getModulesBroker() {
 		return view;
 	}
 

@@ -1,177 +1,33 @@
 package com.app.ioapp;
 
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.app.ioapp.config.ConfigException;
-import com.app.ioapp.config.StaticPropertiesLoader;
-import com.app.ioapp.customDroidViews.AbstractModuleView;
-import com.app.ioapp.customDroidViews.BoardView;
-import com.app.ioapp.customDroidViews.MenuButton;
 import com.app.ioapp.init.InitException;
 import com.app.ioapp.init.Initializer;
 import com.app.ioapp.login.LogInException;
-import com.app.ioapp.modules.ITile;
-import com.app.ioapp.modules.InfrastructureModule;
-import com.app.ioapp.modules.Tile;
-import com.app.ioapp.view.ModulesBroker;
 
-public class MainActivity extends Activity implements UIListener {
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+
+public class MainActivity extends Activity{
 	
-	private static final List<String> arbitraryViewsList = new ArrayList<String>();
-	private static final String ID = "MainActivity";
-	private static final String CONFIG_FILE = "client.properties";
-	private Initializer initializer;
-	private InfrastructureModule board;
-	private BoardView boardView;
-	private LinearLayout menu;
-	private Properties boardConfig; //debug only
-	private List<String> modules;
-	private ModulesBroker view;
-
-
+	private static final String ID = "StartActivity";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		fillViewsList();
-		setContentView(R.layout.activity_main);
+		
 		initialize();
-		modules = initializer.getModules();
-		getMainView();
-		
-		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
-		LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
-		
-		//this part is debug only
-		/*boardView = new BoardView(this);
-		board = new InfrastructureModule(boardConfig);
-		boardView.init("InfrastructureModule", view);
-		boardView.setOnTouchListener(new View.OnTouchListener() {
-	        @Override
-	        public boolean onTouch(View v, MotionEvent event) {
-	            if (event.getAction() == MotionEvent.ACTION_DOWN){
-	              //  textView.setText("Touch coordinates : " +
-	              //          String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
-	            	AbstractModuleView view = (AbstractModuleView) v;
-	            	view.iWasClicked(event.getX(),event.getY());
-	            }
-	            return true;
-	        }
-	    });
-		setupBoard();
-		
-		layout.addView(boardView);
-		//end of debugonly part
-		 */
-		
-		
-		createMenu(mainLayout);
 		
 	}
-	
-	private void createMenu(LinearLayout mainLayout){
-		menu = new LinearLayout(this);
-		menu.setWeightSum(1);
-		menu.setOrientation(LinearLayout.VERTICAL);
-		menu.setBackgroundColor(Color.CYAN);
-		mainLayout.addView(menu);
-		try {
-			initializeUI();
-		} catch (ClassNotFoundException e) {
-			Log.e(ID,"No View with that name implemented - do it!",e);
-			endProgram();
-		} catch (InstantiationException e) {
-			Log.e(ID,"Can't instantiate your view? What?",e);
-			endProgram();
-		} catch (IllegalAccessException e) {
-			Log.e(ID,"Can't access your view? What?",e);
-			endProgram();
-		} catch (Exception e) {
-			Log.e(ID,"Problem with reflection!",e);
-			endProgram();
-		}
-	}
-	
-	private void fillViewsList(){
-		arbitraryViewsList.add("com.app.ioapp.customDroidViews.BoardView");
-	}
-	/**
-	 * receives intent that created this activity and reads it
-	 * creates Initializer properly (in compliance with {@link #Initializer} constructor)
-	 * creates {@link #boardConfig} from config file
-	 */
-	private void initialize(){
-		Intent intent = getIntent();
-		Properties p = null;
-		try{
-			Serializable o = intent.getSerializableExtra(LoginActivity.PROPERTIES);
-			@SuppressWarnings("rawtypes")
-			HashMap map = (HashMap)o; //somehow Properties serialize into HashMap O_o
-			p = new Properties();
-			p.put("mail", (String)map.get("mail"));
-			p.put("password", (String)map.get("password"));
-		}
-		catch(Exception e){
-			Log.e(ID,"Properties from intent can't be loaded :(",e);
-			endProgram();
-		}
+
+	private void initialize() {
 		
-		
-		String mail = p.getProperty("mail");
-		String pass = p.getProperty("password");
-		boolean fileExists = intent.getBooleanExtra(LoginActivity.FILEEXISTS,false);
-		FileOutputStream fos = null;
-		InputStream i=null;
-		InputStream iceConfigStream = null;
-		InputStream jsonConfigStream = null;
-		try {
-			i = getResources().getAssets().open(CONFIG_FILE);
-			iceConfigStream = getResources().getAssets().open("iceClient.config");
-			jsonConfigStream = getResources().getAssets().open("modules.json");
-			boardConfig = StaticPropertiesLoader.load(i); //debug only action
-			
-		} catch (IOException e) {
-			Log.e(ID,"config file error",e);
-		}
-		try{
-			if(!fileExists){
-				 fos = openFileOutput(LoginActivity.loginFile,MODE_PRIVATE);
-			}
-		}
-		catch(FileNotFoundException e){
-			Log.e(ID,"Directory for apps internal files not existing or something... it's bad",e);
-			endProgram();
-		}
-		
-		try {
-			initializer = new Initializer(i, jsonConfigStream, iceConfigStream, fos);
-		} catch (ConfigException e) {
-			Log.e(ID,"Initializer is bad",e);
-			endProgram();
-		}
-		
+		Initializer initializer = new Initializer(this);
 		try {
 			initializer.initialize();
 		} catch (InitException e) {
@@ -179,125 +35,47 @@ public class MainActivity extends Activity implements UIListener {
 			Log.e(ID,"Initializer can't initialize",e);
 			endProgram();
 		}
-		try{
-			initializer.logIn(mail, pass, fileExists);
-		} catch(LogInException e){
-			Log.e(ID,"Login failure, dunno: " + e.getCause());
-			//you cooould come back to Login Activity if you'd really like here, it would be appropiate.
-			
-			endProgram();
-		}
 		
-		
-	}
-	
-	private void getMainView(){
-		view = initializer.getMainView();
-	}
-	
-	/**
-	 * Initialises all the views in arbitraryViewsList.
-	 * Adds all the buttons needed to the menu. Used only after {@link modules} are filled.
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 */
-	
-	private void initializeUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException{
-			for(String text : arbitraryViewsList){
-				AbstractModuleView t =(AbstractModuleView) Class.forName(text).getConstructor(Context.class).newInstance((Context)this);
-				t.init(modules, view);
-				if(t.isButton){
-					MenuButton button = new MenuButton(this);
-					button.setView(t);
-					button.setText(text);
-					OnClickListener ocl = new OnClickListener(){
-					    @Override
-					    public void onClick(View v){
-					        if(v instanceof MenuButton){
-					        	MenuButton b = (MenuButton) v;
-					        	b.iWasClicked();
-					        }
-					        else{
-					        	Log.e(ID,"Button bahaving weirdly");
-					        }
-					    }
-					};
-					button.setOnClickListener(ocl);
-					menu.addView(button);
-					menu.invalidate();
-				}
+		Intent intentLogin = getIntent();
+		Properties p = null;
+		boolean loginSucceeded = true;   //tylko do testow -> powinno byc false
+		while (!loginSucceeded) {
+			try{
+				Serializable o = intentLogin.getSerializableExtra(LoginActivity.PROPERTIES);
+				@SuppressWarnings("rawtypes")
+				HashMap map = (HashMap)o; //somehow Properties serialize into HashMap O_o
+				p = new Properties();
+				p.put("mail", (String)map.get("mail"));
+				p.put("password", (String)map.get("password"));
+			}
+			catch(Exception e){
+				Log.e(ID,"Properties from intent can't be loaded :(",e);
+				endProgram();
+			}
+			String mail = p.getProperty("mail");
+			String pass = p.getProperty("password");
+			boolean fileExists = intentLogin.getBooleanExtra(LoginActivity.FILEEXISTS,false);
+			try{
+				initializer.logIn(mail, pass, fileExists);
+				loginSucceeded = true;
+			} catch(LogInException e){
+				Log.e(ID,"Login failure, dunno: " + e.getCause());
 				
 			}
-	}
-	
-	
-	//debug only method - example board created
-	private void setupBoard(){
-		Log.e(ID, "setupBoard - it's debug only procedure!");
-		List<ITile> tiles = new ArrayList<ITile>();
-		Tile tile1 = new Tile("tile_fill",0,0,1,1);
-		tiles.add(tile1);
-		Tile tile2 = new Tile("tile_fill",2,2,1,1);
-		tiles.add(tile2);
-		Tile tile3 = new Tile(BitmapFactory.decodeResource(getResources(),R.drawable.tile_1x2),5,3,1,2);
-		tiles.add(tile3);
+		}
 		
-		board.setupFields(tiles);
-	}
-	
-	@Override
-	public void onWindowFocusChanged (boolean hasFocus) {
-		boardView.invalidate();
-	}
-
-
-	@Override
-	public void stuffHappened(Object whathappend) {
-		//TODO
-		// REACT to stuff that happened
-		// it probably won't be this activity, but some activity will do it
+		Intent intentRun = new Intent(this, RunActivity.class);
+		startActivity(intentRun);
+		finish();
 		
-	}
-
-	
-	public void buttonWasClicked(MenuButton b){
-		AbstractModuleView v = b.getView();
-		v.setOnTouchListener(new View.OnTouchListener() {
-	        @Override
-	        public boolean onTouch(View v, MotionEvent event) {
-	            if (event.getAction() == MotionEvent.ACTION_DOWN){
-	              //  textView.setText("Touch coordinates : " +
-	              //          String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
-	            	AbstractModuleView view = (AbstractModuleView) v;
-	            	view.iWasClicked(event.getX(),event.getY());
-	            }
-	            return true;
-	        }
-	    });
-		setContentView(R.layout.activity_menu);
-		LinearLayout layout = (LinearLayout) findViewById(R.id.menu_layout);
-		TextView a = new TextView(this);
-		a.setText("menu here");
-		layout.addView(a);
-		layout.addView(v);
-		
-	}
-	
-	/**
-	 * called from menu_layout as a signal that we can return to main display mode
-	 * @param v unused
-	 */
-	public void endMenu(View v){
-		setContentView(R.layout.activity_main);
 	}
 	
 	public void endProgram(){
     	finish();
     	System.exit(0);
     }
+	
+	
+
 
 }
