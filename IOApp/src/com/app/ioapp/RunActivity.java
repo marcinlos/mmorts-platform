@@ -66,6 +66,8 @@ public class RunActivity extends Activity implements UIListener {
 		fillMenuButtons();
 
 		fillMainModulesView();
+		
+		System.out.println("!!!!!!!!!!!!!!!!!" + getApplicationContext());
 
 		// modules = initializer.getModules(); <------------------------
 		// getModulesBroker();
