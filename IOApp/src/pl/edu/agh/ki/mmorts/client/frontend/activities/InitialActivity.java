@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Properties;
 
+import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
 import pl.edu.agh.ki.mmorts.client.backend.loginMod.LogInException;
 
 import com.app.ioapp.R;
-import com.app.ioapp.init.InitException;
 import com.app.ioapp.init.Initializer;
 
 import android.app.Activity;

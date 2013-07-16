@@ -1,8 +1,8 @@
 package com.app.ioapp.modules.example;
 
+import pl.agh.edu.ki.mmorts.client.frontend.modules.GUICommModule;
 import android.util.Log;
 
-import com.app.ioapp.modules.GUICommModule;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 

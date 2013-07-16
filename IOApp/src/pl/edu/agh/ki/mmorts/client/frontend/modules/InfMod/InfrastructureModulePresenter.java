@@ -3,6 +3,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.agh.edu.ki.mmorts.client.frontend.modules.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
 
 import android.app.Activity;
@@ -18,7 +19,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.app.ioapp.modules.ModulePresenter;
 
 public class InfrastructureModulePresenter implements ModulePresenter {
 

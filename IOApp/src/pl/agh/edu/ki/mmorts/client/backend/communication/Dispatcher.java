@@ -1,6 +1,6 @@
 package pl.agh.edu.ki.mmorts.client.backend.communication;
 
-import com.app.ioapp.modules.ModuleContainer;
+import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleContainer;
 
 
 /**

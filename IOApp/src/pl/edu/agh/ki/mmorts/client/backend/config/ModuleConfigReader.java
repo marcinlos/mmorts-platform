@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.Module;
+import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.client.backend.util.GsonUtil;
 import android.util.Log;
 
-import com.app.ioapp.modules.Module;
-import com.app.ioapp.modules.ModuleDescriptor;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 

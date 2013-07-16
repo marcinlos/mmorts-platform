@@ -2,10 +2,10 @@ package pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl;
 
 import java.util.Arrays;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
-import com.app.ioapp.modules.Context;
 
 /**
  * Association of the annotation describing mapping criteria and the handler to

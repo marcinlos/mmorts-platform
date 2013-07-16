@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
+import pl.edu.agh.ki.mmorts.client.backend.init.RegisteringChecker;
 import pl.edu.agh.ki.mmorts.client.frontend.activities.store.Storage;
 
 import android.app.Activity;
@@ -20,7 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.app.ioapp.R;
-import com.app.ioapp.init.RegisteringChecker;
 
 
 

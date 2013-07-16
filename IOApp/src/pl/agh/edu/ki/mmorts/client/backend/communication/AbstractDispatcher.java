@@ -2,19 +2,19 @@ package pl.agh.edu.ki.mmorts.client.backend.communication;
 
 import javax.inject.Inject;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.AbstractModuleContainer;
+import pl.agh.edu.ki.mmorts.client.backend.modules.CommunicatingModule;
+import pl.agh.edu.ki.mmorts.client.backend.modules.ContAdapter;
+import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
+import pl.agh.edu.ki.mmorts.client.backend.modules.Continuation;
+import pl.agh.edu.ki.mmorts.client.backend.modules.Module;
+import pl.agh.edu.ki.mmorts.client.backend.modules.TransactionExecutor;
 import pl.edu.agh.ki.mmorts.client.backend.config.Config;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import android.util.Log;
 
-import com.app.ioapp.modules.AbstractModuleContainer;
-import com.app.ioapp.modules.CommunicatingModule;
-import com.app.ioapp.modules.ContAdapter;
-import com.app.ioapp.modules.Context;
-import com.app.ioapp.modules.Continuation;
-import com.app.ioapp.modules.Module;
-import com.app.ioapp.modules.TransactionExecutor;
 
 /**
  * Partial implementation of a message dispatcher.

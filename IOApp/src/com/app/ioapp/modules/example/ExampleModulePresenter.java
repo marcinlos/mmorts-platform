@@ -1,5 +1,6 @@
 package com.app.ioapp.modules.example;
 
+import pl.agh.edu.ki.mmorts.client.frontend.modules.ModulePresenter;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Layout;
@@ -10,7 +11,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.app.ioapp.R;
-import com.app.ioapp.modules.ModulePresenter;
 
 public class ExampleModulePresenter implements ModulePresenter{
 

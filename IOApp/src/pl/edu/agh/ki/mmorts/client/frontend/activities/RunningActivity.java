@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.ConfiguredModule;
+import pl.agh.edu.ki.mmorts.client.frontend.modules.ModulePresenter;
+import pl.agh.edu.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.activities.store.Storage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModule;
@@ -29,9 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ioapp.R;
-import com.app.ioapp.modules.ConfiguredModule;
-import com.app.ioapp.modules.ModulePresenter;
-import com.app.ioapp.modules.Tile;
 
 public class RunningActivity extends Activity implements UIListener {
 

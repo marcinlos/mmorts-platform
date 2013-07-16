@@ -1,8 +1,8 @@
 package pl.edu.agh.ki.mmorts.client.backend.loginMod;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleBase;
 import android.util.Log;
 
-import com.app.ioapp.modules.ModuleBase;
 
 /**
  * Module responsible for registering, logging in and logging out

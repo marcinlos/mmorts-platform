@@ -1,8 +1,8 @@
 package pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
-import com.app.ioapp.modules.Context;
 
 /**
  * Trivial argument mapper, does not perform any transformation of arguments.

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
+import pl.agh.edu.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModuleData;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
@@ -20,7 +21,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.app.ioapp.R;
-import com.app.ioapp.modules.Tile;
 
 public class MapModuleView extends AbstractModuleView{
 

@@ -1,8 +1,8 @@
 package pl.agh.edu.ki.mmorts.client.backend.communication;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.Continuation;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
-import com.app.ioapp.modules.Continuation;
 
 /**
  * Dispatcher interface for use of the client modules. Allows sending messages

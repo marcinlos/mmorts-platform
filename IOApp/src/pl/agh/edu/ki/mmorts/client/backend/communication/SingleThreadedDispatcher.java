@@ -1,9 +1,9 @@
 package pl.agh.edu.ki.mmorts.client.backend.communication;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.TransactionExecutor;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 
-import com.app.ioapp.modules.TransactionExecutor;
 
 public class SingleThreadedDispatcher extends AbstractDispatcher {
 	

@@ -1,13 +1,13 @@
 package com.app.ioapp.modules.example;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
+import pl.agh.edu.ki.mmorts.client.backend.modules.Module;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import android.util.Log;
 
-import com.app.ioapp.modules.Context;
-import com.app.ioapp.modules.Module;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 

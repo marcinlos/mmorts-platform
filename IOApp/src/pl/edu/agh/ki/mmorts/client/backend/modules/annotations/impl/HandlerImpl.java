@@ -3,9 +3,9 @@ package pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
-import com.app.ioapp.modules.Context;
 
 /**
  * Default {@linkplain Handler} implementation, uses a method object and an
