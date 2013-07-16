@@ -3,6 +3,8 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+
 public class PresentersManager {
 	
 	private Map<String, ModulePresenter> presentersMap = new HashMap<String, ModulePresenter>();
