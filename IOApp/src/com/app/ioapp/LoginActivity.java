@@ -115,7 +115,7 @@ public class LoginActivity extends Activity {
 		if(chk.checkIfAccountExists()){
 			Log.d(ID,"Got valid things from file, gonna start the program");
 			p = chk.getProperties();
-			Intent i = new Intent(this,MainActivity.class);
+			Intent i = new Intent(this,InitialActivity.class);
 			if(p == null){
 				Log.e(ID,"Invalid login file content");
 			}
@@ -188,7 +188,7 @@ public class LoginActivity extends Activity {
 			Properties p = new Properties();
 			p.put("mail", mEmail);
 			p.put("password", mPassword);
-			Intent i = new Intent(this,RunActivity.class);
+			Intent i = new Intent(this,RunningActivity.class);
 			i.putExtra(PROPERTIES, p);
 			i.putExtra(FILEEXISTS, false);
 			startActivity(i);

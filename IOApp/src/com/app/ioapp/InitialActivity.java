@@ -13,18 +13,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-public class MainActivity extends Activity{
+public class InitialActivity extends Activity{
 	
-	private static final String ID = MainActivity.class.getName();
+	private static final String ID = InitialActivity.class.getName();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		initialize();
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_initial);
+		displayPicture();
 		
-		Intent intentRun = new Intent(this, LoginActivity.class);
+		initialize();
+
+		Intent intentRun = new Intent(this, RunningActivity.class);
 		startActivity(intentRun);
 		finish();
 		
@@ -40,7 +42,7 @@ public class MainActivity extends Activity{
 			Log.e(ID,"Initializer can't initialize",e);
 			endProgram();
 		}
-		
+		/*
 		Intent intentLogin = getIntent();
 		Properties p = null;
 		boolean loginSucceeded = true;   //tylko do testow -> powinno byc false
@@ -68,7 +70,7 @@ public class MainActivity extends Activity{
 				
 			}
 		}
-		
+		*/
 		
 		
 	}

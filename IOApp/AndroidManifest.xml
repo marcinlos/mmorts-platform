@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.app.ioapp.MainActivity"
+            android:name="com.app.ioapp.InitialActivity"
             android:label="@string/app_name" >
             
             <intent-filter>
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.app.ioapp.RunActivity"
+            android:name="com.app.ioapp.RunningActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

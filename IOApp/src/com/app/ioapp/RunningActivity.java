@@ -31,10 +31,10 @@ import com.app.ioapp.modules.InfMod.InfrastructureModule;
 import com.app.ioapp.store.Storage;
 import com.app.ioapp.view.ModulesBroker;
 
-public class RunActivity extends Activity implements UIListener {
+public class RunningActivity extends Activity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
-	private static final String ID = RunActivity.class.getName();
+	private static final String ID = RunningActivity.class.getName();
 	private InfrastructureModule board;
 	private BoardView boardView;
 	private LinearLayout menu;
