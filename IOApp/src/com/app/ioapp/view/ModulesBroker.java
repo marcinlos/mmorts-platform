@@ -23,7 +23,7 @@ import com.google.inject.Inject;
  */
 public class ModulesBroker implements View{
 	
-	private static final String ID = "MainView";
+	private static final String ID = "ModulesBroker";
 	
 	/**
 	 * Map of modules

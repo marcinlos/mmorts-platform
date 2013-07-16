@@ -10,8 +10,12 @@ import com.app.ioapp.login.LogInException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 public class InitialActivity extends Activity{
 	
@@ -72,6 +76,16 @@ public class InitialActivity extends Activity{
 		}
 		*/
 		
+		
+	}
+	
+	private void displayPicture(){
+		ImageView imageView = new ImageView(getApplicationContext());
+		Resources res = getResources();
+		Drawable drawable = res.getDrawable(R.drawable.OBRAZEK);
+		imageView.setImageDrawable(drawable);
+		LinearLayout l = (LinearLayout) findViewById(R.id.firstLayoutEver);
+		l.addView(imageView);
 		
 	}
 	
