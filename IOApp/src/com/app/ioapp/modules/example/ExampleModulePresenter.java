@@ -1,6 +1,6 @@
 package com.app.ioapp.modules.example;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
