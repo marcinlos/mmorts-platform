@@ -3,8 +3,8 @@ package pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
-import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 
 
 /**
@@ -30,7 +30,7 @@ public class HandlerImpl implements Handler {
      * {@inheritDoc}
      */
     @Override
-    public void handle(Object target, Message msg, Context ctx) {
+    public void handle(Object target, Message msg, TransactionContext ctx) {
         Object[] args = mapper.map(msg, ctx);
         try {
             method.invoke(target, args);

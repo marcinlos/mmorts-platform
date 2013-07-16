@@ -2,9 +2,9 @@ package pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl;
 
 import java.util.Arrays;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
-import pl.edu.agh.ki.mmorts.common.message.Message;
 
 
 /**
@@ -21,7 +21,7 @@ final class MappingEntry {
         this.handler = handler;
     }
 
-    void handle(Object target, Message msg, Context ctx) {
+    void handle(Object target, Message msg, TransactionContext ctx) {
         handler.handle(target, msg, ctx);
     }
 

@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.ConfiguredModule;
-import pl.agh.edu.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
-
 import android.util.Log;
-
-import com.google.inject.Inject;
 
 
 /**

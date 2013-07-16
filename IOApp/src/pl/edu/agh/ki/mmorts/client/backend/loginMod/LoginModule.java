@@ -1,6 +1,8 @@
 package pl.edu.agh.ki.mmorts.client.backend.loginMod;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleBase;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import android.util.Log;
 
 
@@ -49,6 +51,11 @@ public class LoginModule extends ModuleBase{
 	 */
 	public void logOut() throws LogOutException{
 		Log.d(ID,"Logging out user");
+	}
+
+	@Override
+	public void receive(Message message, TransactionContext context) {
+		return;
 	}
 	
 

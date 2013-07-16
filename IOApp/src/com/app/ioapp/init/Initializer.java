@@ -10,16 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import pl.agh.edu.ki.mmorts.client.backend.communication.Dispatcher;
-import pl.agh.edu.ki.mmorts.client.backend.communication.Gateway;
-import pl.agh.edu.ki.mmorts.client.backend.communication.MessageOutputChannel;
-import pl.agh.edu.ki.mmorts.client.backend.communication.SingleThreadedDispatcher;
-import pl.agh.edu.ki.mmorts.client.backend.modules.ConfiguredModule;
-import pl.agh.edu.ki.mmorts.client.backend.modules.Module;
-import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleDescriptor;
-import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleInitException;
-import pl.agh.edu.ki.mmorts.client.backend.modules.ServiceLocator;
-import pl.agh.edu.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.backend.communication.Dispatcher;
+import pl.edu.agh.ki.mmorts.client.backend.communication.Gateway;
+import pl.edu.agh.ki.mmorts.client.backend.communication.MessageOutputChannel;
+import pl.edu.agh.ki.mmorts.client.backend.communication.SingleThreadedDispatcher;
 import pl.edu.agh.ki.mmorts.client.backend.communication.ice.IceOutputChannel;
 import pl.edu.agh.ki.mmorts.client.backend.config.Config;
 import pl.edu.agh.ki.mmorts.client.backend.config.ConfigReader;
@@ -38,9 +32,14 @@ import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
 import pl.edu.agh.ki.mmorts.client.backend.loginMod.LogInException;
 import pl.edu.agh.ki.mmorts.client.backend.loginMod.LoginModule;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
+import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleDescriptor;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleInitException;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ServiceLocator;
 import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
-import pl.edu.agh.ki.mmorts.client.frontend.activities.store.Storage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import Ice.Util;
 import android.content.Context;
@@ -310,7 +309,6 @@ public Initializer(Context context) {
 			// register with the dispatcher
 			Log.d(ID, "Registering modules with a dispatcher");
 			dispatcher.registerModules(configuredModules);
-			Storage.getStorage().setLoadedModules(configuredModules);
 		} catch (ModuleConfigException e) {
 			Log.e(ID, "Error while readin module configuration");
 			Log.e(ID, e.getMessage());
@@ -329,7 +327,6 @@ public Initializer(Context context) {
 			}
 		}
 		modulesBroker = new ModulesBroker(communicatingModules, configuredModules);
-		Storage.getStorage().setBroker(modulesBroker);
 		Log.d(ID, "Broker initialized");
 	}
 
@@ -439,7 +436,7 @@ public Initializer(Context context) {
 	}
 
 	public List<String> getModules() {
-		// TODO Kasiaa, uzupe³nij t¹ metodê
+		// TODO Kasiaa, uzupeï¿½nij tï¿½ metodï¿½
 		return Arrays.asList(new String[] { "JEDNE", "DRUGIE" });
 	}
 
