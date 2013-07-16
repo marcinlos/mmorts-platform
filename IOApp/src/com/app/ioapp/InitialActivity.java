@@ -82,7 +82,7 @@ public class InitialActivity extends Activity{
 	private void displayPicture(){
 		ImageView imageView = new ImageView(getApplicationContext());
 		Resources res = getResources();
-		Drawable drawable = res.getDrawable(R.drawable.OBRAZEK);
+		Drawable drawable = res.getDrawable(R.drawable.gummi);
 		imageView.setImageDrawable(drawable);
 		LinearLayout l = (LinearLayout) findViewById(R.id.firstLayoutEver);
 		l.addView(imageView);
