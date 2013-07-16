@@ -22,7 +22,7 @@ import com.google.inject.Inject;
  *with annotations, to make available GUICommModule implementations (like InfrastructureCommModule) created from
  *ConfiguredModule map we hold and use them instead of the insides of ConfiguredModule. In doubt ask Andrew.
  */
-public class ModulesBroker implements View{
+public class ModulesBroker {
 	
 	private static final String ID = "ModulesBroker";
 	
@@ -62,7 +62,6 @@ public class ModulesBroker implements View{
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	//public void register(Class<? extends AbstractModuleView> moduleView,
 	//		String moduleName) {
 	public void register(AbstractModuleView moduleView, String moduleName){
