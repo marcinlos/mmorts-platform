@@ -1,8 +1,8 @@
 package com.app.ioapp.modules.example;
 
-import pl.edu.agh.ki.mmorts.client.core.annotations.CustomPersistor;
-import pl.edu.agh.ki.mmorts.client.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.client.data.PlayersPersistor;
+import pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor;
+import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import android.util.Log;
 

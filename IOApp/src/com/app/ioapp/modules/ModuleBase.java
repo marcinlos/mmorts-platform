@@ -2,16 +2,16 @@ package com.app.ioapp.modules;
 
 import java.util.Collection;
 
-import pl.edu.agh.ki.mmorts.client.core.transaction.Transaction;
-import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionProvider;
-import pl.edu.agh.ki.mmorts.client.modules.annotations.impl.CallDispatcher;
-import pl.edu.agh.ki.mmorts.client.modules.annotations.impl.TrivialMapperFactory;
+import pl.agh.edu.ki.mmorts.client.backend.communication.Gateway;
+import pl.edu.agh.ki.mmorts.client.backend.config.Config;
+import pl.edu.agh.ki.mmorts.client.backend.core.transaction.Transaction;
+import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionProvider;
+import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.CallDispatcher;
+import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.TrivialMapperFactory;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.Messages;
 import android.util.Log;
 
-import com.app.ioapp.communication.Gateway;
-import com.app.ioapp.config.Config;
 import com.google.inject.Inject;
 
 /**

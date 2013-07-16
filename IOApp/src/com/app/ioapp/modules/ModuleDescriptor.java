@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.app.ioapp.config.PropertyMap;
+import pl.edu.agh.ki.mmorts.client.backend.config.PropertyMap;
+
 
 /**
  * Module configuration data class.
