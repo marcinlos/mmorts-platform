@@ -3,11 +3,11 @@ package com.app.ioapp.modules;
 
 import javax.inject.Inject;
 
-import pl.edu.agh.ki.mmorts.client.core.transaction.TransactionProvider;
-import pl.edu.agh.ki.mmorts.client.data.CustomPersistor;
+import pl.agh.edu.ki.mmorts.client.backend.communication.Gateway;
+import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionProvider;
+import pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 
-import com.app.ioapp.communication.Gateway;
 import com.google.inject.name.Named;
 
 

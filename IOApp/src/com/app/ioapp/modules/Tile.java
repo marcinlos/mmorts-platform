@@ -1,8 +1,8 @@
 package com.app.ioapp.modules;
 
 
-import com.app.ioapp.modules.InfMod.Building;
-import com.app.ioapp.modules.InfMod.ITile;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.Building;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 
 import android.graphics.Bitmap;
 

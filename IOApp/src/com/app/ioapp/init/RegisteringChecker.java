@@ -4,8 +4,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.app.ioapp.config.PropertiesLoader;
-import com.app.ioapp.config.ReadingPropertiesException;
+import pl.edu.agh.ki.mmorts.client.backend.config.PropertiesLoader;
+import pl.edu.agh.ki.mmorts.client.backend.config.ReadingPropertiesException;
+
 
 /**
  * Responsible for checking if this is the first start-up of the application on this phone
