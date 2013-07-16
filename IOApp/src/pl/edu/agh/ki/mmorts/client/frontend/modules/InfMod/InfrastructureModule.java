@@ -3,11 +3,10 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod;
 import java.util.List;
 import java.util.Properties;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.ModuleBase;
-import pl.agh.edu.ki.mmorts.client.frontend.modules.GUICommModule;
-import pl.agh.edu.ki.mmorts.client.frontend.modules.Tile;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.SpaceOccupiedException;
-
 import android.util.Log;
 
 

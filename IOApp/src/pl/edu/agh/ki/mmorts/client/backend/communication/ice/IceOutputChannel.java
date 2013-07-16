@@ -1,14 +1,13 @@
 package pl.edu.agh.ki.mmorts.client.backend.communication.ice;
 
-import pl.agh.edu.ki.mmorts.client.backend.communication.MessageOutputChannel;
-import pl.agh.edu.ki.mmorts.client.backend.communication.ResponseCallback;
 import pl.edu.agh.ki.mmorts.Callback_Dispatcher_deliver;
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
-import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
 import pl.edu.agh.ki.mmorts.Response;
-import pl.edu.agh.ki.mmorts.common.ice.Translator;
-import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.common.message.MessagePack;
+import pl.edu.agh.ki.mmorts.client.backend.common.ice.Translator;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.MessagePack;
+import pl.edu.agh.ki.mmorts.client.backend.communication.MessageOutputChannel;
+import pl.edu.agh.ki.mmorts.client.backend.communication.ResponseCallback;
 import Ice.LocalException;
 import Ice.ObjectPrx;
 

@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 import java.util.Properties;
 
 import pl.edu.agh.ki.mmorts.client.backend.init.RegisteringChecker;
-import pl.edu.agh.ki.mmorts.client.frontend.activities.store.Storage;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

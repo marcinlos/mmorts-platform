@@ -1,15 +1,9 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import pl.agh.edu.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModulePresenter.Controller;
-
-import com.app.ioapp.R;
-
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.View;

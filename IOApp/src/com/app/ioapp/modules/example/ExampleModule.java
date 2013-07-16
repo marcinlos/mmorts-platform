@@ -1,11 +1,11 @@
 package com.app.ioapp.modules.example;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
-import pl.agh.edu.ki.mmorts.client.backend.modules.Module;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistor;
-import pl.edu.agh.ki.mmorts.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
+import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -42,7 +42,7 @@ public class ExampleModule implements Module {
 	}
 
 	@Override
-	public void receive(Message message, Context context) {
+	public void receive(Message message, TransactionContext context) {
 		Log.d(ID, "Received msg");
 	}
 
@@ -50,5 +50,6 @@ public class ExampleModule implements Module {
 	public void shutdown() {
 		Log.d(ID, "Shutted down");
 	}
+
 
 }

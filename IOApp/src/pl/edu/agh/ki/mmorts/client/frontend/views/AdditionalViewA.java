@@ -3,7 +3,6 @@ package pl.edu.agh.ki.mmorts.client.frontend.views;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
-
 import android.content.Context;
 import android.util.AttributeSet;
 
