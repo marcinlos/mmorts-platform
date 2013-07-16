@@ -1,8 +1,7 @@
  package pl.edu.agh.ki.mmorts.client.frontend.activities;
 
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
-import android.app.Activity;
-import android.content.Intent;
+import roboguice.activity.RoboActivity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

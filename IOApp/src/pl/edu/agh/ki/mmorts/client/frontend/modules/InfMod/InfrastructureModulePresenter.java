@@ -28,14 +28,12 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 		return true;
 	}
 
-	@Override
 	public Button getButton(Context context) {
 		Button button = new Button(context);
 		button.setText("Infrastructure module");
 		return button;
 	}
 
-	@Override
 	public View getMainModuleView(Context context, Activity activ,
 			ViewGroup parent) {
 		if(moduleView==null){
@@ -70,7 +68,6 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 		return moduleView;
 	}
 
-	@Override
 	public boolean isMainView() {
 		return true;
 	}
@@ -168,6 +165,18 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 		
 		
 
+	}
+
+	@Override
+	public Button getMenuButton() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void dataChanged() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

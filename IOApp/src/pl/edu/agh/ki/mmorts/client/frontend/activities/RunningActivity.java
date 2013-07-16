@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModule;
@@ -16,7 +15,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
-import android.app.Activity;
+import roboguice.activity.RoboActivity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -134,18 +133,18 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	}
 
 	private void fillMainModulesView() {
-		Log.d(ID, "Filling main view");
+/*		Log.d(ID, "Filling main view");
 		for (ModulePresenter presenter : presentersMap.values()) {
 			if (presenter.isMainView()) {
 				setMainLayoutView(presenter.getMainModuleView(this, this, (ViewGroup)mainLayout));
 				return;
 			}
-		}
+		}*/
 
 	}
 
 	private void fillMenuButtons() {
-		Log.d(ID, "Filling menu buttons");
+/*		Log.d(ID, "Filling menu buttons");
 		for (Map.Entry<String, ModulePresenter> presenterEntry : presentersMap
 				.entrySet()) {
 			if (presenterEntry.getValue().hasMenuButton()) {
@@ -153,7 +152,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 			} else {
 				Log.d(ID, presenterEntry.getKey() + " no button detected");
 			}
-		}
+		}*/
 
 		menuBar.invalidate();
 	}

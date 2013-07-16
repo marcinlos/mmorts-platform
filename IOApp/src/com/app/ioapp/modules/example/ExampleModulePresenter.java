@@ -16,19 +16,16 @@ public class ExampleModulePresenter implements ModulePresenter{
 		return true;
 	}
 
-	@Override
 	public Button getButton(Context context) {
 		Button button = new Button(context);
 		button.setText("Example");
 		return button;
 	}
 
-	@Override
 	public boolean isMainView() {
 		return false;
 	}
 
-	@Override
 	public View getMainModuleView(Context context, Activity activ, ViewGroup parent) {
 		//View toReturn = activ.findViewById(R.layout.example_layout);
 		//View toReturn = activ.getLayoutInflater().inflate(R.layout.example_layout, null);
@@ -40,6 +37,18 @@ public class ExampleModulePresenter implements ModulePresenter{
 		button.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		horizontal.addView(button);
 		return horizontal;
+	}
+
+	@Override
+	public Button getMenuButton() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void dataChanged() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

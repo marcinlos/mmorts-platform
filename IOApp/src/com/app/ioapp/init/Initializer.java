@@ -323,7 +323,7 @@ public class Initializer {
 	 *            phone application
 	 * @throws LogInxception
 	 */
-	public void logIn(String mail, String password, boolean alreadyRegistered)
+/*	public void logIn(String mail, String password, boolean alreadyRegistered)
 			throws LogInException {
 		try {
 			Log.d(ID, "Logging in started");
@@ -346,7 +346,7 @@ public class Initializer {
 			throw new LogInException(e);
 		}
 
-	}
+	}*/
 
 	
 
