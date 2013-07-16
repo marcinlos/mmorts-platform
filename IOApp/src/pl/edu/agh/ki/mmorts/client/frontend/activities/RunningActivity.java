@@ -31,7 +31,7 @@ import android.widget.TextView;
 
 import com.app.ioapp.R;
 
-public class RunningActivity extends Activity implements UIListener {
+public class RunningActivity extends RoboActivity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = RunningActivity.class.getName();

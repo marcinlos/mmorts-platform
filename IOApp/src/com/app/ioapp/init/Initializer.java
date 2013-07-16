@@ -82,11 +82,6 @@ public class Initializer {
 	private ConfigReader reader;
 
 	/**
-	 * Responsible for logging in, logging out and registering
-	 */
-	// private LoginModule loginModule;
-
-	/**
 	 * Dispatcher object
 	 */
 	private Dispatcher dispatcher;
@@ -118,11 +113,6 @@ public class Initializer {
 	private com.google.inject.Module databaseModule;
 
 	/**
-	 * Module which enables logging in and registering
-	 */
-	private LoginModule loginModule = new LoginModule();
-
-	/**
 	 * Stream to read configuration from file
 	 */
 	private InputStream configInput;
@@ -152,11 +142,7 @@ public class Initializer {
 	private Context context;
 
 	/**
-	 * @param configInput
-	 *            to read configuration from file
-	 * @param logDataOutput
-	 *            to write players info to file if he has not been registered
-	 *            yet. If he has, it is {@code null}
+	 * @param context
 	 */
 
 	public Initializer(Context context) {
@@ -197,7 +183,7 @@ public class Initializer {
 			configInput = context.getAssets().open("client.properties");
 			moduleConfigInput = context.getAssets().open("modules.json");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Log.e(ID, "Exception during opening config files");
 			e.printStackTrace();
 		}
 		

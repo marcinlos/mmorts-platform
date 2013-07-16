@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import com.app.ioapp.R;
 import com.app.ioapp.init.Initializer;
 
-public class InitialActivity extends Activity{
+public class InitialActivity extends RoboActivity{
 	
 	private static final String ID = InitialActivity.class.getName();
 	

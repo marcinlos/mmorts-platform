@@ -1,8 +1,11 @@
 package pl.edu.agh.ki.mmorts.client.backend.loginMod;
 
+import com.google.inject.Inject;
+
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
+import android.content.Context;
 import android.util.Log;
 
 
@@ -23,6 +26,9 @@ public class LoginModule extends ModuleBase{
 	 * Password is checked on server. It is actually  entered by user only when registering and changing phone
 	 */
 	private String password;
+	
+	@Inject
+	private Context context;
 	
 
 	/**
