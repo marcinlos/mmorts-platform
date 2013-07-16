@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 

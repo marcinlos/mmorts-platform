@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.Context;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
-import pl.edu.agh.ki.mmorts.common.message.Message;
 
 
 /**
@@ -97,7 +97,7 @@ public class CallDispatcher implements Handler {
     }
 
     @Override
-    public void handle(Object o, Message msg, Context ctx) {
+    public void handle(Object o, Message msg, TransactionContext ctx) {
         MappingEntry best = new MatchFinder(msg).find(msg);
         if (best != null) {
             best.handle(o, msg, ctx);

@@ -1,15 +1,6 @@
  package pl.edu.agh.ki.mmorts.client.frontend.activities;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Properties;
-
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
-import pl.edu.agh.ki.mmorts.client.backend.loginMod.LogInException;
-
-import com.app.ioapp.R;
-import com.app.ioapp.init.Initializer;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -18,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.app.ioapp.R;
+import com.app.ioapp.init.Initializer;
 
 public class InitialActivity extends Activity{
 	

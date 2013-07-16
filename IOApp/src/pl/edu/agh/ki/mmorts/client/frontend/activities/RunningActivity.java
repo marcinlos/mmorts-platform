@@ -7,17 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import pl.agh.edu.ki.mmorts.client.backend.modules.ConfiguredModule;
-import pl.agh.edu.ki.mmorts.client.frontend.modules.ModulePresenter;
-import pl.agh.edu.ki.mmorts.client.frontend.modules.Tile;
-import pl.edu.agh.ki.mmorts.client.frontend.activities.store.Storage;
+import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -103,6 +101,7 @@ public class RunningActivity extends Activity implements UIListener {
 
 	private void initializePresentersMap() {
 		Log.d(ID, "Initializing presenters");
+		/*
 		for (ConfiguredModule module : Storage.getStorage().getLoadedModules()) {
 			String presenterClassString = module.descriptor.config
 					.get("presenter");
@@ -121,6 +120,7 @@ public class RunningActivity extends Activity implements UIListener {
 			}
 
 		}
+		*/
 	}
 
 	private void setMainLayoutView(View newChild) {

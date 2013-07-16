@@ -3,9 +3,8 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.agh.edu.ki.mmorts.client.frontend.modules.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
-
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulePresenter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,9 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 
 public class InfrastructureModulePresenter implements ModulePresenter {

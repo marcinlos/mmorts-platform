@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
-import pl.agh.edu.ki.mmorts.client.frontend.modules.Tile;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModuleData;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.ViewRefresher;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -76,7 +75,7 @@ public class MapModuleView extends AbstractModuleView{
 			for(int j=0;j<mapHeight;j++){
 				ITile tile = virtual_map[i][j];
 				if(tile != null && tile.isValid()){
-					//TODO wybieranie obrazka na podstawie budynku który tam jest a nie
+					//TODO wybieranie obrazka na podstawie budynku ktï¿½ry tam jest a nie
 					//Building b = tile.getBuilding();
 					//if(b == null){
 					//	Log.e(ID,"Tile is valid but no building is built here, hmm");

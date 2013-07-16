@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import pl.edu.agh.ki.mmorts.common.message.Mode;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Mode;
 
 /**
  * Annotation marking the module method as the message handler. It allows for
