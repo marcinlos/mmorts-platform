@@ -16,7 +16,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.app.ioapp.RunActivity;
+import com.app.ioapp.RunningActivity;
 import com.app.ioapp.modules.ModulePresenter;
 
 public class InfrastructureModulePresenter implements ModulePresenter {
@@ -101,7 +101,7 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 					rawMap.get(x).add(true);
 				}
 			}
-			freeBitmap = BitmapFactory.decodeResource(RunActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_fill);
+			freeBitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_fill);
 		}
 
 		public Bitmap getFreeBitmap(){

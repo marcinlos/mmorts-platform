@@ -6,7 +6,7 @@ import java.util.List;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.app.ioapp.RunActivity;
+import com.app.ioapp.RunningActivity;
 
 public class Building {
 	private int sizeX;
@@ -26,7 +26,7 @@ public class Building {
 	
 	public static Building getCrossy(){
 		if(crossy == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_cross);
+			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_cross);
 			List<Bitmap> list = new ArrayList<Bitmap>();
 			list.add(bitmap);
 			crossy = new Building(1,1,list);
@@ -35,7 +35,7 @@ public class Building {
 	}
 	public static Building getGreeny(){
 		if(green == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile);
+			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile);
 			List<Bitmap> list = new ArrayList<Bitmap>();
 			list.add(bitmap);
 			list.add(bitmap);
@@ -45,7 +45,7 @@ public class Building {
 	}
 	public static Building getOrangy(){
 		if(orange == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_orange);
+			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_orange);
 			List<Bitmap> list = new ArrayList<Bitmap>();
 			list.add(bitmap);
 			list.add(bitmap);
