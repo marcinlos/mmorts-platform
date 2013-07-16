@@ -13,7 +13,9 @@ import com.app.ioapp.modules.Tile;
 /**
  * Implementation of concrete module. Extends {@code AbstractCommunicatingModule} so can communicate with
  * other modules and server site
- *
+ * 
+ * 
+ * TODO No it doesn't
  */
 public class InfrastructureModule extends ModuleBase implements GUICommModule{
 	

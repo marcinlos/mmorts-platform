@@ -120,6 +120,7 @@ public class RunActivity extends Activity implements UIListener {
 	}
 
 	private void setMainLayoutView(View newChild) {
+		//I thought this was to be done through visibility? removeAllViews might completely delete them
 		Log.d(ID, "Clearing old layout");
 		((ViewGroup) mainLayout).removeAllViews();
 		Log.d(ID, "Setting new layout");
@@ -186,6 +187,7 @@ public class RunActivity extends Activity implements UIListener {
 	}
 
 	/**
+	 * TODO Unless I'm missing something it's not called at all - should it be called?
 	 * Initialises all the views in arbitraryViewsList. Adds all the buttons
 	 * needed to the menu. Used only after {@link modules} are filled.
 	 * 
