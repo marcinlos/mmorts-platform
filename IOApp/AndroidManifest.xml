@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.app.ioapp.MainActivity"
+            android:name="pl.edu.agh.ki.mmorts.client.frontend.activities.InitialActivity"
             android:label="@string/app_name" >
             
             <intent-filter>
@@ -27,19 +27,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.app.ioapp.RunActivity"
+            android:name="pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.app.ioapp.GridActivity"
+            android:name="pl.edu.agh.ki.mmorts.client.frontend.activities.GridActivity"
             android:label="TEST" >
         </activity>
         <activity
-            android:name="com.app.ioapp.PlayAreaActivity"
+            android:name="pl.edu.agh.ki.mmorts.client.frontend.activities.PlayAreaActivity"
             android:label="@string/title_activity_play_area" >
         </activity>
         <activity
-            android:name="com.app.ioapp.LoginActivity"
+            android:name="pl.edu.agh.ki.mmorts.client.frontend.activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             

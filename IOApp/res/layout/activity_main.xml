@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".RunActivity" >
+    tools:context=".RunningActivity" >
 
     <LinearLayout
         android:id="@+id/menusBar"
@@ -22,16 +22,20 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:fillViewport="true"
-        android:scrollbars="horizontal|vertical" >
+        android:fillViewport="true"	 >
+        
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:id="@+id/ModulesPresentationView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="right|fill_vertical|fill_horizontal"
-            android:orientation="horizontal" >
-        </LinearLayout>
+	        <LinearLayout
+	            android:id="@+id/ModulesPresentationView"
+	            android:layout_width="wrap_content"
+	            android:layout_height="fill_parent"
+	            android:gravity="right|fill_vertical|fill_horizontal"
+	            android:orientation="horizontal" >
+	        </LinearLayout>
+        </HorizontalScrollView>
 
     </ScrollView>
 
