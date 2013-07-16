@@ -192,7 +192,7 @@ public class Initializer {
 		}
 
 	}
-
+	
 	private void openFiles() {
 		try {
 			iceConfigInput = context.getAssets().open("iceClient.config");

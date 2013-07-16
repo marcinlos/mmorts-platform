@@ -30,6 +30,7 @@ public class InitialActivity extends Activity{
 		startActivity(intentRun);
 		finish();
 		
+		System.out.println("!!!!!!!!!!!!!!!!!" + getApplicationContext());
 	}
 
 	private void initialize() {
