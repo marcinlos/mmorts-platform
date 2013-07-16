@@ -24,13 +24,12 @@ public class InitialActivity extends Activity{
 		setContentView(R.layout.activity_initial);
 		displayPicture();
 		
-		initialize();
+		//initialize();
 
-		Intent intentRun = new Intent(this, RunningActivity.class);
+/*		Intent intentRun = new Intent(this, RunningActivity.class);
 		startActivity(intentRun);
-		finish();
+		finish();*/
 		
-		System.out.println("!!!!!!!!!!!!!!!!!" + getApplicationContext());
 	}
 
 	private void initialize() {
