@@ -158,14 +158,12 @@ public class Initializer {
 	 *            to write players info to file if he has not been registered
 	 *            yet. If he has, it is {@code null}
 	 */
-	public Initializer(InputStream configInput, InputStream moduleConfigInput,
-			InputStream iceConfigInput, OutputStream logDataOutput) {
-		this.configInput = configInput;
-		this.moduleConfigInput = moduleConfigInput;
-		this.iceConfigInput = iceConfigInput;
-		this.logDataOutput = logDataOutput;
-	}
 
+	public Initializer(Context context) {
+		this.context = context;
+	}
+	
+	
 	/**
 	 * Initializes all classes. Called after logging in Exceptions must be
 	 * handled by phone application
@@ -232,9 +230,6 @@ public class Initializer {
 		Log.d(ID, "Message channel created");
 	}
 
-public Initializer(Context context) {
-		this.context = context;
-	}
 
 
 	private void createDispatcher() {
