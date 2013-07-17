@@ -39,7 +39,6 @@ import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import roboguice.inject.ContextSingleton;
 import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
@@ -81,7 +80,7 @@ public class Initializer {
 	/**
 	 * Facade between phone application and module views
 	 */
-	private ModulesBroker modulesBroker;
+	private ConcreteModulesBroker modulesBroker;
 
 	/**
 	 * Stores properties read from configuration file
@@ -326,7 +325,7 @@ public class Initializer {
 				Log.e(ID, module.descriptor.name + " cannot be load as communicating module");
 			}
 		}
-		modulesBroker = new ModulesBroker(communicatingModules, configuredModules);
+		modulesBroker = new ConcreteModulesBroker(communicatingModules, configuredModules);
 		Log.d(ID, "Broker initialized");
 	}
 

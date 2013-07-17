@@ -2,7 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.views;
 
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import android.content.Context;
 import android.util.AttributeSet;
 
@@ -42,7 +42,7 @@ public class AdditionalViewA extends AbstractModuleView {
 		
 	}
 	@Override
-	public void init(List<String> moduleNames, ModulesBroker view) {
+	public void init(List<String> moduleNames, ConcreteModulesBroker view) {
 		// TODO Auto-generated method stub
 		
 	}

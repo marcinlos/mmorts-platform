@@ -5,6 +5,7 @@ import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import android.app.Activity;
 import android.content.Context;
@@ -174,10 +175,12 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 		return null;
 	}
 
+
 	@Override
-	public void dataChanged(Object data) {
+	public void dataChanged(ModuleDataMessage data) {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 }

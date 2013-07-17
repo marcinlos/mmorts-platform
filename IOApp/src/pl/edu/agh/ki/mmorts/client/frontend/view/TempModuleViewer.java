@@ -1,14 +1,15 @@
 package pl.edu.agh.ki.mmorts.client.frontend.view;
 
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import android.util.Log;
 
 public class TempModuleViewer {
 	
-	private static ModulesBroker main;
+	private static ConcreteModulesBroker main;
 	private static final String ID = "TempModuleViewer";
 	
 	
-	public static void setMainView (ModulesBroker v){
+	public static void setMainView (ConcreteModulesBroker v){
 		main = v;
 	}
 	

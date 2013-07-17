@@ -2,7 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.views;
 
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 public abstract class AbstractModuleView extends View {
 	
 	@Inject
-	protected ModulesBroker modulesBroker;
+	protected ConcreteModulesBroker modulesBroker;
 	
 	protected String moduleName;
 	public boolean isButton;
@@ -44,7 +44,7 @@ public abstract class AbstractModuleView extends View {
 	 * @param view facade to separate modules implementation and UI classes. responsible for
 	 * directing calls from UI to impl.
 	 */
-	public abstract void init(List<String> moduleNames, ModulesBroker view);
+	public abstract void init(List<String> moduleNames, ConcreteModulesBroker view);
 	
 
 }

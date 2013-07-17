@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import android.app.Activity;
@@ -38,7 +38,7 @@ public class RunningActivity extends Activity implements UIListener {
 	private LinearLayout menu;
 	private Properties boardConfig; // debug only
 	private List<String> modules;
-	private ModulesBroker view;
+	private ConcreteModulesBroker view;
 	private Map<String, ModulePresenter> presentersMap = new HashMap<String, ModulePresenter>();
 
 	private LinearLayout menuBar;
