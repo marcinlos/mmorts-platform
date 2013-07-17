@@ -43,7 +43,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private Map<String, ModulePresenter> presentersMap = new HashMap<String, ModulePresenter>();
 
 	private LinearLayout menuBar;
-	private LinearLayout mainLayout;
+	private LinearLayout mainSpace;
+	private LinearLayout topSpace;
 
 	private static Context context;
 	
@@ -60,7 +61,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		fillViewsList();
 		setContentView(R.layout.activity_main);
 		menuBar = (LinearLayout) findViewById(R.id.menusBar);
-		mainLayout = (LinearLayout) findViewById(R.id.ModulesPresentationView);
+		mainSpace = (LinearLayout) findViewById(R.id.mainSpace);
+		topSpace = (LinearLayout) findViewById(R.id.topSpace);
 
 		fillMenuButtons();
 
@@ -125,10 +127,10 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private void setMainLayoutView(View newChild) {
 		//I thought this was to be done through visibility? removeAllViews might completely delete them
 		Log.d(ID, "Clearing old layout");
-		((ViewGroup) mainLayout).removeAllViews();
+		((ViewGroup) mainSpace).removeAllViews();
 		Log.d(ID, "Setting new layout");
-		mainLayout.addView(newChild);
-		mainLayout.invalidate();
+		mainSpace.addView(newChild);
+		mainSpace.invalidate();
 		Log.d(ID, "Done");
 	}
 
