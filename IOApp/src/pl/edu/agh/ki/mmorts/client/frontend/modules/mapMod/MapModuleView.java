@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Timer;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModuleData;
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.ViewRefresher;
 import android.content.Context;
@@ -147,7 +147,7 @@ public class MapModuleView extends AbstractModuleView{
 	}
 
 	@Override
-	public void init(List<String> modules, ModulesBroker v){
+	public void init(List<String> modules, ConcreteModulesBroker v){
 		modulesBroker = v;
 		moduleName = modules.get(0);
 		currentData = modulesBroker.getData(moduleName, InfrastructureModuleData.class);

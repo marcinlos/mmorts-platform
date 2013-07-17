@@ -30,6 +30,13 @@ import android.widget.TextView;
  */
 public class LoginActivity extends Activity {
 	
+	
+	
+	
+	
+	
+	
+	
 	private int test;
 	
 	
