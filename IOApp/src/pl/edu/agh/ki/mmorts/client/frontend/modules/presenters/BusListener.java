@@ -6,5 +6,5 @@ public interface BusListener {
 	 * parses and reacts to message from Bus
 	 * @param m
 	 */
-	public void gotMessage(PresentersMessage m);
+	public void gotMessage(GUIGenericMessage m);
 }

@@ -1,5 +1,6 @@
 package com.app.ioapp.modules.example;
 
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import android.app.Activity;
 import android.content.Context;
@@ -46,7 +47,7 @@ public class ExampleModulePresenter implements ModulePresenter{
 	}
 
 	@Override
-	public void dataChanged(Object data) {
+	public void dataChanged(ModuleDataMessage data) {
 		// TODO Auto-generated method stub
 		
 	}
