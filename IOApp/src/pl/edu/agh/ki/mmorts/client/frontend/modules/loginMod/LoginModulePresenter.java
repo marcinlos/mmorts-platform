@@ -4,7 +4,7 @@ import android.widget.Button;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 
-public class LoginModulePrezenter implements ModulePresenter{
+public class LoginModulePresenter implements ModulePresenter{
 
 	@Override
 	public boolean hasMenuButton() {
