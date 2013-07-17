@@ -4,6 +4,7 @@ package com.app.ioapp.modules.example;
 import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.BusListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
@@ -11,6 +12,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
+import roboguice.inject.InjectResource;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -24,17 +26,19 @@ public class ExampleModulePresenter implements ModulePresenter, BusListener{
 	
 	private static final String ID = "ExampleModulePresenter";
 	
-	@Inject
+	@Inject(optional=true)
 	private Context context;
 	
-	@Inject
+	@Inject(optional=true)
 	private TopSpaceManager topSpaceManager;
 	
-	@Inject
+	@Inject(optional=true)
 	private MainSpaceManager mainSpaceManager;
 	
-	@Inject
+	@Inject(optional=true)
 	private ModulesBroker modulesBroker;
+	
+	@InjectResource(R.string.app_name) private String name;
 
 	@Override
 	public boolean hasMenuButton() {
@@ -88,6 +92,8 @@ public class ExampleModulePresenter implements ModulePresenter, BusListener{
 		Log.d(ID, String.format("%s", mainSpaceManager));
 		Log.d(ID, "modulesBroker:");
 		Log.d(ID, String.format("%s", modulesBroker));
+		Log.d(ID, "appName:");
+		Log.d(ID, String.format("%s", name));
 	}
 	
 }

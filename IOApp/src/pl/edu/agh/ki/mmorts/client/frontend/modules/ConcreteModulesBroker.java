@@ -42,12 +42,13 @@ public class ConcreteModulesBroker implements ModulesBroker{
 		return configuredModules;
 	}
 
+	/*
 	public ConcreteModulesBroker(Map<String, GUICommModule> modules,
 			List<ConfiguredModule> configuredModules) {
 		super();
 		this.modules = modules;
 		this.configuredModules = configuredModules;
-	}
+	}*/
 
 	/**
 	 * Mapping of modules and moduleViews which are interested in changes in these modules

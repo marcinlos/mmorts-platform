@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,19 +36,15 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ServiceLocator;
 import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
-import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import roboguice.RoboGuice;
 import roboguice.inject.ContextSingleton;
-import roboguice.inject.InjectResource;
-import roboguice.inject.InjectView;
 import Ice.Util;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -71,7 +66,7 @@ public class Initializer {
 	
 	@Inject private AssetManager assetManager;
 	
-	@Inject private Context injContext;
+	@Inject private Context context;
 	/**
 	 * Used by logger
 	 */
@@ -80,7 +75,8 @@ public class Initializer {
 	/**
 	 * Facade between phone application and module views
 	 */
-	private ConcreteModulesBroker modulesBroker;
+	private ModulesBroker modulesBroker;
+	private com.google.inject.Module modulesBrokerModule;
 
 	/**
 	 * Stores properties read from configuration file
@@ -151,16 +147,6 @@ public class Initializer {
 	private List<ConfiguredModule> configuredModules;
 	
 	
-	private Context context;
-
-	/**
-	 * @param context
-	 */
-/*
-	public Initializer(Context context) {
-		this.context = context;
-	}
-	*/
 	public Initializer(){
 		
 	}
@@ -183,8 +169,9 @@ public class Initializer {
 			createDataSource();
 			createCustomPersistor();
 			createPlayersPersistor();
-			initModules();
 			initModulesBroker();
+			initModules();
+			
 			Log.d(ID, "Successfully initialized");
 		} catch (Exception e) {
 			Log.e(ID, "Error during initialization");
@@ -281,6 +268,15 @@ public class Initializer {
 		Log.d(ID, "Players manager created");
 	}
 	
+	private void initModulesBroker() {
+		Log.d(ID, "Initiliazing broker");
+		modulesBroker = new ConcreteModulesBroker();
+		modulesBrokerModule = DI.objectModule(modulesBroker, ModulesBroker.class);
+		Log.d(ID, "Broker initialized");
+	}
+	
+	
+	
 	/**
 	 * Uses {@linkplain ModuleConfigReader} to read module config file, creates
 	 * the modules and registers them with a dispatcher.
@@ -301,8 +297,17 @@ public class Initializer {
 					Module m = createModule(desc);
 					Log.d(ID, "Module " + desc.name + " created");
 					configuredModules.add(new ConfiguredModule(m, desc));
+					//TODO: oki, ale brzydkie
+					Log.d(ID, String.format("Creating %s module presenter", desc.config.get("presenter")));
+					Class<? extends ModulePresenter> presenterClass = Class.forName(desc.config.get("presenter")).asSubclass(ModulePresenter.class);
+					ModulePresenter pres = DI.createWith(presenterClass, modulesBrokerModule);
+					RoboGuice.getInjector(context).injectMembers(pres);
+					callInit(pres);
 				} catch (ModuleInitException e) {
 					Log.e(ID, "Module " + desc.name + " creation failed", e);
+				} catch (ClassNotFoundException e) {
+					//TODO wrzuciæ do konfiguracji modu³u!
+					Log.e(ID, "Module " + desc.name + " presenter isn't valid", e);
 				}
 			}
 			// register with the dispatcher
@@ -315,19 +320,7 @@ public class Initializer {
 		}
 	}
 	
-	private void initModulesBroker() {
-		Log.d(ID, "Initiliazing broker and his modules");
-		Map<String, GUICommModule> communicatingModules = new HashMap<String, GUICommModule>();
-		for(ConfiguredModule module :configuredModules){
-			try {
-				communicatingModules.put(module.descriptor.name, (GUICommModule)module.module);
-			} catch (Exception e) {
-				Log.e(ID, module.descriptor.name + " cannot be load as communicating module");
-			}
-		}
-		modulesBroker = new ConcreteModulesBroker(communicatingModules, configuredModules);
-		Log.d(ID, "Broker initialized");
-	}
+	
 
 	
 
