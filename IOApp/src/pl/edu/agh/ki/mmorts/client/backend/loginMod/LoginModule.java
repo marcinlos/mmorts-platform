@@ -1,12 +1,12 @@
 package pl.edu.agh.ki.mmorts.client.backend.loginMod;
 
-import com.google.inject.Inject;
-
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
-import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import android.content.Context;
 import android.util.Log;
+
+import com.google.inject.Inject;
 
 
 /**

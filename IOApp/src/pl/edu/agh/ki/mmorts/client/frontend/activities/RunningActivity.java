@@ -16,7 +16,6 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
-import roboguice.activity.RoboActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;

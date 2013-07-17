@@ -9,9 +9,9 @@ import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.client.backend.modules.AbstractModuleContainer;
 import pl.edu.agh.ki.mmorts.client.backend.modules.CommunicatingModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ContAdapter;
-import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Continuation;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionExecutor;
 import android.util.Log;
 

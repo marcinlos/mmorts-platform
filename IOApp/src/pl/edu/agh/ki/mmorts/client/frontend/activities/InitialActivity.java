@@ -3,7 +3,6 @@
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import roboguice.activity.RoboActivity;
-import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,7 +12,7 @@ import android.widget.LinearLayout;
 
 import com.app.ioapp.init.Initializer;
 
-public class InitialActivity extends Activity{
+public class InitialActivity extends RoboActivity{
 	
 	private static final String ID = InitialActivity.class.getName();
 	
