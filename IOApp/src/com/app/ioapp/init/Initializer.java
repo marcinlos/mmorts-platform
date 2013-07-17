@@ -37,16 +37,23 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ServiceLocator;
 import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
+import roboguice.inject.ContextSingleton;
+import roboguice.inject.InjectResource;
+import roboguice.inject.InjectView;
 import Ice.Util;
-import android.R;
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 /**
@@ -60,9 +67,12 @@ import com.google.inject.name.Names;
  * Methods should be called in the following order: 1. {@code initialize()} 2.
  * {@code logIn()} 3. {@code getMainView()}
  */
+@ContextSingleton
 public class Initializer {
 	
-	@Inject protected static Provider<Context> contextProvider;
+	@Inject private AssetManager assetManager;
+	
+	@Inject private Context injContext;
 	/**
 	 * Used by logger
 	 */
@@ -147,9 +157,13 @@ public class Initializer {
 	/**
 	 * @param context
 	 */
-
+/*
 	public Initializer(Context context) {
 		this.context = context;
+	}
+	*/
+	public Initializer(){
+		
 	}
 	
 	
@@ -181,16 +195,16 @@ public class Initializer {
 	}
 	
 	private void openFiles() {
-		
-		Log.d(ID,contextProvider.get().getResources().getString(R.string.cancel));
+		Log.d(ID, "Opening files");
 		try {
-			iceConfigInput = context.getAssets().open("iceClient.config");
-			configInput = context.getAssets().open("client.properties");
-			moduleConfigInput = context.getAssets().open("modules.json");
+			iceConfigInput = assetManager.open("iceClient.config");
+			configInput = assetManager.open("client.properties");
+			moduleConfigInput = assetManager.open("modules.json");
 		} catch (IOException e) {
 			Log.e(ID, "Exception during opening config files");
 			e.printStackTrace();
 		}
+		Log.d(ID, "Files opened");
 		
 	}
 
@@ -316,43 +330,6 @@ public class Initializer {
 		Log.d(ID, "Broker initialized");
 	}
 
-
-	/**
-	 * Called after initializing the rest of environment
-	 * 
-	 * @param mail
-	 * @param password
-	 * @param alreadyRegistered
-	 *            true if player has been registered (a file with mail and
-	 *            password exists and is correct) Exceptions must be handled by
-	 *            phone application
-	 * @throws LogInxception
-	 */
-/*	public void logIn(String mail, String password, boolean alreadyRegistered)
-			throws LogInException {
-		try {
-			Log.d(ID, "Logging in started");
-			if (alreadyRegistered) {
-				Log.d(ID, "User has already been registered");
-				loginModule.logIn();
-			} else {
-				Log.d(ID, "User needs to be registered");
-				Log.d(ID, "Registering");
-				loginModule.register(mail, password);
-				Log.d(ID, "Writing mail and password to file");
-				Properties ps = new Properties();
-				ps.setProperty("mail", mail);
-				ps.setProperty("password", password);
-				ps.store(logDataOutput, null);
-				Log.d(ID, "User's data stored in a file");
-			}
-		} catch (Exception e) {
-			Log.e(ID, "Exception during logging in");
-			throw new LogInException(e);
-		}
-
-	}*/
-
 	
 
 	/**
@@ -404,26 +381,6 @@ public class Initializer {
 		} catch (Exception e) {
 			throw new ModuleInitException(e);
 		}
-	}
-
-	
-
-	/**
-	 * Returns MainView for Module Views
-	 * 
-	 * @return MainView object
-	 */
-	public ModulesBroker getModulesBroker() {
-		return modulesBroker;
-	}
-
-	public MessageOutputChannel getChannel() {
-		return channel;
-	}
-
-	public List<String> getModules() {
-		// TODO Kasiaa, uzupe�nij t� metod�
-		return Arrays.asList(new String[] { "JEDNE", "DRUGIE" });
 	}
 
 }

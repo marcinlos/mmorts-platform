@@ -1,20 +1,34 @@
  package pl.edu.agh.ki.mmorts.client.frontend.activities;
 
+import javax.inject.Inject;
+
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import roboguice.activity.RoboActivity;
+import roboguice.inject.ContextSingleton;
+import roboguice.inject.InjectResource;
+import roboguice.inject.InjectView;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.app.ioapp.init.Initializer;
 
+@ContextSingleton
 public class InitialActivity extends RoboActivity{
 	
+	@Inject
+	private Initializer initializer;
+	
 	private static final String ID = InitialActivity.class.getName();
+	
+	@InjectResource(R.drawable.gummi) private Drawable gummiBearsPicture;
+	@InjectView(R.id.firstLayoutEver) private LinearLayout intialScreenLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,17 +37,21 @@ public class InitialActivity extends RoboActivity{
 		setContentView(R.layout.activity_initial);
 		displayPicture();
 		
-		//initialize();
-
+		
 /*		Intent intentRun = new Intent(this, RunningActivity.class);
 		startActivity(intentRun);
 		finish();*/
 		
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		initialize();
+	}
 
 	private void initialize() {
 		
-		Initializer initializer = new Initializer(this);
 		try {
 			initializer.initialize();
 		} catch (InitException e) {
@@ -76,11 +94,8 @@ public class InitialActivity extends RoboActivity{
 	
 	private void displayPicture(){
 		ImageView imageView = new ImageView(getApplicationContext());
-		Resources res = getResources();
-		Drawable drawable = res.getDrawable(R.drawable.gummi);
-		imageView.setImageDrawable(drawable);
-		LinearLayout l = (LinearLayout) findViewById(R.id.firstLayoutEver);
-		l.addView(imageView);
+		imageView.setImageDrawable(gummiBearsPicture);
+		intialScreenLayout.addView(imageView);
 		
 	}
 	

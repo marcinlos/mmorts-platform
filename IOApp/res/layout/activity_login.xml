@@ -1,4 +1,4 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".LoginActivity" >
 
@@ -73,4 +73,4 @@
         </LinearLayout>
     </ScrollView>
 
-</merge>
+</LinearLayout>
