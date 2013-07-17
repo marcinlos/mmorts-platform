@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.Board.BoardFactory;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.FieldContent;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.ImmutableBoard;
 
