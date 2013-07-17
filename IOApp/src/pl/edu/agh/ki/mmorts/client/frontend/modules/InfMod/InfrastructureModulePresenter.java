@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import android.app.Activity;
 import android.content.Context;
@@ -96,7 +97,7 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 					rawMap.get(x).add(true);
 				}
 			}
-			freeBitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_fill);
+			freeBitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_fill);
 		}
 
 		public Bitmap getFreeBitmap(){

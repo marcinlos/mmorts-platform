@@ -1,6 +1,7 @@
  package pl.edu.agh.ki.mmorts.client.frontend.activities;
 
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import roboguice.activity.RoboActivity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -9,7 +10,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.app.ioapp.R;
 import com.app.ioapp.init.Initializer;
 
 public class InitialActivity extends RoboActivity{

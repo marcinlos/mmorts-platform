@@ -30,8 +30,6 @@ import pl.edu.agh.ki.mmorts.client.backend.data.InMemDatabase;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
-import pl.edu.agh.ki.mmorts.client.backend.loginMod.LogInException;
-import pl.edu.agh.ki.mmorts.client.backend.loginMod.LoginModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleDescriptor;
@@ -42,10 +40,13 @@ import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import Ice.Util;
+import android.R;
 import android.content.Context;
 import android.util.Log;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 /**
@@ -60,6 +61,8 @@ import com.google.inject.name.Names;
  * {@code logIn()} 3. {@code getMainView()}
  */
 public class Initializer {
+	
+	@Inject protected static Provider<Context> contextProvider;
 	/**
 	 * Used by logger
 	 */
@@ -178,6 +181,8 @@ public class Initializer {
 	}
 	
 	private void openFiles() {
+		
+		Log.d(ID,contextProvider.get().getResources().getString(R.string.cancel));
 		try {
 			iceConfigInput = context.getAssets().open("iceClient.config");
 			configInput = context.getAssets().open("client.properties");
