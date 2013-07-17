@@ -1,12 +1,9 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.map;
 
-import javax.xml.ws.Response;
-
 import org.apache.log4j.Logger;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
@@ -56,8 +53,9 @@ public class MapModule extends ModuleBase {
 		logger.debug(CHECK + " message got");
 		DetailedMessage msg = extractMessage(message, DetailedMessage.class);
 		MapModuleData playerData = getFromDatabase(msg.getPlayerName());
-		Message response  = message.response(CHECK, (Object) isFieldAvailable(msg, playerData));
-		output(response);
+		//Message response  = message.response(CHECK, (Object) isFieldAvailable(msg, playerData));
+		//output(response);
+		respond(message, CHECK, isFieldAvailable(msg, playerData));
 	}
 
 	@MessageMapping(FULL)
@@ -75,8 +73,9 @@ public class MapModule extends ModuleBase {
 			persistor.createBinding(name(), extractedMsg.getPlayerName(),
 					returnMapMessage);
 		}
-		Message response = message.response(FULL, returnMapMessage);
-		output(response);
+		//Message response = message.response(FULL, returnMapMessage);
+		//output(response);
+		respond(message, FULL, returnMapMessage);
 	}
 	
 	@MessageMapping()
