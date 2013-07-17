@@ -112,7 +112,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         try {
             Module module = conf.module;
 //            module.init();
-            Log.e(ID, "Adding to internal map structures");
+            Log.d(ID, "Adding to internal map structures");
             modules.put(desc.name, conf);
             // Register module with all its' unicast addresses
             for (String address : desc.unicast) {
@@ -188,7 +188,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         Set<String> moduleNames = new HashSet<String>(modules.keySet());
         for (String name : moduleNames) {
             ConfiguredModule conf = modules.get(name);
-            Log.e(ID, "Calling started() on " + name);
+            Log.d(ID, "Calling started() on " + name);
             Module module = conf.module;
             try {
 //                module.started();

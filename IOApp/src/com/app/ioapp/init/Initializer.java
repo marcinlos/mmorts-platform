@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,15 +37,17 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.ServiceLocator;
 import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import roboguice.RoboGuice;
+import roboguice.inject.ContextSingleton;
 import Ice.Util;
-import android.R;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 /**
@@ -60,9 +61,12 @@ import com.google.inject.name.Names;
  * Methods should be called in the following order: 1. {@code initialize()} 2.
  * {@code logIn()} 3. {@code getMainView()}
  */
+@ContextSingleton
 public class Initializer {
 	
-	@Inject protected static Provider<Context> contextProvider;
+	@Inject private AssetManager assetManager;
+	
+	@Inject private Context context;
 	/**
 	 * Used by logger
 	 */
@@ -71,7 +75,8 @@ public class Initializer {
 	/**
 	 * Facade between phone application and module views
 	 */
-	private ConcreteModulesBroker modulesBroker;
+	private ModulesBroker modulesBroker;
+	private com.google.inject.Module modulesBrokerModule;
 
 	/**
 	 * Stores properties read from configuration file
@@ -142,14 +147,8 @@ public class Initializer {
 	private List<ConfiguredModule> configuredModules;
 	
 	
-	private Context context;
-
-	/**
-	 * @param context
-	 */
-
-	public Initializer(Context context) {
-		this.context = context;
+	public Initializer(){
+		
 	}
 	
 	
@@ -170,8 +169,9 @@ public class Initializer {
 			createDataSource();
 			createCustomPersistor();
 			createPlayersPersistor();
-			initModules();
 			initModulesBroker();
+			initModules();
+			
 			Log.d(ID, "Successfully initialized");
 		} catch (Exception e) {
 			Log.e(ID, "Error during initialization");
@@ -181,16 +181,16 @@ public class Initializer {
 	}
 	
 	private void openFiles() {
-		
-		Log.d(ID,contextProvider.get().getResources().getString(R.string.cancel));
+		Log.d(ID, "Opening files");
 		try {
-			iceConfigInput = context.getAssets().open("iceClient.config");
-			configInput = context.getAssets().open("client.properties");
-			moduleConfigInput = context.getAssets().open("modules.json");
+			iceConfigInput = assetManager.open("iceClient.config");
+			configInput = assetManager.open("client.properties");
+			moduleConfigInput = assetManager.open("modules.json");
 		} catch (IOException e) {
 			Log.e(ID, "Exception during opening config files");
 			e.printStackTrace();
 		}
+		Log.d(ID, "Files opened");
 		
 	}
 
@@ -268,6 +268,15 @@ public class Initializer {
 		Log.d(ID, "Players manager created");
 	}
 	
+	private void initModulesBroker() {
+		Log.d(ID, "Initiliazing broker");
+		modulesBroker = new ConcreteModulesBroker();
+		modulesBrokerModule = DI.objectModule(modulesBroker, ModulesBroker.class);
+		Log.d(ID, "Broker initialized");
+	}
+	
+	
+	
 	/**
 	 * Uses {@linkplain ModuleConfigReader} to read module config file, creates
 	 * the modules and registers them with a dispatcher.
@@ -288,8 +297,17 @@ public class Initializer {
 					Module m = createModule(desc);
 					Log.d(ID, "Module " + desc.name + " created");
 					configuredModules.add(new ConfiguredModule(m, desc));
+					//TODO: oki, ale brzydkie
+					Log.d(ID, String.format("Creating %s module presenter", desc.config.get("presenter")));
+					Class<? extends ModulePresenter> presenterClass = Class.forName(desc.config.get("presenter")).asSubclass(ModulePresenter.class);
+					ModulePresenter pres = DI.createWith(presenterClass, modulesBrokerModule);
+					RoboGuice.getInjector(context).injectMembers(pres);
+					callInit(pres);
 				} catch (ModuleInitException e) {
 					Log.e(ID, "Module " + desc.name + " creation failed", e);
+				} catch (ClassNotFoundException e) {
+					//TODO wrzuciæ do konfiguracji modu³u!
+					Log.e(ID, "Module " + desc.name + " presenter isn't valid", e);
 				}
 			}
 			// register with the dispatcher
@@ -302,56 +320,7 @@ public class Initializer {
 		}
 	}
 	
-	private void initModulesBroker() {
-		Log.d(ID, "Initiliazing broker and his modules");
-		Map<String, GUICommModule> communicatingModules = new HashMap<String, GUICommModule>();
-		for(ConfiguredModule module :configuredModules){
-			try {
-				communicatingModules.put(module.descriptor.name, (GUICommModule)module.module);
-			} catch (Exception e) {
-				Log.e(ID, module.descriptor.name + " cannot be load as communicating module");
-			}
-		}
-		modulesBroker = new ConcreteModulesBroker(communicatingModules, configuredModules);
-		Log.d(ID, "Broker initialized");
-	}
-
-
-	/**
-	 * Called after initializing the rest of environment
-	 * 
-	 * @param mail
-	 * @param password
-	 * @param alreadyRegistered
-	 *            true if player has been registered (a file with mail and
-	 *            password exists and is correct) Exceptions must be handled by
-	 *            phone application
-	 * @throws LogInxception
-	 */
-/*	public void logIn(String mail, String password, boolean alreadyRegistered)
-			throws LogInException {
-		try {
-			Log.d(ID, "Logging in started");
-			if (alreadyRegistered) {
-				Log.d(ID, "User has already been registered");
-				loginModule.logIn();
-			} else {
-				Log.d(ID, "User needs to be registered");
-				Log.d(ID, "Registering");
-				loginModule.register(mail, password);
-				Log.d(ID, "Writing mail and password to file");
-				Properties ps = new Properties();
-				ps.setProperty("mail", mail);
-				ps.setProperty("password", password);
-				ps.store(logDataOutput, null);
-				Log.d(ID, "User's data stored in a file");
-			}
-		} catch (Exception e) {
-			Log.e(ID, "Exception during logging in");
-			throw new LogInException(e);
-		}
-
-	}*/
+	
 
 	
 
@@ -404,26 +373,6 @@ public class Initializer {
 		} catch (Exception e) {
 			throw new ModuleInitException(e);
 		}
-	}
-
-	
-
-	/**
-	 * Returns MainView for Module Views
-	 * 
-	 * @return MainView object
-	 */
-	public ConcreteModulesBroker getModulesBroker() {
-		return modulesBroker;
-	}
-
-	public MessageOutputChannel getChannel() {
-		return channel;
-	}
-
-	public List<String> getModules() {
-		// TODO Kasiaa, uzupeï¿½nij tï¿½ metodï¿½
-		return Arrays.asList(new String[] { "JEDNE", "DRUGIE" });
 	}
 
 }
