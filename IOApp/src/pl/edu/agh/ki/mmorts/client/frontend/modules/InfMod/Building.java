@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -26,7 +27,7 @@ public class Building {
 	
 	public static Building getCrossy(){
 		if(crossy == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_cross);
+			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_cross);
 			List<Bitmap> list = new ArrayList<Bitmap>();
 			list.add(bitmap);
 			crossy = new Building(1,1,list);
@@ -35,7 +36,7 @@ public class Building {
 	}
 	public static Building getGreeny(){
 		if(green == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile);
+			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile);
 			List<Bitmap> list = new ArrayList<Bitmap>();
 			list.add(bitmap);
 			list.add(bitmap);
@@ -45,7 +46,7 @@ public class Building {
 	}
 	public static Building getOrangy(){
 		if(orange == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), com.app.ioapp.R.drawable.tile_orange);
+			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_orange);
 			List<Bitmap> list = new ArrayList<Bitmap>();
 			list.add(bitmap);
 			list.add(bitmap);
