@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.frontend.view;
+package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.view.ModuleNotExists;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import android.util.Log;
 
@@ -19,7 +20,7 @@ import android.util.Log;
  *with annotations, to make available GUICommModule implementations (like InfrastructureCommModule) created from
  *ConfiguredModule map we hold and use them instead of the insides of ConfiguredModule. In doubt ask Andrew.
  */
-public class ModulesBroker {
+public class ConcreteModulesBroker implements ModulesBroker{
 	
 	private static final String ID = "ModulesBroker";
 	
@@ -41,7 +42,7 @@ public class ModulesBroker {
 		return configuredModules;
 	}
 
-	public ModulesBroker(Map<String, GUICommModule> modules,
+	public ConcreteModulesBroker(Map<String, GUICommModule> modules,
 			List<ConfiguredModule> configuredModules) {
 		super();
 		this.modules = modules;
@@ -120,6 +121,18 @@ public class ModulesBroker {
 	public <T> void setData(String moduleName, T data, Class<T> clazz){
 		GUICommModule m = modules.get(moduleName);
 		if(m != null) m.setData(data, clazz);
+	}
+
+	@Override
+	public void registerPresenter(String moduleName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterPresenter(ModulePresenter p) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

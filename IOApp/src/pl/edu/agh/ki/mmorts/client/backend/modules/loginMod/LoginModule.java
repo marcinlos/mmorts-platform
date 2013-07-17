@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.backend.loginMod;
+package pl.edu.agh.ki.mmorts.client.backend.modules.loginMod;
 
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
@@ -17,15 +17,7 @@ public class LoginModule extends ModuleBase{
 
 	private static final String ID = "LoginModule";
 
-	/**
-	 * Mail identifies user
-	 */
-	private String userMail;
-	
-	/**
-	 * Password is checked on server. It is actually  entered by user only when registering and changing phone
-	 */
-	private String password;
+	private LoginModuleData moduleData;
 	
 	@Inject
 	private Context context;
@@ -39,8 +31,11 @@ public class LoginModule extends ModuleBase{
 	 */
 	public void register(String mail, String password) throws RegisterException{
 		Log.d(ID,"Registering user");
-		this.userMail = mail;
-		this.password = password;
+		
+		
+		moduleData = new LoginModuleData();
+		moduleData.setUserMail(mail);
+		moduleData.setPassword(password);
 	}
 	
 	/**
@@ -59,6 +54,9 @@ public class LoginModule extends ModuleBase{
 		Log.d(ID,"Logging out user");
 	}
 
+	/**
+	 * Does not need to do anything
+	 */
 	@Override
 	public void receive(Message message, TransactionContext context) {
 		return;

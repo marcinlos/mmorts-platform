@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.backend.loginMod;
+package pl.edu.agh.ki.mmorts.client.backend.modules.loginMod;
 
 /**
  * Thrown by LogInModule when registering does not succeed
