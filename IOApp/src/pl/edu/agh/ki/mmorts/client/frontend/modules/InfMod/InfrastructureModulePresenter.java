@@ -174,7 +174,7 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 	}
 
 	@Override
-	public void dataChanged() {
+	public void dataChanged(Object data) {
 		// TODO Auto-generated method stub
 		
 	}
