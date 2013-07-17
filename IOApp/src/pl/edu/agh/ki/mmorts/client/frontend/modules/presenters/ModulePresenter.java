@@ -19,5 +19,5 @@ public interface ModulePresenter {
 	/**
 	 * method used as a listener in module - receives concrete object with new data.
 	 */
-	public void dataChanged(Object data); //TODO sialalala
+	public void dataChanged(ModuleDataMessage data); //TODO sialalala
 }
