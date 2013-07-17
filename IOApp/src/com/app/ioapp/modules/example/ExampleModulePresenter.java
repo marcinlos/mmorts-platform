@@ -8,6 +8,8 @@ import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.BusListener;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.GUIGenericMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
@@ -69,18 +71,6 @@ public class ExampleModulePresenter extends AbstractModulePresenter implements B
 		return horizontal;
 	}
 
-
-	@Override
-	public void dataChanged(ModuleDataMessage data) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void gotMessage(PresentersMessage m) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@OnInit
 	public void onInit() {
@@ -94,6 +84,18 @@ public class ExampleModulePresenter extends AbstractModulePresenter implements B
 		Log.d(ID, String.format("%s", modulesBroker));
 		Log.d(ID, "appName:");
 		Log.d(ID, String.format("%s", name));
+	}
+
+	@Override
+	public void dataChanged(ModuleDataMessage data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gotMessage(GUIGenericMessage m) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
