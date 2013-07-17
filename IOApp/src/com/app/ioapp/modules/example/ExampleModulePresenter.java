@@ -45,8 +45,9 @@ public class ExampleModulePresenter implements ModulePresenter{
 		return null;
 	}
 
+
 	@Override
-	public void dataChanged() {
+	public void dataChanged(Object data) {
 		// TODO Auto-generated method stub
 		
 	}
