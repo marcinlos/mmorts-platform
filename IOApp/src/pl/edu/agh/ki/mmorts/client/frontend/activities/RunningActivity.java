@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModule;
@@ -16,6 +17,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import roboguice.activity.RoboActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -28,9 +30,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.app.ioapp.R;
-
-public class RunningActivity extends RoboActivity implements UIListener {
+public class RunningActivity extends Activity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = RunningActivity.class.getName();
