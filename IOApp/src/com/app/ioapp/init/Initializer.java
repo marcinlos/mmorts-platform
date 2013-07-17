@@ -39,8 +39,6 @@ import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
-import roboguice.RoboGuice;
-import roboguice.activity.RoboAccountAuthenticatorActivity;
 import Ice.Util;
 import android.R;
 import android.content.Context;

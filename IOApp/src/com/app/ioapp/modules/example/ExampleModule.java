@@ -4,8 +4,8 @@ import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistor;
-import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import android.util.Log;
 
 import com.google.inject.Inject;
