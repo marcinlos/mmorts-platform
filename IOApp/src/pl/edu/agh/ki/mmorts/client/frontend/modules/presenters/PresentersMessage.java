@@ -11,18 +11,16 @@ public class PresentersMessage {
 		this.content = object;
 	}
 	
+	
 	/**
 	 * 
 	 * @param clazz expected return type
 	 * @return object of type clazz or null it cast is impossible
+	 * @throws ClassCastException use {@link PresentersMessage#carries(Class)} before using!
 	 */
-	public <T> T getMessage(Class<T> clazz){
-		if(carries(clazz)){
-			return clazz.cast(content);
-		}
-		else{
-			return null;
-		}
+	public <T> T getMessage(Class<T> clazz) throws ClassCastException{
+		return clazz.cast(content);
+
 	}
 	
 	/**

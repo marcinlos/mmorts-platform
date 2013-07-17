@@ -18,25 +18,37 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:fillViewport="true"	 >
-        
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-	        <LinearLayout
-	            android:id="@+id/ModulesPresentationView"
-	            android:layout_width="wrap_content"
-	            android:layout_height="fill_parent"
-	            android:gravity="right|fill_vertical|fill_horizontal"
-	            android:orientation="horizontal" >
-	        </LinearLayout>
-        </HorizontalScrollView>
-
-    </ScrollView>
+        android:orientation="vertical" >
+   
+        <LinearLayout
+        android:id="@+id/topSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:layout_weight="1" />
+    
+	    <ScrollView
+	        android:layout_width="0dp"
+	        android:layout_height="0dip"
+	        android:layout_weight="1"
+	        android:fillViewport="true"	 >
+	        
+	        <HorizontalScrollView
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" >
+	
+		        <LinearLayout
+		            android:id="@+id/mainSpace"
+		            android:layout_width="wrap_content"
+		            android:layout_height="fill_parent"
+		            android:orientation="horizontal" >
+		        </LinearLayout>
+	        </HorizontalScrollView>
+	
+	    </ScrollView>
+     </LinearLayout>
 
 </LinearLayout>

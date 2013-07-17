@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod.InfrastructureModule;
@@ -16,6 +17,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import roboguice.activity.RoboActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -28,9 +30,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.app.ioapp.R;
-
-public class RunningActivity extends RoboActivity implements UIListener {
+public class RunningActivity extends Activity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = RunningActivity.class.getName();
@@ -43,7 +43,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private Map<String, ModulePresenter> presentersMap = new HashMap<String, ModulePresenter>();
 
 	private LinearLayout menuBar;
-	private LinearLayout mainLayout;
+	private LinearLayout mainSpace;
+	private LinearLayout topSpace;
 
 	private static Context context;
 	
@@ -60,7 +61,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		fillViewsList();
 		setContentView(R.layout.activity_main);
 		menuBar = (LinearLayout) findViewById(R.id.menusBar);
-		mainLayout = (LinearLayout) findViewById(R.id.ModulesPresentationView);
+		mainSpace = (LinearLayout) findViewById(R.id.mainSpace);
+		topSpace = (LinearLayout) findViewById(R.id.topSpace);
 
 		fillMenuButtons();
 
@@ -125,10 +127,10 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private void setMainLayoutView(View newChild) {
 		//I thought this was to be done through visibility? removeAllViews might completely delete them
 		Log.d(ID, "Clearing old layout");
-		((ViewGroup) mainLayout).removeAllViews();
+		((ViewGroup) mainSpace).removeAllViews();
 		Log.d(ID, "Setting new layout");
-		mainLayout.addView(newChild);
-		mainLayout.invalidate();
+		mainSpace.addView(newChild);
+		mainSpace.invalidate();
 		Log.d(ID, "Done");
 	}
 
