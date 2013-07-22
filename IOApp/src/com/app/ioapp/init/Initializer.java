@@ -36,18 +36,30 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ServiceLocator;
 import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteMainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteTopSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import roboguice.RoboGuice;
 import roboguice.inject.ContextSingleton;
 import Ice.Util;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 /**
@@ -62,11 +74,12 @@ import com.google.inject.name.Names;
  * {@code logIn()} 3. {@code getMainView()}
  */
 @ContextSingleton
-public class Initializer {
+public class Initializer{
 	
 	@Inject private AssetManager assetManager;
 	
 	@Inject private Context context;
+	@Inject private LayoutInflater inflater;
 	/**
 	 * Used by logger
 	 */
@@ -120,6 +133,12 @@ public class Initializer {
 	private Database database;
 	private com.google.inject.Module databaseModule;
 
+	private TopSpaceManager topSpaceManager;
+	private com.google.inject.Module topSpaceManagerModule;
+	
+	private MainSpaceManager mainSpaceManager;
+	private com.google.inject.Module mainSpaceManagerModule;
+	
 	/**
 	 * Stream to read configuration from file
 	 */
@@ -147,9 +166,15 @@ public class Initializer {
 	private List<ConfiguredModule> configuredModules;
 	
 	
-	public Initializer(){
-		
-	}
+	
+	private View mainScreenView;
+//	private com.google.inject.Module mainScreenViewModule;
+	private View topView;
+//	private com.google.inject.Module topViewModule;
+	private View mainModulesView;
+//	private com.google.inject.Module mainModulesViewModule;
+	
+	
 	
 	
 	/**
@@ -161,6 +186,7 @@ public class Initializer {
 	public void initialize() throws InitException {
 		try {
 			Log.d(ID, "Initializing environment started");
+			prepareViewModules();
 			openFiles();
 			readConfig();
 			createTransactionManager();
@@ -169,6 +195,8 @@ public class Initializer {
 			createDataSource();
 			createCustomPersistor();
 			createPlayersPersistor();
+			createMainSpaceManager();
+			createTopSpaceManager();
 			initModulesBroker();
 			initModules();
 			
@@ -179,7 +207,60 @@ public class Initializer {
 		}
 
 	}
+
+	public View getMainScreenView() {
+		return mainScreenView;
+	}
+
+	public View getTopView() {
+		return topView;
+	}
+
+	public View getMainModulesView() {
+		return mainModulesView;
+	}
+
+	private void prepareViewModules() {
+		mainScreenView = inflater.inflate(R.layout.activity_main, null);
+		topView = mainScreenView.findViewById(R.id.topSpace);
+		mainModulesView = mainScreenView.findViewById(R.id.mainSpace);
+		
+//		mainActivityViewModule = DI.objectModule(mainActivityView, View.class);
+//		topViewModule = DI.objectModule(topView, View.class);
+//		mainModulesViewModule = DI.objectModule(mainModulesView, View.class);
+		//mainScreenView = inflater.inflate(R.layout.activity_main, null);
+		//LayoutInflater inf =inflater.cloneInContext(context);
+		//inf.setFactory(new FactoryMine());
+		
+	}
 	
+	private class FactoryMine extends Activity{
+		private Map<String, View> createdViewsCache = new HashMap<String, View>();
+		
+		@Override
+		public View onCreateView(String name, Context context,
+				AttributeSet attrs) {
+			for(int i = 0; i<attrs.getAttributeCount(); ++i){
+				System.out.println(String.format("%s",attrs.getAttributeValue(i)));
+				
+			}
+			
+			View toReturn;
+			if(!createdViewsCache.containsKey(name)){
+				toReturn = super.onCreateView(name, context, attrs); 
+				createdViewsCache.put(name, toReturn);
+				//R.layout
+			}else{
+				toReturn = createdViewsCache.get(name);
+			}
+			
+			return toReturn;
+		}
+
+	}
+	
+
+
 	private void openFiles() {
 		Log.d(ID, "Opening files");
 		try {
@@ -268,6 +349,25 @@ public class Initializer {
 		Log.d(ID, "Players manager created");
 	}
 	
+	
+	private void createMainSpaceManager() {
+		Log.d(ID, "Initiliazing main space manager");
+		mainSpaceManager = DI.createWith(ConcreteMainSpaceManager.class);
+		RoboGuice.injectMembers(context, mainSpaceManager);
+		mainSpaceManagerModule = DI.objectModule(mainSpaceManager, MainSpaceManager.class);
+		callInit(mainSpaceManager);
+		Log.d(ID, "Main space manager initialized");
+	}
+	
+	private void createTopSpaceManager() {
+		Log.d(ID, "Initiliazing top space manager");
+		topSpaceManager = DI.createWith(ConcreteTopSpaceManager.class);
+		RoboGuice.injectMembers(context, topSpaceManager);
+		topSpaceManagerModule = DI.objectModule(topSpaceManager, TopSpaceManager.class);
+		callInit(topSpaceManager);
+		Log.d(ID, "Top space manager initialized");
+	}
+	
 	private void initModulesBroker() {
 		Log.d(ID, "Initiliazing broker");
 		modulesBroker = new ConcreteModulesBroker();
@@ -300,7 +400,7 @@ public class Initializer {
 					//TODO: oki, ale brzydkie
 					Log.d(ID, String.format("Creating %s module presenter", desc.config.get("presenter")));
 					Class<? extends ModulePresenter> presenterClass = Class.forName(desc.config.get("presenter")).asSubclass(ModulePresenter.class);
-					ModulePresenter pres = DI.createWith(presenterClass, modulesBrokerModule);
+					ModulePresenter pres = DI.createWith(presenterClass, modulesBrokerModule, mainSpaceManagerModule, topSpaceManagerModule);
 					RoboGuice.getInjector(context).injectMembers(pres);
 					callInit(pres);
 				} catch (ModuleInitException e) {

@@ -27,30 +27,30 @@ public class Building {
 	
 	public static Building getCrossy(){
 		if(crossy == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_cross);
-			List<Bitmap> list = new ArrayList<Bitmap>();
-			list.add(bitmap);
-			crossy = new Building(1,1,list);
+//			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_cross);
+//			List<Bitmap> list = new ArrayList<Bitmap>();
+//			list.add(bitmap);
+//			crossy = new Building(1,1,list);
 		}
 		return crossy;
 	}
 	public static Building getGreeny(){
 		if(green == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile);
-			List<Bitmap> list = new ArrayList<Bitmap>();
-			list.add(bitmap);
-			list.add(bitmap);
-			green = new Building(1,2,list);
+//			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile);
+//			List<Bitmap> list = new ArrayList<Bitmap>();
+//			list.add(bitmap);
+//			list.add(bitmap);
+//			green = new Building(1,2,list);
 		}
 		return green;
 	}
 	public static Building getOrangy(){
 		if(orange == null){
-			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_orange);
-			List<Bitmap> list = new ArrayList<Bitmap>();
-			list.add(bitmap);
-			list.add(bitmap);
-			orange = new Building(2,1,list);
+//			Bitmap bitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_orange);
+//			List<Bitmap> list = new ArrayList<Bitmap>();
+//			list.add(bitmap);
+//			list.add(bitmap);
+//			orange = new Building(2,1,list);
 		}
 		return orange;
 	}
