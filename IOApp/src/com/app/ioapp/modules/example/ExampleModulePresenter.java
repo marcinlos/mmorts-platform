@@ -3,17 +3,17 @@ package com.app.ioapp.modules.example;
 
 import com.google.inject.Inject;
 
+import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.BusListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.GUIGenericMessage;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
+import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import roboguice.inject.InjectResource;
 import android.app.Activity;
 import android.content.Context;
@@ -73,7 +73,7 @@ public class ExampleModulePresenter extends AbstractModulePresenter implements B
 
 	
 	@OnInit
-	public void onInit() {
+	public void init() {
 		Log.d(ID, "context:");
 		Log.d(ID, String.format("%s", context));
 		Log.d(ID, "topSpaceManager:");
@@ -93,7 +93,7 @@ public class ExampleModulePresenter extends AbstractModulePresenter implements B
 	}
 
 	@Override
-	public void gotMessage(GUIGenericMessage m) {
+	public void gotMessage(PresentersMessage m) {
 		// TODO Auto-generated method stub
 		
 	}
