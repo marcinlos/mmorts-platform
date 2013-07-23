@@ -6,7 +6,7 @@ public interface Bus {
 	 * sends message to every {@link BusListener} that registered itself within
 	 * @param m
 	 */
-	public void sendMessage(GUIGenericMessage m);
+	public void sendMessage(PresentersMessage m);
 	
 	/**
 	 * registers listener for message receiving

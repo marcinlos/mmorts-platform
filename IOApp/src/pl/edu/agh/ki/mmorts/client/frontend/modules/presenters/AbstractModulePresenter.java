@@ -14,6 +14,10 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 	protected MainSpaceManager mainSpaceManager;
 	@Inject
 	protected TopSpaceManager topSpaceManager;
+	@Inject
+	protected Bus bus;
 	protected String presenterId; 
+	
+	public abstract void init();
 
 }

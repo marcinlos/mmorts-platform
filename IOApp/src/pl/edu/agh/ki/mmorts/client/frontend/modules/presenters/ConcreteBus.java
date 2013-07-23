@@ -8,7 +8,7 @@ public class ConcreteBus implements Bus {
 	private List<BusListener> l;
 
 	@Override
-	public void sendMessage(GUIGenericMessage m) {
+	public void sendMessage(PresentersMessage m) {
 		for(BusListener bl : l){
 			bl.gotMessage(m);
 		}
