@@ -39,6 +39,8 @@ import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.Bus;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ConcreteBus;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteMainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteTopSpaceManager;
@@ -54,12 +56,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 /**
@@ -139,6 +138,9 @@ public class Initializer{
 	private MainSpaceManager mainSpaceManager;
 	private com.google.inject.Module mainSpaceManagerModule;
 	
+	
+	private Bus bus;
+	private com.google.inject.Module busModule;
 	/**
 	 * Stream to read configuration from file
 	 */
@@ -195,6 +197,7 @@ public class Initializer{
 			createDataSource();
 			createCustomPersistor();
 			createPlayersPersistor();
+			createBus();
 			createMainSpaceManager();
 			createTopSpaceManager();
 			initModulesBroker();
@@ -207,6 +210,8 @@ public class Initializer{
 		}
 
 	}
+
+	
 
 	public View getMainScreenView() {
 		return mainScreenView;
@@ -233,33 +238,6 @@ public class Initializer{
 		//inf.setFactory(new FactoryMine());
 		
 	}
-	
-	private class FactoryMine extends Activity{
-		private Map<String, View> createdViewsCache = new HashMap<String, View>();
-		
-		@Override
-		public View onCreateView(String name, Context context,
-				AttributeSet attrs) {
-			for(int i = 0; i<attrs.getAttributeCount(); ++i){
-				System.out.println(String.format("%s",attrs.getAttributeValue(i)));
-				
-			}
-			
-			View toReturn;
-			if(!createdViewsCache.containsKey(name)){
-				toReturn = super.onCreateView(name, context, attrs); 
-				createdViewsCache.put(name, toReturn);
-				//R.layout
-			}else{
-				toReturn = createdViewsCache.get(name);
-			}
-			
-			return toReturn;
-		}
-
-	}
-	
-
 
 	private void openFiles() {
 		Log.d(ID, "Opening files");
@@ -350,9 +328,17 @@ public class Initializer{
 	}
 	
 	
+	private void createBus() {
+		Log.d(ID, "Creating frontend bus");
+		bus = DI.createWith(ConcreteBus.class);
+		RoboGuice.injectMembers(context, bus);
+		busModule  = DI.objectModule(bus, Bus.class);
+		Log.d(ID, "Frontend bus created");
+	}
+	
 	private void createMainSpaceManager() {
 		Log.d(ID, "Initiliazing main space manager");
-		mainSpaceManager = DI.createWith(ConcreteMainSpaceManager.class);
+		mainSpaceManager = DI.createWith(ConcreteMainSpaceManager.class, busModule);
 		RoboGuice.injectMembers(context, mainSpaceManager);
 		mainSpaceManagerModule = DI.objectModule(mainSpaceManager, MainSpaceManager.class);
 		callInit(mainSpaceManager);
@@ -361,7 +347,7 @@ public class Initializer{
 	
 	private void createTopSpaceManager() {
 		Log.d(ID, "Initiliazing top space manager");
-		topSpaceManager = DI.createWith(ConcreteTopSpaceManager.class);
+		topSpaceManager = DI.createWith(ConcreteTopSpaceManager.class, busModule);
 		RoboGuice.injectMembers(context, topSpaceManager);
 		topSpaceManagerModule = DI.objectModule(topSpaceManager, TopSpaceManager.class);
 		callInit(topSpaceManager);
@@ -370,8 +356,9 @@ public class Initializer{
 	
 	private void initModulesBroker() {
 		Log.d(ID, "Initiliazing broker");
-		modulesBroker = new ConcreteModulesBroker();
+		modulesBroker = DI.createWith(ConcreteModulesBroker.class, busModule);
 		modulesBrokerModule = DI.objectModule(modulesBroker, ModulesBroker.class);
+		callInit(modulesBroker);
 		Log.d(ID, "Broker initialized");
 	}
 	
@@ -400,7 +387,7 @@ public class Initializer{
 					//TODO: oki, ale brzydkie
 					Log.d(ID, String.format("Creating %s module presenter", desc.config.get("presenter")));
 					Class<? extends ModulePresenter> presenterClass = Class.forName(desc.config.get("presenter")).asSubclass(ModulePresenter.class);
-					ModulePresenter pres = DI.createWith(presenterClass, modulesBrokerModule, mainSpaceManagerModule, topSpaceManagerModule);
+					ModulePresenter pres = DI.createWith(presenterClass, modulesBrokerModule, mainSpaceManagerModule, topSpaceManagerModule, busModule);
 					RoboGuice.getInjector(context).injectMembers(pres);
 					callInit(pres);
 				} catch (ModuleInitException e) {
