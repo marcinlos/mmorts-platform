@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
+
 import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModuleNotExists;
@@ -27,7 +29,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 	/**
 	 * Map of modules
 	 */
-	//temporarily not injected
+	@Inject
 	private Map<String, GUICommModule> modules;
 	
 	private List<ConfiguredModule> configuredModules;
@@ -42,13 +44,6 @@ public class ConcreteModulesBroker implements ModulesBroker{
 		return configuredModules;
 	}
 
-	/*
-	public ConcreteModulesBroker(Map<String, GUICommModule> modules,
-			List<ConfiguredModule> configuredModules) {
-		super();
-		this.modules = modules;
-		this.configuredModules = configuredModules;
-	}*/
 
 	/**
 	 * Mapping of modules and moduleViews which are interested in changes in these modules
@@ -61,8 +56,6 @@ public class ConcreteModulesBroker implements ModulesBroker{
 	/**
 	 * {@inheritDoc}
 	 */
-	//public void register(Class<? extends AbstractModuleView> moduleView,
-	//		String moduleName) {
 	public void register(AbstractModuleView moduleView, String moduleName){
 		if (!modules.containsKey(moduleName)) {
 			Log.e(ID, "Registering view to a module that doesn't exist");

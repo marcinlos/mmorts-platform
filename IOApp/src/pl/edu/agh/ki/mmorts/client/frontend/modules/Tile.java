@@ -1,7 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Building;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.Building;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
 import android.graphics.Bitmap;
 

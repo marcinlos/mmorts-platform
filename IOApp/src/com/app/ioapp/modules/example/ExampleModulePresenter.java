@@ -86,8 +86,21 @@ public class ExampleModulePresenter extends AbstractModulePresenter implements B
 		Log.d(ID, String.format("%s", name));
 	}
 
+
 	@Override
-	public void gotMessage(GUIGenericMessage m) {
+	public void dataChanged(ModuleDataMessage data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gotMessage(PresentersMessage m) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void init() {
 		// TODO Auto-generated method stub
 		
 	}

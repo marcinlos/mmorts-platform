@@ -23,7 +23,8 @@ import android.util.Log;
 
 public class MapModuleView extends AbstractModuleView{
 
-	private static final String ID = "BoardView";
+	private static final String ID = "MapModuleView";
+	private static String viewId = "MapView";
 	private String moduleName;
 	private List<ITile> fields;
 	private int imageSize = 50;
@@ -40,6 +41,10 @@ public class MapModuleView extends AbstractModuleView{
 	 */
 	private ITile[][] virtual_map = new Tile[mapWidth][mapHeight];
 	
+
+	public static String getViewId() {
+		return viewId;
+	}
 
 	public MapModuleView(Context context) {
 		super(context);

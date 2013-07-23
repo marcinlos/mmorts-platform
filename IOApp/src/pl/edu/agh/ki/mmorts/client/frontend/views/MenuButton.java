@@ -15,19 +15,16 @@ public class MenuButton extends Button {
 		super(context);
 		if(context instanceof RunningActivity)
 			this.context = (RunningActivity) context;
-		// TODO Auto-generated constructor stub
 	}
 	public MenuButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		if(context instanceof RunningActivity)
 			this.context = (RunningActivity) context;
-		// TODO Auto-generated constructor stub
 	}
 	public MenuButton(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		if(context instanceof RunningActivity)
 			this.context = (RunningActivity) context;
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void setView(AbstractModuleView view){

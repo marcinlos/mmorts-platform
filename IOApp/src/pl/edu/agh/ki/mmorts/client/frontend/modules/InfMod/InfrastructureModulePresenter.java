@@ -5,6 +5,7 @@ import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.Building;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import android.app.Activity;

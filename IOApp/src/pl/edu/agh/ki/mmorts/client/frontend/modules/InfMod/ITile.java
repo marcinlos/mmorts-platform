@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
 
+import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.Building;
 import android.graphics.Bitmap;
 
 /**
