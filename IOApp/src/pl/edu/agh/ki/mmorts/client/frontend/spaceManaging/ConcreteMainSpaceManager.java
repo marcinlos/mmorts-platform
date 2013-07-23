@@ -3,16 +3,33 @@ package pl.edu.agh.ki.mmorts.client.frontend.spaceManaging;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.app.ioapp.init.Initializer;
+import com.google.inject.Inject;
+
+import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewAlreadyRegisteredException;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewNotRegisteredException;
-
+import roboguice.inject.InjectView;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 public class ConcreteMainSpaceManager implements MainSpaceManager {
+	
+	private static final String ID = ConcreteMainSpaceManager.class.getSimpleName();
+
+	@Inject(optional=true) private  Initializer initializer;
 	
 	private Map<String, View> viewMap = new HashMap<String, View>();
 	
 	private View topView;
+	
+	@OnInit
+	public void onInit(){
+		Log.d(ID, "OnInit fired");
+		Log.d(ID,String.format("%s", initializer.getMainScreenView()));
+	}
 
 	/**
 	 * only register views with visibility.GONE

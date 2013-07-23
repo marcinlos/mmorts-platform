@@ -98,7 +98,7 @@ public class InfrastructureModulePresenter implements ModulePresenter {
 					rawMap.get(x).add(true);
 				}
 			}
-			freeBitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_fill);
+//			freeBitmap = BitmapFactory.decodeResource(RunningActivity.getContext().getResources(), R.drawable.tile_fill);
 		}
 
 		public Bitmap getFreeBitmap(){

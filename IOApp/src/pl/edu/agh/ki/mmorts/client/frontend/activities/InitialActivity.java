@@ -8,12 +8,10 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.ContextSingleton;
 import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -22,25 +20,24 @@ import com.app.ioapp.init.Initializer;
 @ContextSingleton
 public class InitialActivity extends RoboActivity{
 	
+	private static String ID = InitialActivity.class.getSimpleName();
 	@Inject
 	private Initializer initializer;
 	
-	private static final String ID = InitialActivity.class.getName();
 	
 	@InjectResource(R.drawable.gummi) private Drawable gummiBearsPicture;
 	@InjectView(R.id.firstLayoutEver) private LinearLayout intialScreenLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(ID, "Started initial activity");
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_initial);
 		displayPicture();
 		
 		
-/*		Intent intentRun = new Intent(this, RunningActivity.class);
-		startActivity(intentRun);
-		finish();*/
+		
 		
 	}
 	
@@ -48,6 +45,9 @@ public class InitialActivity extends RoboActivity{
 	protected void onResume() {
 		super.onResume();
 		initialize();
+		Intent intentRun = new Intent(this, RunningActivity.class);
+		startActivity(intentRun);
+		finish();
 	}
 
 	private void initialize() {

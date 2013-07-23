@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
+import com.app.ioapp.init.Initializer;
+import com.google.inject.Module;
+
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
@@ -16,12 +21,13 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
-import android.app.Activity;
+import roboguice.activity.RoboActivity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +35,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class RunningActivity extends Activity implements UIListener {
+public class RunningActivity extends RoboActivity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = RunningActivity.class.getName();
@@ -45,57 +51,40 @@ public class RunningActivity extends Activity implements UIListener {
 	private LinearLayout mainSpace;
 	private LinearLayout topSpace;
 
-	private static Context context;
+		
+	@Inject LayoutInflater inflater;
 	
-	public static Context getContext(){
-		return context;
-	}
+	//@Inject Module mainViewActivityModule;
+	
+	//@Inject View mainActivityView;
+	
+	@Inject Initializer initializer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		context= this;
-		Log.d(ID, "Started Run Activity");
-		initializePresentersMap();
+		Log.d(ID, "Started running Activity");
 		super.onCreate(savedInstanceState);
-		fillViewsList();
-		setContentView(R.layout.activity_main);
-		menuBar = (LinearLayout) findViewById(R.id.menusBar);
-		mainSpace = (LinearLayout) findViewById(R.id.mainSpace);
-		topSpace = (LinearLayout) findViewById(R.id.topSpace);
-
-		fillMenuButtons();
-
-		fillMainModulesView();
+		View view  = initializer.getMainScreenView();
+		setContentView(view);
+		Log.d(ID, String.format("Layout is: %s", view));
 		
-		System.out.println("!!!!!!!!!!!!!!!!!" + getApplicationContext());
+		
+		//initializePresentersMap();
+		
+		//fillViewsList();
+		//setContentView(R.layout.activity_main);
+		//menuBar = (LinearLayout) findViewById(R.id.menusBar);
+		//mainSpace = (LinearLayout) findViewById(R.id.mainSpace);
+		//topSpace = (LinearLayout) findViewById(R.id.topSpace);
+
+		//fillMenuButtons();
+
+		//fillMainModulesView();
+		
+		//System.out.println("!!!!!!!!!!!!!!!!!" + getApplicationContext());
 
 		// modules = initializer.getModules(); <------------------------
 		// getModulesBroker();
-
-		/*
-		 * LinearLayout mainLayout = (LinearLayout)
-		 * findViewById(R.id.main_layout); LinearLayout layout = (LinearLayout)
-		 * findViewById(R.id.layout);
-		 * 
-		 * //this part is debug only /*boardView = new BoardView(this); board =
-		 * new InfrastructureModule(boardConfig);
-		 * boardView.init("InfrastructureModule", view);
-		 * boardView.setOnTouchListener(new View.OnTouchListener() {
-		 * 
-		 * @Override public boolean onTouch(View v, MotionEvent event) { if
-		 * (event.getAction() == MotionEvent.ACTION_DOWN){ //
-		 * textView.setText("Touch coordinates : " + //
-		 * String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
-		 * AbstractModuleView view = (AbstractModuleView) v;
-		 * view.iWasClicked(event.getX(),event.getY()); } return true; } });
-		 * setupBoard();
-		 * 
-		 * layout.addView(boardView); //end of debugonly part
-		 */
-
-		/*
-		 * createMenu(mainLayout);
-		 */
 
 	}
 
