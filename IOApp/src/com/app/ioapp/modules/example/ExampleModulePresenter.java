@@ -87,13 +87,13 @@ public class ExampleModulePresenter extends AbstractModulePresenter implements B
 	}
 
 	@Override
-	public void gotMessage(PresentersMessage m) {
+	public void dataChanged(ModuleDataMessage data) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void dataChanged(ModuleDataMessage data) {
+	public void gotMessage(PresentersMessage m) {
 		// TODO Auto-generated method stub
 		
 	}
