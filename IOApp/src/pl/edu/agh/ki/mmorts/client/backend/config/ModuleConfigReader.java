@@ -61,7 +61,7 @@ public class ModuleConfigReader {
             ModuleData[] data = GsonUtil.gson.fromJson(reader, ModuleData[].class);
             for (ModuleData item : data) {
                 try {
-                	Log.e(ID, "Processing config of module " + item.name);
+                	Log.d(ID, "Processing config of module " + item.name);
                     ModuleDescriptor desc = makeDescriptor(item);
                     addModule(desc);
                 } catch (Exception e) {

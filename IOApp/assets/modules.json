@@ -1,28 +1,19 @@
 [ {
 	"name" : "LoginModule",
-	"class" : "pl.edu.agh.ki.mmorts.server.modules.builtin.LoginModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.LoginModule",
 	"unicast" : [ "login_module" ],
 	"groups" : [ "core", "cool_modules" ],
 	"properties" : {
 		"datatype" : "java.lang.String",
 		"login.number" : 3
 	}
-}, {
-	"name" : "ExampleModule",
-	"class" : "com.app.ioapp.modules.example.ExampleModuleComm",
-	"unicast" : [ "ex_mod" ],
-	"groups" : [ "ex_mod_group" ],
-	"properties" : {
-		"example.number" : 3,
-		"presenter" : "com.app.ioapp.modules.example.ExampleModulePresenter"
-	}
-}, {
+},  {
 	"name" : "InfrastructureModule",
-	"class" : "com.app.ioapp.modules.InfMod.InfrastructureModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.infMod.InfrastructureModule",
 	"unicast" : [ "i_mod" ],
 	"groups" : [ "i_mod_group" ],
 	"properties" : {
 		"example.number" : 3,
-		"presenter" : "com.app.ioapp.modules.InfMod.InfrastructureModulePresenter"
+		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModulePresenter"
 	}
 }]

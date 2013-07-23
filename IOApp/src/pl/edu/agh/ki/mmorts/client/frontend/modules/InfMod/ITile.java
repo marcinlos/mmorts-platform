@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.InfMod;
+package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
 
 import android.graphics.Bitmap;
 
