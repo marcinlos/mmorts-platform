@@ -1,4 +1,7 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.presenters;
+package pl.edu.agh.ki.mmorts.client;
+
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+
 
 public class GUIGenericMessage {
 

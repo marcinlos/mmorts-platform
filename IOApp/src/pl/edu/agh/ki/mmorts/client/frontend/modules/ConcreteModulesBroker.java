@@ -11,6 +11,7 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModuleNotExists;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
+import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
 
 
@@ -125,6 +126,12 @@ public class ConcreteModulesBroker implements ModulesBroker{
 
 	@Override
 	public void unregisterPresenter(ModulePresenter p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void tellModule(ModuleDataMessage m, String moduleName) {
 		// TODO Auto-generated method stub
 		
 	}

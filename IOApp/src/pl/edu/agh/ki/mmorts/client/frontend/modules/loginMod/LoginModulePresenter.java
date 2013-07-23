@@ -1,15 +1,18 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
 import android.widget.Button;
+import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements LoginListener{
+	
+	
 
 	@Override
 	public boolean hasMenuButton() {
@@ -29,7 +32,18 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@Override
 	@OnInit
 	public void init() {
-		// TODO Auto-generated method stub
+		presenterId = "LoginModulePresenter";
+		
+		//moduuu³, mamy plik do logowania?
+		boolean loginFromFile = false;
+		//bo jak tak to nas zaloguj
+		if(loginFromFile)
+		{
+			//if(zalogowalNas) tellBusWeAreDone(); return;
+		}
+		else{
+			mainSpaceManager.toTop(presenterId);
+		}
 		
 	}
 
@@ -55,8 +69,14 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	}
 
 	@Override
-	public void LogMeIn() {
+	public void LogMeIn(String login, String pass) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	private void sendMessage(){
+		PresentersMessage pm = new PresentersMessage(presenterId, new LoginDone());
+		bus.sendMessage(pm);
 		
 	}
 
