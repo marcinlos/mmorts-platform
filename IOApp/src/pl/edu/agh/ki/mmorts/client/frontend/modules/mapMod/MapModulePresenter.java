@@ -2,11 +2,11 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
+import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Button;

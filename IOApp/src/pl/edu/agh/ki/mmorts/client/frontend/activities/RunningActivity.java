@@ -9,9 +9,6 @@ import java.util.Properties;
 
 import javax.inject.Inject;
 
-import com.app.ioapp.init.Initializer;
-import com.google.inject.Module;
-
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
@@ -34,6 +31,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.app.ioapp.init.Initializer;
 
 public class RunningActivity extends RoboActivity implements UIListener {
 
