@@ -1,10 +1,11 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
 import android.widget.Button;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 
-public class LoginModulePresenter implements ModulePresenter{
+public class LoginModulePresenter implements ModulePresenter, ModuleDataChangedListener{
 
 	@Override
 	public boolean hasMenuButton() {
