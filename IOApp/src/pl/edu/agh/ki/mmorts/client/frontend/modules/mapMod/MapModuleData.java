@@ -15,4 +15,24 @@ public class MapModuleData {
 	private boolean[][] map;
 	
 	
+	public int getMapHeight() {
+		return mapHeight;
+	}
+	public int getMapWidth() {
+		return mapWidth;
+	}
+	public boolean[][] getMap() {
+		return map;
+	}
+	public void setMapHeight(int mapHeight) {
+		this.mapHeight = mapHeight;
+	}
+	public void setMapWidth(int mapWidth) {
+		this.mapWidth = mapWidth;
+	}
+	public void setMap(boolean[][] map) {
+		this.map = map;
+	}
+	
+	
 }

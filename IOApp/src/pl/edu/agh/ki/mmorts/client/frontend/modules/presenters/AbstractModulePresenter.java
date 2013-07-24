@@ -2,6 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.presenters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.widget.Button;
 
 import com.google.inject.Inject;
 
@@ -12,7 +13,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 public abstract class AbstractModulePresenter implements ModulePresenter, ModuleDataChangedListener, BusListener{
 	
 	@Inject
-	private Context context;
+	protected Context context;
 	@Inject
 	protected ModulesBroker modulesBroker;
 	@Inject
@@ -24,6 +25,16 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 	@Inject
 	protected LayoutInflater inflater;
 	protected String presenterId; 
+
+	@Override
+	public boolean hasMenuButton() {
+		return false;
+	}
+
+	@Override
+	public Button getMenuButton() {
+		return null;
+	}
 	
 	public abstract void init();
 
