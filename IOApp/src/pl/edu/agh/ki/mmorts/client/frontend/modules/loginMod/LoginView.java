@@ -16,9 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class LoginView extends View {
+public class LoginView extends LinearLayout {
 	
 	private static final String ID = "LoginView";
 	
@@ -28,9 +29,21 @@ public class LoginView extends View {
 	private EditText mPasswordView;
 	private String mPassword;
 	
+	View view;
+	
 	 //I think this one should be called when inflating like I do
-	public LoginView(Context context, AttributeSet attrs){
-		super(context,attrs);
+	public LoginView(Context context){
+		super(context);
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		if (inflater != null) {
+			view = (LoginView)inflater.inflate(R.layout.activity_login, this, true);
+			initialize();
+		}
+		else{
+			Log.e(ID, "Inflater sie nie tworzy, ale smutek :(");
+			System.exit(-1); //TODO it shouldn't stay that way, though I dunno what way it should stay
+		}
+		
 	}
 
 	public LoginModulePresenter getPresenter() {
@@ -38,12 +51,11 @@ public class LoginView extends View {
 	}
 	
 	
-/**
- * doubles as onCreate which Views don't have
- * @param presenter
- */
 	public void setPresenter(LoginModulePresenter presenter) {
 		this.presenter = presenter;
+	}
+	
+	private void initialize(){
 		
 			// Set up the login form.
 				mEmailView = (EditText) findViewById(R.id.email);

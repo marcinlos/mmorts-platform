@@ -9,7 +9,9 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDon
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
+import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,17 +21,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	private static final String ID = "LoginModulePresenter"; //for Android.Log
 	
 	private LoginView myView;
-	
-
-	@Override
-	public boolean hasMenuButton() {
-		return false;
-	} 
-
-	@Override
-	public Button getMenuButton() {
-		return null;
-	}
+	private LayoutInflater inflater;
 	
 	/**
 	 * Called after proper creation of the universe. 
@@ -99,7 +91,8 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	}
 	
 	private void createView(){
-		myView = (LoginView)inflater.inflate(R.layout.activity_login, null);
+		
+		myView = new LoginView(context);
 	}
 
 	
