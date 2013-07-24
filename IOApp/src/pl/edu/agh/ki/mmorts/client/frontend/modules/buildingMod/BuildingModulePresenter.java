@@ -4,6 +4,7 @@ import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleData;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.MapViewCreated;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.widget.Button;
@@ -46,12 +47,13 @@ public class BuildingModulePresenter extends AbstractModulePresenter{
 
 	@Override
 	public void gotMessage(PresentersMessage m) {
-		if (m.carries(MapModuleView.class)) {
-			mapModuleView = m.getMessage(MapModuleView.class);
-			//It means that it's a request for data from server
+		if (m.carries(MapViewCreated.class)) {
+			mapModuleView = (m.getMessage(MapViewCreated.class)).getView();
+		}
+/*			//It means that it's a request for data from server
 			ModuleDataMessage message = new ModuleDataMessage(presenterId, null);
 			modulesBroker.tellModule(message, moduleName);
-		}
+		} */
 		
 	}
 

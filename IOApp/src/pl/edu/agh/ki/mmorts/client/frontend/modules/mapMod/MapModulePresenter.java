@@ -27,7 +27,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	public void init() {
 		presenterId = "MapModulePresenter";
 		mapModuleView = new MapModuleView(context);
-		informOthersAboutMapModuleView();
+		informOthersAboutView();
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);
 		Log.d(ID, "context:");
@@ -65,7 +65,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	/**
 	 * It's called to send an object of {@code MapModuleView}  to other presenters which want to have it.
 	 */
-	private void informOthersAboutMapModuleView() {
+	private void informOthersAboutView() {
 		MapViewCreated content = new MapViewCreated();
 		content.setView(mapModuleView);
 		PresentersMessage message = new PresentersMessage(presenterId, content);
@@ -76,6 +76,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	@Override
 	public void gotMessage(PresentersMessage m) {
 		if (m.carries(LoginDone.class)) {
+			// TODO
 			//It means that it's a request for data from server
 			ModuleDataMessage message = new ModuleDataMessage(presenterId, null);
 			modulesBroker.tellModule(message, moduleName);
