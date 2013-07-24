@@ -2,7 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
 
 import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.Building;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.infrMod.ITile;
 import android.graphics.Bitmap;
 
 public class Tile implements ITile {
