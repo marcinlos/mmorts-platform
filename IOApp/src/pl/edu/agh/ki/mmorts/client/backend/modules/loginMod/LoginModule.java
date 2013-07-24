@@ -19,9 +19,6 @@ public class LoginModule extends ModuleBase{
 
 	private LoginModuleData moduleData;
 	
-	@Inject
-	private Context context;
-	
 
 	/**
 	 * Registers player in system

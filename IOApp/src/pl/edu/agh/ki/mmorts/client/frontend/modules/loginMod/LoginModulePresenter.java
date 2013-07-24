@@ -1,23 +1,27 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
-import android.widget.Button;
-import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.messages.LoginMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
+import android.view.View;
+import android.widget.Button;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements LoginListener{
 	
+	private static final String moduleName = "LoginModule";
+	private static final String ID = "LoginModulePresenter"; //for Android.Log
+	
+	private View myView;
 	
 
 	@Override
 	public boolean hasMenuButton() {
 		return false;
-	}
+	} 
 
 	@Override
 	public Button getMenuButton() {
@@ -29,34 +33,44 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	 * Checks with module whether we can login from file, logs in an says that it's done
 	 * or sends it's view to top and awaits login attempt
 	 */
+	
+	
+	
 	@Override
 	@OnInit
 	public void init() {
 		presenterId = "LoginModulePresenter";
 		
 		//moduuu³, mamy plik do logowania?
-		boolean loginFromFile = false;
-		//bo jak tak to nas zaloguj
-		if(loginFromFile)
-		{
-			//if(zalogowalNas) tellBusWeAreDone(); return;
-		}
-		else{
-			mainSpaceManager.toTop(presenterId);
-		}
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessage(LoginMessage.TO_MODULE_FILE_LOGIN)), moduleName);
 		
 	}
 
-
-	/**
-	 * Idea of dataChanged is that module sends info about underlying change
-	 * in case of login, no such thing should happen, or if the implementation causes it
-	 * it needs to do nothing
-	 * @param data
-	 */
 	@Override
 	public void dataChanged(ModuleDataMessage data) {
-		return;
+		if(data.carries(LoginMessage.class)){
+			LoginMessage m = data.getMessage(LoginMessage.class);
+			switch(m.getMode()){
+			case LoginMessage.TO_PRESENTER_FILE_LOGIN:
+				if(m.isLogFromFileSuccess()){
+					sendBusMessage();
+					return;
+				}
+				else{
+					mainSpaceManager.toTop(presenterId);
+					return;
+				}
+			case LoginMessage.TO_PRESENTER_LOGIN_RESPONSE:
+				if(m.isLogInSuccess()){
+					sendBusMessage();
+					return;
+				}
+				else{
+					//TODO tell view it ain't workin
+				}
+				
+			}
+		}
 		
 	}
 	/**
@@ -65,19 +79,25 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@Override
 	public void gotMessage(PresentersMessage m) {
 		return;
-		
 	}
 
 	@Override
 	public void LogMeIn(String login, String pass) {
-		// TODO Auto-generated method stub
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessage(login, pass, LoginMessage.TO_MODULE_LOGIN)), moduleName);
 		
 	}
 	
-	private void sendMessage(){
+	/**
+	 * sends the I'm done message
+	 */
+	private void sendBusMessage(){
 		PresentersMessage pm = new PresentersMessage(presenterId, new LoginDone());
 		bus.sendMessage(pm);
 		
+	}
+	
+	private void createView(){
+		myView = inflater.inflate(R.layout.activity_login, null);
 	}
 
 	
