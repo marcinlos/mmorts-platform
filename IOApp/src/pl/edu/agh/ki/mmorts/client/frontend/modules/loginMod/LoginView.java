@@ -120,7 +120,6 @@ public class LoginView extends View {
 			// form field with an error.
 			focusView.requestFocus();
 		} else {
-			//TODO - we have a valid login attempt!
 			mEmailView.setTextColor(Color.GRAY);
 			findViewById(R.id.sign_in_button).setClickable(false);
 			presenter.LogMeIn(mEmail, mPassword);

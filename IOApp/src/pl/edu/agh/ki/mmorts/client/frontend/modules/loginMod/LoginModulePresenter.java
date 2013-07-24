@@ -36,9 +36,6 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	 * Checks with module whether we can login from file, logs in an says that it's done
 	 * or sends it's view to top and awaits login attempt
 	 */
-	
-	
-	
 	@Override
 	@OnInit
 	public void init() {
