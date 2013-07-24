@@ -11,9 +11,9 @@ import javax.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;

@@ -7,9 +7,8 @@ import java.util.Timer;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModuleData;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.ViewRefresher;
 import android.content.Context;
@@ -21,7 +20,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 
-public class MapModuleView extends AbstractModuleView{
+public class MapModuleView extends AbstractModuleView {
 
 	private static final String ID = "MapModuleView";
 	private static String viewId = "MapView";
@@ -34,7 +33,7 @@ public class MapModuleView extends AbstractModuleView{
 	//private InfrastructureModule map;
 	private Map<String,Bitmap> cache;
 	private boolean refresh_in_progress;
-	private InfrastructureModuleData currentData;
+	private MapModuleData currentData;
 	/**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
@@ -74,7 +73,7 @@ public class MapModuleView extends AbstractModuleView{
 	@Override
 	public void refresh(){
 		Log.d(ID,"Refresh called");
-		virtual_map = currentData.map;
+		//virtual_map = currentData.map;
 		fields = new ArrayList<ITile>();
 		for(int i=0;i<mapWidth;i++){
 			for(int j=0;j<mapHeight;j++){
@@ -117,11 +116,11 @@ public class MapModuleView extends AbstractModuleView{
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		if(modulesBroker.stateChanged(moduleName)){
+		/*if(modulesBroker.stateChanged(moduleName)){
 			modulesBroker.stateReceived(moduleName);
-			currentData = modulesBroker.getData(moduleName, InfrastructureModuleData.class);
+			currentData = modulesBroker.getData(moduleName, MapModuleData.class);
 			refresh();
-		}
+		}*/
 		super.onDraw(canvas);
 		Log.d(ID, "Drawing stuff");
 		//canvas.save();
@@ -155,10 +154,10 @@ public class MapModuleView extends AbstractModuleView{
 	public void init(List<String> modules, ConcreteModulesBroker v){
 		modulesBroker = v;
 		moduleName = modules.get(0);
-		currentData = modulesBroker.getData(moduleName, InfrastructureModuleData.class);
+/*		currentData = modulesBroker.getData(moduleName, MapModuleData.class);
 		modulesBroker.register(this, moduleName);
 		this.mapWidth = currentData.mapWidth;
-		this.mapHeight = currentData.mapHeight;
+		this.mapHeight = currentData.mapHeight;*/
 		//TODO set tile size to somethin, based on phone specifics or somethin?
 		addRefresher();
 	}

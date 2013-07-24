@@ -1,11 +1,12 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules;
+package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
 
 
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
 
 public class InfrastructureCommModule implements GUICommModule {
@@ -44,35 +45,21 @@ public class InfrastructureCommModule implements GUICommModule {
     public void shutdown() {
         //TODO dunno
     }
-    
-    @Override
+
+
+	@Override
 	public void receive(Message message, TransactionContext context) {
-		// TODO dunno
+		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public boolean isStateChanged() {
-		return m.isStateChanged();
-	}
 
 	@Override
-	public void stateReceived() {
-		m.stateReceived();
-
+	public void dataChanged(ModuleDataMessage data) {
+		// TODO Auto-generated method stub
+		
 	}
-
-	@Override
-	public <T> void setData(T data, Class<T> clazz) {
-		m.setData(data);
-
-	}
-
-	@Override
-	public <T> T getData(Class<T> clazz) {
-		return m.getData();
-	}
-
-	
+    
+ 
 
 }

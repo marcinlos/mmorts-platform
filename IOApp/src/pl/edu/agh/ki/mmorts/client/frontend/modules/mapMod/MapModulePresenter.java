@@ -2,6 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
@@ -19,9 +20,16 @@ import com.google.inject.Inject;
  */
 public class MapModulePresenter extends AbstractModulePresenter{
 	private static final String ID = "MapModulePresenter";
+	/**
+	 * Name of module that I want to communicate with
+	 */
+	private String moduleName = "MapModule";
 	
 	@Inject
 	private Context context;
+	/**
+	 * Not used
+	 */
 	@Inject
 	private TopSpaceManager topSpaceManager;
 	@Inject
@@ -34,6 +42,10 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	
 	@Override
 	public void init() {
+		presenterId = "MapModulePresenter";
+		mapModuleView = new MapModuleView(context);
+		menuButton = new MenuButton(context);
+		menuButton.setView(mapModuleView);
 		Log.d(ID, "context:");
 		Log.d(ID, String.format("%s", context));
 		Log.d(ID, "topSpaceManager:");
@@ -42,8 +54,6 @@ public class MapModulePresenter extends AbstractModulePresenter{
 		Log.d(ID, String.format("%s", mainSpaceManager));
 		Log.d(ID, "modulesBroker:");
 		Log.d(ID, String.format("%s", modulesBroker));
-		menuButton = new MenuButton(context);
-		mapModuleView = new MapModuleView(context);
 	}
 	
 	@Override
@@ -59,19 +69,22 @@ public class MapModulePresenter extends AbstractModulePresenter{
 
 	@Override
 	public void dataChanged(ModuleDataMessage data) {
-		// TODO Auto-generated method stub
-		mapModuleView.postInvalidate();
 		
+		// TODO view.update(data)
+		mapModuleView.postInvalidate();
+		mainSpaceManager.toTop(mapModuleView.getViewId());
 		
 	}
 
 
 	@Override
 	public void gotMessage(PresentersMessage m) {
-/*		if (m.carries(LoginDone.class)) {
-			PresentersMessage message
-			mainSpaceManager.toTop(mapModuleView.getViewId());
-		}*/
+		if (m.carries(LoginDone.class)) {
+			//It means that it's a request for data from server
+			ModuleDataMessage message = new ModuleDataMessage(presenterId, null);
+			modulesBroker.tellModule(message, moduleName);
+
+		}
 		
 	}
 
