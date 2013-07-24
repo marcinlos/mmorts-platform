@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
+import java.io.File;
+
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
@@ -7,6 +9,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDon
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,7 +18,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	private static final String moduleName = "LoginModule";
 	private static final String ID = "LoginModulePresenter"; //for Android.Log
 	
-	private View myView;
+	private LoginView myView;
 	
 
 	@Override
@@ -40,6 +43,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@OnInit
 	public void init() {
 		presenterId = "LoginModulePresenter";
+		createView(); //TODO should it be here?
 		
 		//moduuu³, mamy plik do logowania?
 		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessage(LoginMessage.TO_MODULE_FILE_LOGIN)), moduleName);
@@ -66,7 +70,8 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 					return;
 				}
 				else{
-					//TODO tell view it ain't workin
+					Log.d(ID,"Login with email failed, it shouldn't happen exactly often");
+					myView.invalidLogIn();
 				}
 				
 			}
@@ -97,7 +102,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	}
 	
 	private void createView(){
-		myView = inflater.inflate(R.layout.activity_login, null);
+		myView = (LoginView)inflater.inflate(R.layout.activity_login, null);
 	}
 
 	
