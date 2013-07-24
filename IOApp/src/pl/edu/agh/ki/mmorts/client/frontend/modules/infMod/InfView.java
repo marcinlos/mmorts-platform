@@ -1,8 +1,8 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.infrMod;
+package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
 
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infrMod.InfrastructureModulePresenter.Controller;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModulePresenter.Controller;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.Log;

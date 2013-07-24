@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.infrMod;
+package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
 
 public class InfrastructureModuleData {
 
