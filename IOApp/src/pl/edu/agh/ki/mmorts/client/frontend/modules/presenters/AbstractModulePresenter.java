@@ -22,8 +22,6 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 	protected TopSpaceManager topSpaceManager;
 	@Inject
 	protected Bus bus;
-	@Inject
-	protected LayoutInflater inflater;
 	protected String presenterId; 
 
 	@Override

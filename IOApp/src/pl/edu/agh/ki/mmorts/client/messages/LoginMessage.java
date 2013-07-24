@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.messages;
 
+import java.io.File;
+
 public class LoginMessage{
 	
 	
@@ -24,10 +26,14 @@ public class LoginMessage{
 	String login;
 	String password;
 	
+	File file;
+	
 	
 	public <T> LoginMessage(int mode) {
 		this.mode = mode;
 	}
+	
+	
 	public <T> LoginMessage(String login, String password, int mode) {
 		this.login = login;
 		this.password = password;
