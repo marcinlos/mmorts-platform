@@ -1,14 +1,11 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
-import android.widget.Button;
-import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
+import android.widget.Button;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements LoginListener{
 	
@@ -39,7 +36,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 		//bo jak tak to nas zaloguj
 		if(loginFromFile)
 		{
-			//if(zalogowalNas) tellBusWeAreDone(); return;
+			//if(zalogowalNas) sendMessage(); return;
 		}
 		else{
 			mainSpaceManager.toTop(presenterId);
@@ -65,13 +62,14 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@Override
 	public void gotMessage(PresentersMessage m) {
 		return;
-		
 	}
 
 	@Override
 	public void LogMeIn(String login, String pass) {
 		// TODO Auto-generated method stub
-		
+		//tell module to log in
+		//update tell the view that he rejected us if he rejected us
+		//if he didn't, sentMessage()
 	}
 	
 	private void sendMessage(){
