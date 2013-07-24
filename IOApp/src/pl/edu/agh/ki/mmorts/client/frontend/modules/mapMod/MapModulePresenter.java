@@ -1,18 +1,13 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.MapViewCreated;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Button;
-
-import com.google.inject.Inject;
 
 /**
  * Presenter for map module. The main presenter for {@code MapModuleView}
@@ -25,18 +20,6 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	 */
 	private String moduleName = "MapModule";
 	
-	@Inject
-	private Context context;
-	/**
-	 * Not used
-	 */
-	@Inject
-	private TopSpaceManager topSpaceManager;
-	@Inject
-	private MainSpaceManager mainSpaceManager;
-	@Inject
-	private ModulesBroker modulesBroker;
-	
 	private MapModuleView mapModuleView;
 	private MenuButton menuButton;
 	
@@ -44,6 +27,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	public void init() {
 		presenterId = "MapModulePresenter";
 		mapModuleView = new MapModuleView(context);
+		informOthersAboutMapModuleView();
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);
 		Log.d(ID, "context:");
@@ -68,12 +52,24 @@ public class MapModulePresenter extends AbstractModulePresenter{
 	}
 
 	@Override
-	public void dataChanged(ModuleDataMessage data) {
+	public void dataChanged(ModuleDataMessage message) {
+		if (message.carries(MapModuleData.class)) {
+			MapModuleData data = message.getMessage(MapModuleData.class);
+			mapModuleView.updateMapData(data);
+			mapModuleView.postInvalidate();
+			mainSpaceManager.toTop(mapModuleView.getViewId());
+		}
 		
-		// TODO view.update(data)
-		mapModuleView.postInvalidate();
-		mainSpaceManager.toTop(mapModuleView.getViewId());
-		
+	}
+	
+	/**
+	 * It's called to send an object of {@code MapModuleView}  to other presenters which want to have it.
+	 */
+	private void informOthersAboutMapModuleView() {
+		MapViewCreated content = new MapViewCreated();
+		content.setView(mapModuleView);
+		PresentersMessage message = new PresentersMessage(presenterId, content);
+		bus.sendMessage(message);
 	}
 
 
@@ -83,7 +79,6 @@ public class MapModulePresenter extends AbstractModulePresenter{
 			//It means that it's a request for data from server
 			ModuleDataMessage message = new ModuleDataMessage(presenterId, null);
 			modulesBroker.tellModule(message, moduleName);
-
 		}
 		
 	}

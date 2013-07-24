@@ -1,29 +1,84 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
 
-import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModuleData;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
-import pl.edu.agh.ki.mmorts.client.frontend.views.ViewRefresher;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 
 
 public class MapModuleView extends AbstractModuleView {
-
-	private static final String ID = "MapModuleView";
+	
+	private MapModuleData mapData;
+	private BuildingModuleData buildingData;
 	private static String viewId = "MapView";
+
+	public MapModuleView(Context context) {
+		super(context);
+	}
+
+	public MapModuleView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
+
+	public MapModuleView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		
+	}
+	
+	public static String getViewId() {
+		return viewId;
+	}
+	
+	/**
+	 * Called automatically after {@code invalidate()} or {@code postInvalidate()}
+	 */
+	@Override
+	public void onDraw(Canvas canvas) {
+		
+	}
+
+	@Override
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void iWasClicked(float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void init(List<String> moduleNames, ConcreteModulesBroker view) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void updateMapData(MapModuleData data) {
+		this.mapData = data;
+	}
+	
+	public void updateBuildingData(BuildingModuleData data) {
+		this.buildingData = data;
+	}
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	/*	private static final String ID = "MapModuleView";
+
 	private String moduleName;
 	private List<ITile> fields;
 	private int imageSize = 50;
@@ -34,30 +89,16 @@ public class MapModuleView extends AbstractModuleView {
 	private Map<String,Bitmap> cache;
 	private boolean refresh_in_progress;
 	private MapModuleData currentData;
-	/**
+	*//**
 	 * 0 - empty tile
 	 * 1 - tile occupied by
-	 */
+	 *//*
 	private ITile[][] virtual_map = new Tile[mapWidth][mapHeight];
 	
 
-	public static String getViewId() {
-		return viewId;
-	}
 
-	public MapModuleView(Context context) {
-		super(context);
-	}
 
-	public MapModuleView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		this.setBackgroundColor(Color.GREEN);
-	}
 
-	public MapModuleView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		
-	}
 	
 	private void addRefresher(){
 		Timer timer = new Timer();
@@ -116,11 +157,11 @@ public class MapModuleView extends AbstractModuleView {
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		/*if(modulesBroker.stateChanged(moduleName)){
+		if(modulesBroker.stateChanged(moduleName)){
 			modulesBroker.stateReceived(moduleName);
 			currentData = modulesBroker.getData(moduleName, MapModuleData.class);
 			refresh();
-		}*/
+		}
 		super.onDraw(canvas);
 		Log.d(ID, "Drawing stuff");
 		//canvas.save();
@@ -154,12 +195,12 @@ public class MapModuleView extends AbstractModuleView {
 	public void init(List<String> modules, ConcreteModulesBroker v){
 		modulesBroker = v;
 		moduleName = modules.get(0);
-/*		currentData = modulesBroker.getData(moduleName, MapModuleData.class);
+		currentData = modulesBroker.getData(moduleName, MapModuleData.class);
 		modulesBroker.register(this, moduleName);
 		this.mapWidth = currentData.mapWidth;
-		this.mapHeight = currentData.mapHeight;*/
+		this.mapHeight = currentData.mapHeight;
 		//TODO set tile size to somethin, based on phone specifics or somethin?
 		addRefresher();
-	}
+	}*/
 
 }
