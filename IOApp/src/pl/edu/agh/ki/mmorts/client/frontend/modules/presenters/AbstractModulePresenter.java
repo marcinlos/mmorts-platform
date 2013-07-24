@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.presenters;
 
+import android.content.Context;
+
 import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
@@ -8,6 +10,8 @@ import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 
 public abstract class AbstractModulePresenter implements ModulePresenter, ModuleDataChangedListener, BusListener{
 	
+	@Inject
+	private Context context;
 	@Inject
 	protected ModulesBroker modulesBroker;
 	@Inject
