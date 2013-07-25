@@ -226,6 +226,11 @@ public class Initializer{
 	}
 
 	private void prepareViewModules() {
+		//TODO check if I'm right:
+		//Those methods below should not work (or at least work as expected). Finding by id only gets a reference
+		//to the object with that id, but it takes nothing else, so returned views will have no contents initialised I think
+		//and calling sub-views by IDs would probably return nulls. If doing what we do here before inflating the views even works
+		//and doesn't throw null exceptions. Well, unless you inflate them somewhere I don't know about.
 		mainScreenView = inflater.inflate(R.layout.activity_main, null);
 		topView = mainScreenView.findViewById(R.id.topSpace);
 		mainModulesView = mainScreenView.findViewById(R.id.mainSpace);

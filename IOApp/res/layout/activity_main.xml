@@ -29,7 +29,20 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:layout_weight="1" />
+        android:layout_weight="1" >
+        
+            <LinearLayout 
+            android:id="@+id/iconSpace"
+        	android:layout_width="wrap_content"
+       		android:layout_height="fill_parent"
+       		android:orientation="horizontal"/>
+            <LinearLayout 
+            android:id="@+id/statSpace"
+        	android:layout_width="wrap_content"
+       		android:layout_height="fill_parent"
+       		android:orientation="horizontal"/>
+            
+        </LinearLayout>
     
 	    <ScrollView
 	    android:layout_width="0dp"

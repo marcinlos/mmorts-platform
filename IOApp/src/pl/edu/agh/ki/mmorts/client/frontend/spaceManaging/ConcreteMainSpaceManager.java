@@ -8,6 +8,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewAlreadyRegist
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewNotRegisteredException;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.app.ioapp.init.Initializer;
 import com.google.inject.Inject;
@@ -22,10 +23,13 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 	
 	private View topView;
 	
+	private LinearLayout mainSpace;
+	
 	@OnInit
 	public void onInit(){
 		Log.d(ID, "OnInit fired");
-		Log.d(ID,String.format("%s", initializer.getMainScreenView()));
+		Log.d(ID,String.format("%s", initializer.getMainModulesView()));
+		mainSpace = (LinearLayout) initializer.getMainModulesView();
 	}
 
 	/**
@@ -37,6 +41,8 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 			throw new ViewAlreadyRegisteredException("Your ID is not as unique as you think");
 		}
 		viewMap.put(id, view);
+		view.setVisibility(View.GONE);
+		mainSpace.addView(view);
 		
 	}
 
@@ -61,6 +67,11 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 	@Override
 	public View getTop() {
 		return topView;
+	}
+
+	@Override
+	public View getViewById(String id) {
+		return viewMap.get(id);
 	}
 
 }

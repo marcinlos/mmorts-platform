@@ -19,6 +19,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	
 	private static final String moduleName = "LoginModule";
 	private static final String ID = "LoginModulePresenter"; //for Android.Log
+	private static final String viewID = "LoginView";
 	
 	private LoginView myView;
 	private LayoutInflater inflater;
@@ -32,7 +33,9 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@OnInit
 	public void init() {
 		presenterId = "LoginModulePresenter";
-		createView(); //TODO should it be here?
+		createView(); 
+		mainSpaceManager.register(viewID, myView);
+		modulesBroker.registerPresenter(this, moduleName);
 		
 		//moduuu³, mamy plik do logowania?
 		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessage(LoginMessage.TO_MODULE_FILE_LOGIN)), moduleName);
@@ -41,7 +44,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 
 	@Override
 	public void dataChanged(ModuleDataMessage data) {
-		if(data.carries(LoginMessage.class)){
+		if(data.carries(LoginMessage.class)){ //possibly reduntant - what else could our module send us.
 			LoginMessage m = data.getMessage(LoginMessage.class);
 			switch(m.getMode()){
 			case LoginMessage.TO_PRESENTER_FILE_LOGIN:
@@ -92,7 +95,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	
 	private void createView(){
 		
-		myView = new LoginView(context, this	);
+		myView = new LoginView(context, this);
 	}
 
 	
