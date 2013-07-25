@@ -23,8 +23,16 @@ public class LoginMessageContent implements ModuleDataMessageContent{
 	boolean logInSuccess;
 	
 	
-	String login;
-	String password;
+	public String getLogin() {
+		return login;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	private String login;
+	private String password;
 	
 	
 	public <T> LoginMessageContent(int mode) {
