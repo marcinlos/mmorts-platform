@@ -4,6 +4,7 @@ import java.io.File;
 
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
@@ -32,6 +33,12 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@Override
 	@OnInit
 	public void init() {
+		
+		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG TODO
+		modulesBroker = new ModulesBrokerDummy();
+		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG
+		
+		
 		presenterId = "LoginModulePresenter";
 		createView(); 
 		mainSpaceManager.register(viewID, myView);

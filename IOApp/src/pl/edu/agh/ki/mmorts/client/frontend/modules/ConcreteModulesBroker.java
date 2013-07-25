@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModuleNotExists;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
@@ -34,7 +34,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 	/**
 	 * Map of presenters and name of modules
 	 */
-	private Map<AbstractModulePresenter, String> modulePresenters = new HashMap<AbstractModulePresenter, String>();
+	private Map<ModuleDataChangedListener, String> modulePresenters = new HashMap<ModuleDataChangedListener, String>();
 	/**
 	 * Map of modules to send messages
 	 */
@@ -43,7 +43,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 
 
 	@Override
-	public void registerPresenter(ModulePresenter presenter, String moduleName) {
+	public void registerPresenter(ModuleDataChangedListener presenter, String moduleName) {
 		if (modulePresenters.containsKey(presenter)) {
 			Log.e(ID, "Trying to register presenter again");
 			throw new ModulesBrokerException("Presenter is already registered.");
@@ -52,12 +52,12 @@ public class ConcreteModulesBroker implements ModulesBroker{
 			Log.e(ID, "Trying to register presenter to a module that doesn't exist");
 			throw new ModulesBrokerException("Module doesn't exist");
 		}
-		modulePresenters.put((AbstractModulePresenter) presenter, moduleName);
+		modulePresenters.put(presenter, moduleName);
 		
 	}
 
 	@Override
-	public void unregisterPresenter(ModulePresenter presenter) {
+	public void unregisterPresenter(ModuleDataChangedListener presenter) {
 		if (!modulePresenters.containsKey(presenter)) {
 			Log.e(ID, "Trying to unregister not registered presenter");
 			throw new ModulesBrokerException("Presenter is not registered.");
@@ -72,7 +72,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 
 	@Override
 	public void tellPresenters(ModuleDataMessage message, String moduleName) {
-		for (AbstractModulePresenter presenter : modulePresenters.keySet()) {
+		for (ModuleDataChangedListener presenter : modulePresenters.keySet()) {
 			if (modulePresenters.get(presenter).equals(moduleName)) {
 				presenter.dataChanged(message);
 			}
