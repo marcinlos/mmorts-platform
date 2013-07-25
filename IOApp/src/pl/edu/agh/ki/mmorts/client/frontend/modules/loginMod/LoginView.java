@@ -22,6 +22,7 @@ import android.widget.TextView;
 public class LoginView extends LinearLayout {
 	
 	private static final String ID = "LoginView";
+	private static final String viewId = "LoginView";
 	
 	private LoginModulePresenter presenter;
 	private EditText mEmailView;
@@ -137,6 +138,10 @@ public class LoginView extends LinearLayout {
 		mEmailView.setTextColor(Color.BLACK);
 		findViewById(R.id.sign_in_button).setClickable(true);
 		mEmailView.requestFocus();
+	}
+
+	public static String getViewid() {
+		return viewId;
 	}
 		
 	

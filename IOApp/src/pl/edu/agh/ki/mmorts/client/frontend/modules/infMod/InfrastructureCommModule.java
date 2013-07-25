@@ -21,38 +21,6 @@ public class InfrastructureCommModule implements GUICommModule {
 	}
 	
 
-	/**
-     * {@inheritDoc}
-     */
-	@OnInit
-    @Override
-    public void init() {
-        Log.d(ID, "Initialized");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void started() {
-    	Log.d(ID, "Started");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void shutdown() {
-        //TODO dunno
-    }
-
-
-	@Override
-	public void receive(Message message, TransactionContext context) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 	@Override
 	public void dataChanged(ModuleDataMessage data) {

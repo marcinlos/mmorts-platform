@@ -1,6 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 
 public interface ModulesBroker {
@@ -10,12 +10,12 @@ public interface ModulesBroker {
 	 * @param presenter
 	 * @param moduleName
 	 */
-	public void registerPresenter(ModulePresenter presenter, String moduleName);
+	public void registerPresenter(ModuleDataChangedListener presenter, String moduleName);
 	/**
 	 * Unregisters presenter
 	 * @param presenter
 	 */
-	public void unregisterPresenter(ModulePresenter presenter);
+	public void unregisterPresenter(ModuleDataChangedListener presenter);
 	/**
 	 * Sends message from presenter to module. Presenter needs to know the name of module
 	 * @param message
