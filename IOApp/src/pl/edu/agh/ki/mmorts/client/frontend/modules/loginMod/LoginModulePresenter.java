@@ -44,11 +44,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 
 	@Override
 	public void dataChanged(ModuleDataMessage data) {
-		if(data.carries(LoginMessageContent.class)){
-			LoginMessageContent m = data.getMessage(LoginMessageContent.class);
 		if(data.carries(LoginMessageContent.class)){ //possibly reduntant - what else could our module send us.
-			LoginMessageContent m = data.getMessage(LoginMessageContent.class);
-		if(data.carries(LoginMessageContent.class)){
 			LoginMessageContent m = data.getMessage(LoginMessageContent.class);
 			switch(m.getMode()){
 			case LoginMessageContent.TO_PRESENTER_FILE_LOGIN:
