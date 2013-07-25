@@ -16,6 +16,8 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import roboguice.activity.RoboActivity;
@@ -49,9 +51,14 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private LinearLayout menuBar;
 	private LinearLayout mainSpace;
 	private LinearLayout topSpace;
+	
+	@Inject
+	private MainSpaceManager mainManager;
+	@Inject
+	private TopSpaceManager topManager;
 
 		
-	@Inject LayoutInflater inflater;
+	//@Inject LayoutInflater inflater;
 	
 	//@Inject Module mainViewActivityModule;
 	
@@ -66,6 +73,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		View view  = initializer.getMainScreenView();
 		setContentView(view);
 		Log.d(ID, String.format("Layout is: %s", view));
+		
+		
 		
 		
 		//initializePresentersMap();
