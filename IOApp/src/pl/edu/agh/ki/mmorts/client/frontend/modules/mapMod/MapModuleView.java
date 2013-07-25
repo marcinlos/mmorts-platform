@@ -12,9 +12,10 @@ import android.util.AttributeSet;
 
 public class MapModuleView extends AbstractModuleView {
 	
+	private static final String viewId = "MapView";
 	private MapModuleData mapData;
 	private BuildingModuleData buildingData;
-	private static String viewId = "MapView";
+	
 
 	public MapModuleView(Context context) {
 		super(context);
@@ -29,12 +30,9 @@ public class MapModuleView extends AbstractModuleView {
 		
 	}
 	
-	public static String getViewId() {
-		return viewId;
-	}
 	
 	/**
-	 * Called automatically after {@code invalidate()} or {@code postInvalidate()}
+	 * Called automatically after {@code invalidate()} or {@code postInvalidate()}. Implement this to do your drawing.
 	 */
 	@Override
 	public void onDraw(Canvas canvas) {
@@ -65,6 +63,10 @@ public class MapModuleView extends AbstractModuleView {
 	
 	public void updateBuildingData(BuildingModuleData data) {
 		this.buildingData = data;
+	}
+
+	public static String getViewId() {
+		return viewId;
 	}
 	
 	

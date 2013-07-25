@@ -16,7 +16,7 @@ import android.widget.Button;
  */
 public class MapModulePresenter extends AbstractModulePresenter{
 	private static final String ID = "MapModulePresenter";
-	private static final String VIEW_ID = "MapView";
+
 	/**
 	 * Name of module that I want to communicate with
 	 */
@@ -31,7 +31,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 		presenterId = "MapModulePresenter";
 		modulesBroker.registerPresenter(this, MODULE_NAME);
 		mapModuleView = new MapModuleView(context);
-		mainSpaceManager.register(VIEW_ID, mapModuleView);
+		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);
 		informOthersAboutView();
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);

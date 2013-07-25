@@ -39,7 +39,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter{
 			BuildingModuleData data = message.getMessage(BuildingModuleData.class);
 			mapModuleView.updateBuildingData(data);
 			mapModuleView.postInvalidate();
-			mainSpaceManager.toTop(mapModuleView.getViewId());
+			mainSpaceManager.toTop(MapModuleView.getViewId());
 		}
 		
 	}

@@ -20,11 +20,8 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	
 	private static final String moduleName = "LoginModule";
 	private static final String ID = "LoginModulePresenter"; //for Android.Log
-	private static final String viewID = "LoginView";
 	
 	private LoginView myView;
-	private LayoutInflater inflater;
-	
 	/**
 	 * Called after proper creation of the universe. 
 	 * Checks with module whether we can login from file, logs in an says that it's done
@@ -41,7 +38,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 		
 		presenterId = "LoginModulePresenter";
 		createView(); 
-		mainSpaceManager.register(viewID, myView);
+		mainSpaceManager.register(LoginView.getViewid(), myView);
 		modulesBroker.registerPresenter(this, moduleName);
 		
 		//moduuu³, mamy plik do logowania?
