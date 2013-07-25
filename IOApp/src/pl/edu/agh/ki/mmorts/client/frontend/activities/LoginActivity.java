@@ -31,7 +31,7 @@ import android.widget.TextView;
 public class LoginActivity extends Activity {
 	
 	
-	
+	/*
 	
 	
 	
@@ -67,9 +67,9 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		/*File dir = getFilesDir();
+		File dir = getFilesDir();
 		File f = new File(dir, loginFile);
-		f.delete();*/ //uncomment this if you want to see how it goes before first login again
+		f.delete(); //uncomment this if you want to see how it goes before first login again
 		File file = getFileStreamPath(loginFile);
 		if(file.exists())
 		{
@@ -144,12 +144,12 @@ public class LoginActivity extends Activity {
 		return true;
 	}
 
-	/**
+	*//**
 	 * Attempts to log in with data filled into forms, starts MainActivity with that data
 	 * put into intent extra.
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
-	 */
+	 *//*
 	public void attemptLogin() {
 
 		// Reset errors.
@@ -204,5 +204,5 @@ public class LoginActivity extends Activity {
 	public void endProgram(){
     	finish();
     	System.exit(0);
-    }
+    }*/
 }

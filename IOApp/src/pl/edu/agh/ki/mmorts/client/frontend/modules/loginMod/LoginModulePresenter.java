@@ -52,7 +52,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 			LoginMessageContent m = data.getMessage(LoginMessageContent.class);
 			switch(m.getMode()){
 			case LoginMessageContent.TO_PRESENTER_FILE_LOGIN:
-				if(m.isLogFromFileSuccess()){
+				if(m.isLogInSuccess()){
 					sendBusMessage();
 					return;
 				}

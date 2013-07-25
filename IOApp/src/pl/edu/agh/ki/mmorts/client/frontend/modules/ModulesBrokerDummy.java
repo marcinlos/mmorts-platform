@@ -29,7 +29,7 @@ public class ModulesBrokerDummy implements ModulesBroker {
 			switch(m.getMode()){
 			case LoginMessageContent.TO_MODULE_FILE_LOGIN:
 				LoginMessageContent mnew = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_FILE_LOGIN);
-				mnew.setLogFromFileSuccess(false); //chcemy cos zobaczyc, wiec z pliku sie nie udaje
+				mnew.setLogInSuccess(false); //chcemy cos zobaczyc, wiec z pliku sie nie udaje
 				tellPresenters(new ModuleDataMessage("", mnew), moduleName);
 				break;
 			case LoginMessageContent.TO_MODULE_LOGIN:

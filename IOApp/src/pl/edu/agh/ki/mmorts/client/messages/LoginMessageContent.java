@@ -5,28 +5,26 @@ import java.io.File;
 public class LoginMessageContent implements ModuleDataMessageContent{
 	
 	
+	/**
+	 * login from file
+	 */
 	public static final int TO_MODULE_FILE_LOGIN = 0;
 	public static final int TO_PRESENTER_FILE_LOGIN = 1;
+	
+	/**
+	 * note, that if these messages are sent it's really a registration attempt,
+	 * if it fails, it's because username already exists, or something tragic happened
+	 */
 	public static final int TO_MODULE_LOGIN = 2;
 	public static final int TO_PRESENTER_LOGIN_RESPONSE = 3;
 	
 	private int mode;
-	/**
-	 * set in LoginMessage.mode == 1, true if login from file was successful
-	 */
-	boolean logFromFileSuccess;
-	/**
-	 * set in LoginMessage.mode == 3, true if login with given login and pass was succesfull
-	 * note, that if these messages are sent it's really a registration attempt,
-	 * if it failed, it's because username already exists, or something tragic happened
-	 */
+	
 	boolean logInSuccess;
 	
 	
 	String login;
 	String password;
-	
-	File file;
 	
 	
 	public <T> LoginMessageContent(int mode) {
@@ -47,22 +45,12 @@ public class LoginMessageContent implements ModuleDataMessageContent{
 	public void setMode(int mode) {
 		this.mode = mode;
 	}
-	public boolean isLogFromFileSuccess() {
-		return logFromFileSuccess;
-	}
-	public void setLogFromFileSuccess(boolean logFromFileSuccess) {
-		this.logFromFileSuccess = logFromFileSuccess;
-	}
 	public boolean isLogInSuccess() {
 		return logInSuccess;
 	}
 	public void setLogInSuccess(boolean logInSuccess) {
 		this.logInSuccess = logInSuccess;
 	}
-	
-	
-	
-	
 	
 
 }
