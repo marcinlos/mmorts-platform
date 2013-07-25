@@ -14,11 +14,12 @@ import android.widget.Button;
  *
  */
 public class BuildingModulePresenter extends AbstractModulePresenter{
-	
+	private static final String ID = "BuildingModulePresenter";
+	private static final String VIEW_ID = "MapView";
 	/**
 	 * Name of module that I want to communicate with
 	 */
-	private String moduleName = "BuildingModule";
+	private static final String MODULE_NAME = "BuildingModule";
 	
 	/**
 	 * This presenter is not the main presenter for this view so 
@@ -30,6 +31,8 @@ public class BuildingModulePresenter extends AbstractModulePresenter{
 	@OnInit
 	public void init() {
 		presenterId = "BuildingModulePresenter";
+		modulesBroker.registerPresenter(this, MODULE_NAME);
+		mapModuleView = (MapModuleView) mainSpaceManager.getViewById(VIEW_ID);
 	}
 
 

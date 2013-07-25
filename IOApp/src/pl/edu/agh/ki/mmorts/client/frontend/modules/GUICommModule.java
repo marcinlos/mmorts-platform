@@ -1,13 +1,12 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
-import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 
 /**
- * Represents a module that is able to communicate with {@code ModulesBroker}
+ * Interface enabling module communicating with {@code ModulesBroker}
  *
  */
-public interface GUICommModule extends Module {
+public interface GUICommModule {
 	
 	/**
 	 * Called by {@code ModulesBroker} when {@code ModulesPresenter} sends a message
