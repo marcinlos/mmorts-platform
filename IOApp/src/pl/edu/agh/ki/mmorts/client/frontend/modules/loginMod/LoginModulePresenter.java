@@ -7,7 +7,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
-import pl.edu.agh.ki.mmorts.client.messages.LoginMessage;
+import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.content.Context;
 import android.util.Log;
@@ -35,16 +35,16 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 		createView(); //TODO should it be here?
 		
 		//moduuu³, mamy plik do logowania?
-		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessage(LoginMessage.TO_MODULE_FILE_LOGIN)), moduleName);
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), moduleName);
 		
 	}
 
 	@Override
 	public void dataChanged(ModuleDataMessage data) {
-		if(data.carries(LoginMessage.class)){
-			LoginMessage m = data.getMessage(LoginMessage.class);
+		if(data.carries(LoginMessageContent.class)){
+			LoginMessageContent m = data.getMessage(LoginMessageContent.class);
 			switch(m.getMode()){
-			case LoginMessage.TO_PRESENTER_FILE_LOGIN:
+			case LoginMessageContent.TO_PRESENTER_FILE_LOGIN:
 				if(m.isLogFromFileSuccess()){
 					sendBusMessage();
 					return;
@@ -53,7 +53,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 					mainSpaceManager.toTop(presenterId);
 					return;
 				}
-			case LoginMessage.TO_PRESENTER_LOGIN_RESPONSE:
+			case LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE:
 				if(m.isLogInSuccess()){
 					sendBusMessage();
 					return;
@@ -77,7 +77,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 
 	@Override
 	public void LogMeIn(String login, String pass) {
-		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessage(login, pass, LoginMessage.TO_MODULE_LOGIN)), moduleName);
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(login, pass, LoginMessageContent.TO_MODULE_LOGIN)), moduleName);
 		
 	}
 	

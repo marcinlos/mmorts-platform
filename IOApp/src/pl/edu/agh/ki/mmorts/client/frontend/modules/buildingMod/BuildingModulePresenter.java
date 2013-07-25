@@ -29,7 +29,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter{
 	@Override
 	@OnInit
 	public void init() {
-		
+		presenterId = "BuildingModulePresenter";
 	}
 
 
