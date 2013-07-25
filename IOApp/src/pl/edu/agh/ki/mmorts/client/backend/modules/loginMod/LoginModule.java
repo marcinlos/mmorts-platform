@@ -9,6 +9,7 @@ import pl.edu.agh.ki.mmorts.client.backend.init.LoginChecker;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
@@ -28,6 +29,9 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	@Inject 
 	private LoginChecker checker;
+	
+	@Inject
+	ModulesBroker modulesBroker;
 	
 	private String mail;
 	private String password;
@@ -105,10 +109,13 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 			responseContent.setLogInSuccess(logInFromFile());
 		}
 		else {
-			//String mail = content.g
+			String mail = content.getLogin();
+			String password = content.getPassword();
 			responseContent = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE);
 			responseContent.setLogInSuccess(logInWithoutFile(mail, password));
 		}
+		ModuleDataMessage responseMessage = new ModuleDataMessage(ID, content);
+		modulesBroker.tellPresenters(responseMessage, ID);
 
 	}
 
