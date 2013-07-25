@@ -2,7 +2,7 @@ package pl.edu.agh.ki.mmorts.client.messages;
 
 import java.io.File;
 
-public class LoginMessage{
+public class LoginMessageContent implements ModuleDataMessageContent{
 	
 	
 	public static final int TO_MODULE_FILE_LOGIN = 0;
@@ -29,12 +29,12 @@ public class LoginMessage{
 	File file;
 	
 	
-	public <T> LoginMessage(int mode) {
+	public <T> LoginMessageContent(int mode) {
 		this.mode = mode;
 	}
 	
 	
-	public <T> LoginMessage(String login, String password, int mode) {
+	public <T> LoginMessageContent(String login, String password, int mode) {
 		this.login = login;
 		this.password = password;
 		this.mode = mode;
