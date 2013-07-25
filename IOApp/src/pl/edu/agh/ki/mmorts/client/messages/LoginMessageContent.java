@@ -1,6 +1,5 @@
 package pl.edu.agh.ki.mmorts.client.messages;
 
-import java.io.File;
 
 public class LoginMessageContent implements ModuleDataMessageContent{
 	
@@ -20,8 +19,10 @@ public class LoginMessageContent implements ModuleDataMessageContent{
 	
 	private int mode;
 	
-	boolean logInSuccess;
+	private boolean logInSuccess;
 	
+	private String login;
+	private String password;
 	
 	public String getLogin() {
 		return login;
@@ -29,18 +30,14 @@ public class LoginMessageContent implements ModuleDataMessageContent{
 
 	public String getPassword() {
 		return password;
-	}
-
-	private String login;
-	private String password;
+	}	
 	
-	
-	public <T> LoginMessageContent(int mode) {
+	public LoginMessageContent(int mode) {
 		this.mode = mode;
 	}
 	
 	
-	public <T> LoginMessageContent(String login, String password, int mode) {
+	public LoginMessageContent(String login, String password, int mode) {
 		this.login = login;
 		this.password = password;
 		this.mode = mode;
