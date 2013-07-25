@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
-import pl.edu.agh.ki.mmorts.client.backend.init.RegisteringChecker;
+import pl.edu.agh.ki.mmorts.client.backend.init.LoginChecker;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -116,7 +116,7 @@ public class LoginActivity extends Activity {
 		} catch (FileNotFoundException e) {
 			Log.e(ID,"SHOULD NOT HAPPEN",e);
 		}
-		RegisteringChecker chk = new RegisteringChecker(loginconf);
+		LoginChecker chk = new LoginChecker(loginconf);
 		Properties p;
 		if(chk.checkIfAccountExists()){
 			Log.d(ID,"Got valid things from file, gonna start the program");

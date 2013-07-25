@@ -32,7 +32,6 @@ public class MapModulePresenter extends AbstractModulePresenter{
 		modulesBroker.registerPresenter(this, MODULE_NAME);
 		mapModuleView = new MapModuleView(context);
 		mainSpaceManager.register(VIEW_ID, mapModuleView);
-		informOthersAboutView();
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);
 		Log.d(ID, "context:");
@@ -66,16 +65,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 		}
 		
 	}
-	
-	/**
-	 * It's called to send an object of {@code MapModuleView}  to other presenters which want to have it.
-	 */
-	private void informOthersAboutView() {
-		MapViewCreated content = new MapViewCreated();
-		content.setView(mapModuleView);
-		PresentersMessage message = new PresentersMessage(presenterId, content);
-		bus.sendMessage(message);
-	}
+
 	
 
 	@Override
