@@ -29,12 +29,12 @@ public class ModulesBrokerDummy implements ModulesBroker {
 			switch(m.getMode()){
 			case LoginMessageContent.TO_MODULE_FILE_LOGIN:
 				LoginMessageContent mnew = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_FILE_LOGIN);
-				mnew.setLogFromFileSuccess(false);
+				mnew.setLogFromFileSuccess(false); //chcemy cos zobaczyc, wiec z pliku sie nie udaje
 				tellPresenters(new ModuleDataMessage("", mnew), moduleName);
 				break;
 			case LoginMessageContent.TO_MODULE_LOGIN:
 				LoginMessageContent mnew2 = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE);
-				mnew2.setLogInSuccess(true);
+				mnew2.setLogInSuccess(true); //przyjmiemy zwykly login
 				tellPresenters(new ModuleDataMessage("", mnew2), moduleName);
 				break;
 			}
