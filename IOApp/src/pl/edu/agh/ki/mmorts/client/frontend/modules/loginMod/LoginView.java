@@ -32,8 +32,9 @@ public class LoginView extends LinearLayout {
 	View view;
 	
 	 //I think this one should be called when inflating like I do
-	public LoginView(Context context){
+	public LoginView(Context context, LoginModulePresenter presenter){
 		super(context);
+		this.presenter = presenter;
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		if (inflater != null) {
 			view = (LoginView)inflater.inflate(R.layout.activity_login, this, true);
@@ -44,15 +45,6 @@ public class LoginView extends LinearLayout {
 			System.exit(-1); //TODO it shouldn't stay that way, though I dunno what way it should stay
 		}
 		
-	}
-
-	public LoginModulePresenter getPresenter() {
-		return presenter;
-	}
-	
-	
-	public void setPresenter(LoginModulePresenter presenter) {
-		this.presenter = presenter;
 	}
 	
 	private void initialize(){

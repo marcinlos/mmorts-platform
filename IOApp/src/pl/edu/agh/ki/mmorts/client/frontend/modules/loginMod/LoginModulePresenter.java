@@ -92,7 +92,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	
 	private void createView(){
 		
-		myView = new LoginView(context);
+		myView = new LoginView(context, this	);
 	}
 
 	
