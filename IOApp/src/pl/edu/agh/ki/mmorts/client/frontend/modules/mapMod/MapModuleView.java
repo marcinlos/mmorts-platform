@@ -36,6 +36,7 @@ public class MapModuleView extends AbstractModuleView {
 	 */
 	@Override
 	public void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		
 	}
 
