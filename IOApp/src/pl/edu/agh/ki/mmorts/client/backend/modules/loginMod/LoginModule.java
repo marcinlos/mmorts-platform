@@ -32,7 +32,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	private LoginChecker checker = new LoginChecker();
 	
-	@Inject
+	@Inject(optional= true)
 	ModulesBroker modulesBroker;
 	
 	private String mail;
