@@ -1,12 +1,8 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
+package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
-import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 
 public class Building {

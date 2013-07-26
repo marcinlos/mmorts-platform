@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import roboguice.activity.RoboActivity;
@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ioapp.init.Initializer;
+import com.google.inject.Inject;
 
 public class RunningActivity extends RoboActivity implements UIListener {
 
@@ -46,15 +47,21 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private LinearLayout menuBar;
 	private LinearLayout mainSpace;
 	private LinearLayout topSpace;
+	
+	@Inject(optional = true)
+	private MainSpaceManager mainManager;
+	@Inject(optional = true)
+	private TopSpaceManager topManager;
 
 		
-	@Inject LayoutInflater inflater;
+	//@Inject LayoutInflater inflater;
 	
 	//@Inject Module mainViewActivityModule;
 	
 	//@Inject View mainActivityView;
 	
-	@Inject Initializer initializer;
+	@Inject(optional = true)
+	Initializer initializer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		View view  = initializer.getMainScreenView();
 		setContentView(view);
 		Log.d(ID, String.format("Layout is: %s", view));
+		
+		
 		
 		
 		//initializePresentersMap();

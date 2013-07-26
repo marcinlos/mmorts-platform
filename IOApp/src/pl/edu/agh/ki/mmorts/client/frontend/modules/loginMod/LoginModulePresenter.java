@@ -1,64 +1,77 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
-import android.util.Log;
-import android.widget.Button;
-import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
+import java.io.File;
+
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteMainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements LoginListener{
 	
-	private static final String ID = LoginModulePresenter.class.getSimpleName();
-
-
-	@Override
-	public boolean hasMenuButton() {
-		return false;
-	}
-
-	@Override
-	public Button getMenuButton() {
-		return null;
-	}
+	private static final String moduleName = "LoginModule";
+	private static final String ID = "LoginModulePresenter"; //for Android.Log
 	
+	private LoginView myView;
 	/**
 	 * Called after proper creation of the universe. 
 	 * Checks with module whether we can login from file, logs in an says that it's done
 	 * or sends it's view to top and awaits login attempt
 	 */
-	@OnInit
 	@Override
+	@OnInit
 	public void init() {
-		Log.d(ID, "On init");
+		
+		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG TODO
+		modulesBroker = new ModulesBrokerDummy();
+		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG
+		
+		
+		presenterId = "LoginModulePresenter";
+		createView(); 
+		mainSpaceManager.register(LoginView.getViewid(), myView);
+		modulesBroker.registerPresenter(this, moduleName);
+		
 		//moduuu³, mamy plik do logowania?
-		boolean loginFromFile = false;
-		//bo jak tak to nas zaloguj
-		if(loginFromFile)
-		{
-			//if(zalogowalNas) tellBusWeAreDone(); return;
-		}
-		else{
-			mainSpaceManager.toTop(presenterId);
-		}
-		Log.d(ID, "On init done");
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), moduleName);
+		
 	}
 
-
-	/**
-	 * Idea of dataChanged is that module sends info about underlying change
-	 * in case of login, no such thing should happen, or if the implementation causes it
-	 * it needs to do nothing
-	 * @param data
-	 */
 	@Override
 	public void dataChanged(ModuleDataMessage data) {
-		return;
+		if(data.carries(LoginMessageContent.class)){ //possibly reduntant - what else could our module send us.
+			LoginMessageContent m = data.getMessage(LoginMessageContent.class);
+			switch(m.getMode()){
+			case LoginMessageContent.TO_PRESENTER_FILE_LOGIN:
+				if(m.isLogInSuccess()){
+					sendBusMessage();
+					return;
+				}
+				else{
+					mainSpaceManager.toTop(presenterId);
+					return;
+				}
+			case LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE:
+				if(m.isLogInSuccess()){
+					sendBusMessage();
+					return;
+				}
+				else{
+					Log.d(ID,"Login with email failed, it shouldn't happen exactly often");
+					myView.invalidLogIn();
+				}
+				
+			}
+		}
 		
 	}
 	/**
@@ -67,19 +80,26 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@Override
 	public void gotMessage(PresentersMessage m) {
 		return;
-		
 	}
 
 	@Override
 	public void LogMeIn(String login, String pass) {
-		// TODO Auto-generated method stub
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(login, pass, LoginMessageContent.TO_MODULE_LOGIN)), moduleName);
 		
 	}
 	
-	private void sendMessage(){
+	/**
+	 * sends the I'm done message
+	 */
+	private void sendBusMessage(){
 		PresentersMessage pm = new PresentersMessage(presenterId, new LoginDone());
 		bus.sendMessage(pm);
 		
+	}
+	
+	private void createView(){
+		
+		myView = new LoginView(context, this);
 	}
 
 	

@@ -1,8 +1,11 @@
 package pl.edu.agh.ki.mmorts.client.backend.init;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.client.backend.config.PropertiesLoader;
 import pl.edu.agh.ki.mmorts.client.backend.config.ReadingPropertiesException;
@@ -13,42 +16,36 @@ import pl.edu.agh.ki.mmorts.client.backend.config.ReadingPropertiesException;
  * If it is not, reads properties
  *
  */
-public class RegisteringChecker {
-	/**
-	 * Stream to read file with player's information
-	 */
-	private FileInputStream inputSream;
+public class LoginChecker {
+	
+	@Inject
+	private File loginDataFile;
 	
 	/**
-     * Reads properties from a file
+     * Properties from a file
      */
-    private PropertiesLoader loader = new PropertiesLoader();
-    
-    /**
-     * @param inputStream
-     */
-    public RegisteringChecker (FileInputStream inputStream) {
-    	this.inputSream = inputStream;
-    }
+    private Properties properties;
     
     /**
      * @return read properties
      */
     public Properties getProperties() {
-    	return loader.getProperties();
+    	return properties;
     }
 
 	/**
 	 * Checks if account exists which means info file contains correct user info
-	 * @return true if exists
+	 * @return {@code true} if exists
 	 * @throws ReadingPropertiesException
 	 */
 	public boolean checkIfAccountExists() throws ReadingPropertiesException {
+		PropertiesLoader loader = new PropertiesLoader();
 		try {
-			loader.load(inputSream);
+			loader.load(new FileInputStream(loginDataFile));
 		} catch (IOException e) {
 			throw new ReadingPropertiesException();
 		}
+		properties = loader.getProperties();
 		String userMail = loader.getProperties().getProperty("mail");
 		String password = loader.getProperties().getProperty("password");
 		if (userMail == null || password == null) {

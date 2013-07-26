@@ -5,8 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import com.google.inject.Inject;
+
 import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
 import pl.edu.agh.ki.mmorts.client.frontend.view.ModuleNotExists;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
@@ -26,120 +32,51 @@ public class ConcreteModulesBroker implements ModulesBroker{
 	private static final String ID = "ModulesBroker";
 	
 	/**
-	 * Map of modules
+	 * Map of presenters and name of modules
 	 */
-	//temporarily not injected
-	private Map<String, GUICommModule> modules;
-	
-	private List<ConfiguredModule> configuredModules;
-	
-	
-	
-	public Map<String, GUICommModule> getModules() {
-		return modules;
-	}
-
-	public List<ConfiguredModule> getConfiguredModules() {
-		return configuredModules;
-	}
-
-	/*
-	public ConcreteModulesBroker(Map<String, GUICommModule> modules,
-			List<ConfiguredModule> configuredModules) {
-		super();
-		this.modules = modules;
-		this.configuredModules = configuredModules;
-	}*/
-
+	private Map<ModuleDataChangedListener, String> modulePresenters = new HashMap<ModuleDataChangedListener, String>();
 	/**
-	 * Mapping of modules and moduleViews which are interested in changes in these modules
+	 * Map of modules to send messages
 	 */
-	//private Map<String, List<Class<? extends AbstractModuleView>>> registeredViews = 
-	//		new HashMap<String, List<Class<? extends AbstractModuleView>>>();
-	private Map<String, List<AbstractModuleView>> registeredViews = new HashMap<String, List<AbstractModuleView>>();
-	
+	@Inject(optional = true)
+	private Map<String, GUICommModule> modules; 
 
-	/**
-	 * {@inheritDoc}
-	 */
-	//public void register(Class<? extends AbstractModuleView> moduleView,
-	//		String moduleName) {
-	public void register(AbstractModuleView moduleView, String moduleName){
+
+	@Override
+	public void registerPresenter(ModuleDataChangedListener presenter, String moduleName) {
+		if (modulePresenters.containsKey(presenter)) {
+			Log.e(ID, "Trying to register presenter again");
+			throw new ModulesBrokerException("Presenter is already registered.");
+		}
 		if (!modules.containsKey(moduleName)) {
-			Log.e(ID, "Registering view to a module that doesn't exist");
-			throw new ModuleNotExists();
+			Log.e(ID, "Trying to register presenter to a module that doesn't exist");
+			throw new ModulesBrokerException("Module doesn't exist");
 		}
-		if (!registeredViews.containsKey(moduleName)) {
-			registeredViews.put(moduleName, new ArrayList<AbstractModuleView>());
-		}
-		registeredViews.get(moduleName).add(moduleView);		
-	}
-	
-	public void refreshViews(String moduleName){
-		for(AbstractModuleView a : registeredViews.get(moduleName)){
-			a.postInvalidate();
-		}
-	}
-	/*
-	public void addModule(String n, ConfiguredModule m){
-		modules.put(n, m);
-	}
-	*/
-	/**
-	 * @see com.app.ioapp.module.GUICommModule
-	 * @param moduleName
-	 * @return
-	 */
-	public boolean stateChanged(String moduleName){
-		GUICommModule m = modules.get(moduleName);
-		if(m != null) return m.isStateChanged();
-		return false;
-	}
-	/**
-	 * @see com.app.ioapp.module.GUICommModule
-	 * @param moduleName
-	 */
-	public void stateReceived(String moduleName){
-		GUICommModule m = modules.get(moduleName);
-		if(m != null) m.stateReceived();
-	}
-	/**
-	 * @see com.app.ioapp.module.GUICommModule
-	 * @param moduleName
-	 * @param returnType
-	 * @return
-	 */
-	public <T> T getData(String moduleName, Class<T> returnType){
-		GUICommModule m = modules.get(moduleName);
-		if(m != null) return m.getData(returnType);
-		return null;
-	}
-	
-	/**
-	 * @see com.app.ioapp.module.GUICommModule
-	 * @param moduleName
-	 * @param data
-	 */
-	public <T> void setData(String moduleName, T data, Class<T> clazz){
-		GUICommModule m = modules.get(moduleName);
-		if(m != null) m.setData(data, clazz);
-	}
-
-	@Override
-	public void registerPresenter(String moduleName) {
-		// TODO Auto-generated method stub
+		modulePresenters.put(presenter, moduleName);
 		
 	}
 
 	@Override
-	public void unregisterPresenter(ModulePresenter p) {
-		// TODO Auto-generated method stub
+	public void unregisterPresenter(ModuleDataChangedListener presenter) {
+		if (!modulePresenters.containsKey(presenter)) {
+			Log.e(ID, "Trying to unregister not registered presenter");
+			throw new ModulesBrokerException("Presenter is not registered.");
+		}
+	}
+
+	@Override
+	public void tellModule(ModuleDataMessage message, String moduleName) {
+		modules.get(moduleName).dataChanged(message);
 		
 	}
 
 	@Override
-	public void tellModule(ModuleDataMessage m, String moduleName) {
-		// TODO Auto-generated method stub
+	public void tellPresenters(ModuleDataMessage message, String moduleName) {
+		for (ModuleDataChangedListener presenter : modulePresenters.keySet()) {
+			if (modulePresenters.get(presenter).equals(moduleName)) {
+				presenter.dataChanged(message);
+			}
+		}
 		
 	}
 

@@ -5,8 +5,8 @@ import java.util.Properties;
 
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.SpaceOccupiedException;
+import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
 
 
@@ -225,15 +225,11 @@ public <T> T getData() {
 	// TODO Auto-generated method stub
 	return null;
 }
+
 @Override
-public <T> void setData(T data, Class<T> clazz) {
+public void dataChanged(ModuleDataMessage data) {
 	// TODO Auto-generated method stub
 	
-}
-@Override
-public <T> T getData(Class<T> clazz) {
-	// TODO Auto-generated method stub
-	return null;
 }
 	
 

@@ -226,6 +226,7 @@ public class Initializer{
 	}
 
 	private void prepareViewModules() {
+
 		mainScreenView = inflater.inflate(R.layout.activity_main, null);
 		topView = mainScreenView.findViewById(R.id.topSpace);
 		mainModulesView = mainScreenView.findViewById(R.id.mainSpace);

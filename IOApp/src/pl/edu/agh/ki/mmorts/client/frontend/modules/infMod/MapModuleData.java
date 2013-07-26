@@ -1,8 +1,9 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.infMod;
 
-public class InfrastructureModuleData {
+import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
 
-	public boolean isSpaceAvailable;
+public class MapModuleData {
+
 	public int mapHeight;
 	public int mapWidth;
 	public ITile[][] map;

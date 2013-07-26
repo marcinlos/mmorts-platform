@@ -1,5 +1,8 @@
 package pl.edu.agh.ki.mmorts.client.frontend.spaceManaging;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.app.ioapp.init.Initializer;
 import com.google.inject.Inject;
 
@@ -21,28 +24,31 @@ public class ConcreteTopSpaceManager implements TopSpaceManager{
 //	@Inject(optional = true) LayoutInflater inflater;
 
 	@Inject(optional=true) private  Initializer initializer;
+	
+	//private Map<String, View> icons = new HashMap<String,View>();
+	//private Map<String, View> stats = new HashMap<String,View>();
+	
+	private View topView;
 
 	
 	
 	@OnInit
 	public void onInit(){
 		Log.d(ID, "OnInit fired");
-		View view  = initializer.getTopView();
-		Log.d(ID,String.format("%s", view));
+		topView  = initializer.getTopView();
+		Log.d(ID,String.format("%s", topView));
 		Log.d(ID, String.format("Main is: %s", initializer.getMainScreenView()));
 
 	}
 	
 	@Override
 	public View getIconView() {
-		// TODO Auto-generated method stub
-		return null;
+		return topView.findViewById(R.id.iconSpace);
 	}
 
 	@Override
 	public View getStatView() {
-		// TODO Auto-generated method stub
-		return null;
+		return topView.findViewById(R.id.statSpace);
 	}
 
 }
