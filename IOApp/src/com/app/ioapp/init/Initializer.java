@@ -1,5 +1,8 @@
 package com.app.ioapp.init;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -158,6 +161,25 @@ public class Initializer{
 	 * Stream to write player information if he is not registered yet
 	 */
 	private OutputStream logDataOutput;
+	
+	/**
+	 * input stream with login contents, should never be null due to implementation
+	 */
+	
+	
+	
+	
+	
+	private FileInputStream loginInput;
+	
+	/**
+	 * output stream to file with login contents, starts at the end of already existing file if it had some content
+	 */
+	private FileOutputStream loginOutput;
+	
+	
+	
+	
 
 	/**
 	 * Transaction manager object
@@ -246,6 +268,15 @@ public class Initializer{
 			iceConfigInput = assetManager.open("iceClient.config");
 			configInput = assetManager.open("client.properties");
 			moduleConfigInput = assetManager.open("modules.json");
+			loginOutput = context.openFileOutput("loginDataFile",Context.MODE_APPEND);
+			try{
+				loginInput = context.openFileInput("loginDataFile");
+			}
+			catch(FileNotFoundException e){
+				Log.e(ID,"file with login not found, shouldn't be possible with this order of creating", e);
+			}
+			
+			
 		} catch (IOException e) {
 			Log.e(ID, "Exception during opening config files");
 			e.printStackTrace();

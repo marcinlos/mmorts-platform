@@ -2,7 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.MapViewCreated;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
@@ -70,7 +70,7 @@ public class MapModulePresenter extends AbstractModulePresenter{
 
 	@Override
 	public void gotMessage(PresentersMessage m) {
-		if (m.carries(LoginDone.class)) {
+		if (m.carries(LoginDoneMessageContent.class)) {
 			// TODO
 			//It means that it's a request for data from server
 			ModuleDataMessage message = new ModuleDataMessage(presenterId, null);

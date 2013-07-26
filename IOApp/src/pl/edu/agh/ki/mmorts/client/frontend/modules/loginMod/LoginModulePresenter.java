@@ -6,7 +6,7 @@ import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
@@ -92,7 +92,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	 * sends the I'm done message
 	 */
 	private void sendBusMessage(){
-		PresentersMessage pm = new PresentersMessage(presenterId, new LoginDone());
+		PresentersMessage pm = new PresentersMessage(presenterId, new LoginDoneMessageContent());
 		bus.sendMessage(pm);
 		
 	}
