@@ -62,6 +62,7 @@ import android.view.View;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 
 /**
@@ -75,7 +76,8 @@ import com.google.inject.name.Names;
  * Methods should be called in the following order: 1. {@code initialize()} 2.
  * {@code logIn()} 3. {@code getMainView()}
  */
-@ContextSingleton
+
+@Singleton
 public class Initializer{
 	
 	@Inject private AssetManager assetManager;
@@ -248,10 +250,17 @@ public class Initializer{
 	}
 
 	private void prepareViewModules() {
-
+		Log.d(ID, "Preparing Views");
 		mainScreenView = inflater.inflate(R.layout.activity_main, null);
+		Log.d(ID, String.format("MainScreenView: %s",mainScreenView));
 		topView = mainScreenView.findViewById(R.id.topSpace);
+		Log.d(ID, String.format("TopView: %s",topView));
+		Log.d(ID, String.format("TopViewParent: %s",topView.getParent()));
+		View v = mainScreenView.findViewById(R.id.topParentForDebug); //TODO remove
+		Log.d(ID, String.format("TopViewTrueParent: %s",v));
+		Log.d(ID, String.format("TopViewTrueParentsParent: %s",v.getParent()));
 		mainModulesView = mainScreenView.findViewById(R.id.mainSpace);
+		Log.d(ID, String.format("MainModulesView: %s",mainModulesView));
 		
 //		mainActivityViewModule = DI.objectModule(mainActivityView, View.class);
 //		topViewModule = DI.objectModule(topView, View.class);

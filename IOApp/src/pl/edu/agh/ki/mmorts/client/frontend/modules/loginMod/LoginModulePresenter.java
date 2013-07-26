@@ -1,24 +1,17 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
-import java.io.File;
-
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements LoginListener{
 	
-	private static final String moduleName = "LoginModule";
+	private static final String correspondingModuleName = "LoginModule";
 	private static final String ID = "LoginModulePresenter"; //for Android.Log
 	
 	private LoginView myView;
@@ -39,10 +32,10 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 		presenterId = "LoginModulePresenter";
 		createView(); 
 		mainSpaceManager.register(LoginView.getViewid(), myView);
-		modulesBroker.registerPresenter(this, moduleName);
+		modulesBroker.registerPresenter(this, correspondingModuleName);
 		
 		//moduuu³, mamy plik do logowania?
-		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), moduleName);
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), correspondingModuleName);
 		
 	}
 
@@ -57,7 +50,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 					return;
 				}
 				else{
-					mainSpaceManager.toTop(presenterId);
+					mainSpaceManager.toTop(LoginView.getViewid());
 					return;
 				}
 			case LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE:
@@ -84,7 +77,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 
 	@Override
 	public void LogMeIn(String login, String pass) {
-		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(login, pass, LoginMessageContent.TO_MODULE_LOGIN)), moduleName);
+		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(login, pass, LoginMessageContent.TO_MODULE_LOGIN)), correspondingModuleName);
 		
 	}
 	

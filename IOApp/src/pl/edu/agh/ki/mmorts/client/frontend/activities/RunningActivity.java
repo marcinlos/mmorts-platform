@@ -2,39 +2,37 @@ package pl.edu.agh.ki.mmorts.client.frontend.activities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
+import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import roboguice.activity.RoboActivity;
+import roboguice.inject.ContextSingleton;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ioapp.init.Initializer;
 import com.google.inject.Inject;
 
+@ContextSingleton
 public class RunningActivity extends RoboActivity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
@@ -42,16 +40,16 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private InfrastructureModule board;
 	private LinearLayout menu;
 	private List<String> modules;
-	private ConcreteModulesBroker view;
+	//private ConcreteModulesBroker view;
 
 	private LinearLayout menuBar;
 	private LinearLayout mainSpace;
 	private LinearLayout topSpace;
 	
-	@Inject(optional = true)
-	private MainSpaceManager mainManager;
-	@Inject(optional = true)
-	private TopSpaceManager topManager;
+	//@Inject(optional = true)
+	//private MainSpaceManager mainManager;
+	//@Inject(optional = true)
+	//private TopSpaceManager topManager;
 
 		
 	//@Inject LayoutInflater inflater;
@@ -60,16 +58,39 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	
 	//@Inject View mainActivityView;
 	
-	@Inject(optional = true)
+	@Inject(optional= true)
 	Initializer initializer;
+	
+	private View view;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(ID, "Started running Activity");
 		super.onCreate(savedInstanceState);
-		View view  = initializer.getMainScreenView();
+		/*try {
+			Log.d(ID, String.format("Initializer: %s", initializer));
+			initializer.initialize();
+		} catch (InitException e) {
+			// initializing didn't work, it's sad. Tell the user to go to the corner and cry.
+			Log.e(ID,"Initializer can't initialize",e);
+			endProgram();
+		}*/
+		
+		Log.d(ID, "Started running Activity");
+		view  = initializer.getMainScreenView();
+		Log.d(ID, String.format("MainScreenView: %s", view));
 		setContentView(view);
+		//view.invalidate();
+		//((LinearLayout)view).removeAllViews();
+		//((LinearLayout)view).addView(initializer.getMainModulesView());
+		//initializer.getMainModulesView().
+		
+		view.invalidate();
+		
 		Log.d(ID, String.format("Layout is: %s", view));
+		
+		//view.cr
+		
+		
 		
 		
 		
@@ -93,6 +114,13 @@ public class RunningActivity extends RoboActivity implements UIListener {
 
 	}
 
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		view.invalidate();
+	}
+	
+	
 	private void initializePresentersMap() {
 		Log.d(ID, "Initializing presenters");
 		/*
@@ -152,28 +180,28 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		menuBar.invalidate();
 	}
 
-	private void createMenu(LinearLayout mainLayout) {
-		menu = new LinearLayout(this);
-		menu.setWeightSum(1);
-		menu.setOrientation(LinearLayout.VERTICAL);
-		menu.setBackgroundColor(Color.CYAN);
-		mainLayout.addView(menu);
-		try {
-			initializeUI();
-		} catch (ClassNotFoundException e) {
-			Log.e(ID, "No View with that name implemented - do it!", e);
-			endProgram();
-		} catch (InstantiationException e) {
-			Log.e(ID, "Can't instantiate your view? What?", e);
-			endProgram();
-		} catch (IllegalAccessException e) {
-			Log.e(ID, "Can't access your view? What?", e);
-			endProgram();
-		} catch (Exception e) {
-			Log.e(ID, "Problem with reflection!", e);
-			endProgram();
-		}
-	}
+//	private void createMenu(LinearLayout mainLayout) {
+//		menu = new LinearLayout(this);
+//		menu.setWeightSum(1);
+//		menu.setOrientation(LinearLayout.VERTICAL);
+//		menu.setBackgroundColor(Color.CYAN);
+//		mainLayout.addView(menu);
+//		try {
+//			initializeUI();
+//		} catch (ClassNotFoundException e) {
+//			Log.e(ID, "No View with that name implemented - do it!", e);
+//			endProgram();
+//		} catch (InstantiationException e) {
+//			Log.e(ID, "Can't instantiate your view? What?", e);
+//			endProgram();
+//		} catch (IllegalAccessException e) {
+//			Log.e(ID, "Can't access your view? What?", e);
+//			endProgram();
+//		} catch (Exception e) {
+//			Log.e(ID, "Problem with reflection!", e);
+//			endProgram();
+//		}
+//	}
 
 	private void fillViewsList() {
 		arbitraryViewsList.add("com.app.ioapp.customDroidViews.BoardView");
@@ -197,36 +225,36 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	 * @throws IllegalArgumentException
 	 */
 
-	private void initializeUI() throws ClassNotFoundException,
-			InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException {
-		for (String text : arbitraryViewsList) {
-			AbstractModuleView t = (AbstractModuleView) Class.forName(text)
-					.getConstructor(Context.class).newInstance((Context) this);
-			t.init(modules, view);
-			if (t.isButton) {
-				MenuButton b = new MenuButton(this);
-				b.setView(t);
-				b.setText(text);
-				OnClickListener ocl = new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						if (v instanceof MenuButton) {
-							MenuButton b = (MenuButton) v;
-							b.iWasClicked();
-						} else {
-							Log.e(ID, "Button bahaving weirdly");
-						}
-					}
-				};
-				b.setOnClickListener(ocl);
-				menu.addView(b);
-				menu.invalidate();
-			}
-
-		}
-	}
+//	private void initializeUI() throws ClassNotFoundException,
+//			InstantiationException, IllegalAccessException,
+//			IllegalArgumentException, InvocationTargetException,
+//			NoSuchMethodException {
+//		for (String text : arbitraryViewsList) {
+//			AbstractModuleView t = (AbstractModuleView) Class.forName(text)
+//					.getConstructor(Context.class).newInstance((Context) this);
+//			t.init(modules, view);
+//			if (t.isButton) {
+//				MenuButton b = new MenuButton(this);
+//				b.setView(t);
+//				b.setText(text);
+//				OnClickListener ocl = new OnClickListener() {
+//					@Override
+//					public void onClick(View v) {
+//						if (v instanceof MenuButton) {
+//							MenuButton b = (MenuButton) v;
+//							b.iWasClicked();
+//						} else {
+//							Log.e(ID, "Button bahaving weirdly");
+//						}
+//					}
+//				};
+//				b.setOnClickListener(ocl);
+//				menu.addView(b);
+//				menu.invalidate();
+//			}
+//
+//		}
+//	}
 
 	// debug only method - example board created
 	private void setupBoard() {

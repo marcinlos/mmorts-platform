@@ -6,8 +6,10 @@ import java.util.Map;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewAlreadyRegisteredException;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewNotRegisteredException;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.app.ioapp.init.Initializer;
@@ -19,17 +21,22 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 
 	@Inject(optional=true) private  Initializer initializer;
 	
+	@Inject(optional=true) private  Context context;
+	
 	private Map<String, View> viewMap = new HashMap<String, View>();
 	
 	private View topView;
 	
 	private LinearLayout mainSpace;
 	
+	private View wholeSpace;
+	
 	@OnInit
 	public void onInit(){
 		Log.d(ID, "OnInit fired");
 		Log.d(ID,String.format("%s", initializer.getMainModulesView()));
 		mainSpace = (LinearLayout) initializer.getMainModulesView();
+		wholeSpace = initializer.getMainScreenView();
 	}
 
 	/**
@@ -37,7 +44,7 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 	 */
 	@Override
 	public void register(String id, View view) throws ViewAlreadyRegisteredException{
-		Log.d(ID, String.format("Registered view: %s", view));
+		Log.d(ID, String.format("Registered view: %s", id));
 		if (viewMap.containsKey(id)) {
 			throw new ViewAlreadyRegisteredException("Your ID is not as unique as you think");
 		}
@@ -63,9 +70,18 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 			topView.setVisibility(View.GONE);
 		}
 		topView = viewMap.get(id);
+		//topView = new Button(context);
 		topView.setVisibility(View.VISIBLE);
-		topView.postInvalidate();
+		//topView.postInvalidate();
+		///topView.invalidate();
+		mainSpace.invalidate();
 		topView.invalidate();
+		wholeSpace.invalidate();
+		mainSpace.postInvalidate();
+		topView.postInvalidate();
+		wholeSpace.postInvalidate();
+		//mainSpace.addView(topView);
+		
 	}
 
 	@Override
