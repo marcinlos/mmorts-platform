@@ -5,6 +5,6 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages;
  * logging in
  *
  */
-public class LoginDone {
+public class LoginDoneMessageContent {
 
 }

@@ -1,6 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.backend.modules.loginMod;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
@@ -24,11 +24,13 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	private static final String ID = "LoginModule";
 	
-	@Inject
-	private File loginDataFile;
+	@Inject(optional=true)
+	private FileInputStream loginDataInputStream;
+	
+	@Inject(optional=true)
+	private FileOutputStream loginDataOutputStream;
 
-	@Inject 
-	private LoginChecker checker;
+	private LoginChecker checker = new LoginChecker();
 	
 	@Inject(optional= true)
 	ModulesBroker modulesBroker;
@@ -44,15 +46,14 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	 */
 	private boolean logInFromFile() throws LogInException {
 		Log.d(ID, "Trying to log in from file");
-		if(!checker.checkIfAccountExists()) {
+		if(!checker.checkIfAccountExists(loginDataInputStream)) {
 			Log.d(ID, "File does not have correct properties");
 			return false;
 		}
 		else {
 			mail = checker.getProperties().getProperty("mail");
 			password = checker.getProperties().getProperty("password");
-			// wyslij wiadomosc do serwera ze chcesz sie zalogowac
-			// jesli sie nie uda - zwroc false
+			loginOnServer();
 			Log.d(ID, "Log in succeeded");
 			return true;
 		}
@@ -60,8 +61,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	
 	private boolean logInWithoutFile(String mail, String password) throws LogInException {
 		Log.d(ID, "Trying to log in without file");
-		// wyslij wiadomosc do serwera ze chcesz sie zalogowac
-		// jesli sie nie uda - zwroc false
+		loginOnServer();
 		writePropertiesToFile(mail, password);
 		this.mail = mail;
 		this.password = password;
@@ -74,8 +74,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 		properties.setProperty("mail",mail);
 		properties.setProperty("password", password);
 		try {
-			FileOutputStream loginOutputStream = new FileOutputStream(loginDataFile);
-			properties.store(loginOutputStream, null);
+			properties.store(loginDataOutputStream, null);
 			
 		} catch (Exception e) {
 			Log.e(ID, "Error in writing user data to file. " + e.getMessage());
@@ -83,13 +82,12 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	}
 
 	/**
-	 * Responsible for logging out. Currently not used.
+	 * Responsible for logging out. Currently empty.
 	 * 
 	 * @throws LogOutException
 	 */
 	private void logOut() throws LogOutException {
 		Log.d(ID, "Logging out user");
-		//wyslij wiadomosc do serwera
 	}
 
 	/**
@@ -117,6 +115,10 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 		ModuleDataMessage responseMessage = new ModuleDataMessage(ID, content);
 		modulesBroker.tellPresenters(responseMessage, ID);
 
+	}
+	
+	private void loginOnServer() {
+		
 	}
 
 }

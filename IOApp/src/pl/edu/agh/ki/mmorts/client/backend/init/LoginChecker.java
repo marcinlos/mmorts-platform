@@ -1,11 +1,8 @@
 package pl.edu.agh.ki.mmorts.client.backend.init;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.client.backend.config.PropertiesLoader;
 import pl.edu.agh.ki.mmorts.client.backend.config.ReadingPropertiesException;
@@ -18,8 +15,6 @@ import pl.edu.agh.ki.mmorts.client.backend.config.ReadingPropertiesException;
  */
 public class LoginChecker {
 	
-	@Inject
-	private File loginDataFile;
 	
 	/**
      * Properties from a file
@@ -34,14 +29,14 @@ public class LoginChecker {
     }
 
 	/**
-	 * Checks if account exists which means info file contains correct user info
+	 * Checks if account exists which means loginDataFile contains correct user info
 	 * @return {@code true} if exists
 	 * @throws ReadingPropertiesException
 	 */
-	public boolean checkIfAccountExists() throws ReadingPropertiesException {
+	public boolean checkIfAccountExists(FileInputStream inputStream) throws ReadingPropertiesException {
 		PropertiesLoader loader = new PropertiesLoader();
 		try {
-			loader.load(new FileInputStream(loginDataFile));
+			loader.load(inputStream);
 		} catch (IOException e) {
 			throw new ReadingPropertiesException();
 		}
