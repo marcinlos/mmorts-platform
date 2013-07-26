@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
+import android.util.Log;
 import android.widget.Button;
 import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
@@ -8,11 +9,13 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChanged
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDone;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteMainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements LoginListener{
 	
-	
+	private static final String ID = LoginModulePresenter.class.getSimpleName();
+
 
 	@Override
 	public boolean hasMenuButton() {
@@ -29,11 +32,10 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	 * Checks with module whether we can login from file, logs in an says that it's done
 	 * or sends it's view to top and awaits login attempt
 	 */
-	@Override
 	@OnInit
+	@Override
 	public void init() {
-		presenterId = "LoginModulePresenter";
-		
+		Log.d(ID, "On init");
 		//moduuu³, mamy plik do logowania?
 		boolean loginFromFile = false;
 		//bo jak tak to nas zaloguj
@@ -44,7 +46,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 		else{
 			mainSpaceManager.toTop(presenterId);
 		}
-		
+		Log.d(ID, "On init done");
 	}
 
 

@@ -8,14 +8,16 @@ import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 
 public abstract class AbstractModulePresenter implements ModulePresenter, ModuleDataChangedListener, BusListener{
 	
-	@Inject
+	@Inject(optional = true)
 	protected ModulesBroker modulesBroker;
-	@Inject
+	@Inject(optional = true)
 	protected MainSpaceManager mainSpaceManager;
-	@Inject
+	@Inject(optional = true)
 	protected TopSpaceManager topSpaceManager;
-	@Inject
+	@Inject(optional = true)
 	protected Bus bus;
+	
+	
 	protected String presenterId; 
 	
 	public abstract void init();

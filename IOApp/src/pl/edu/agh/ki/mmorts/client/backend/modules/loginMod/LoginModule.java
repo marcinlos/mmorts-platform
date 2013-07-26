@@ -19,7 +19,7 @@ public class LoginModule extends ModuleBase{
 
 	private LoginModuleData moduleData;
 	
-	@Inject
+	@Inject(optional= true)
 	private Context context;
 	
 

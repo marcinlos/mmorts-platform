@@ -9,9 +9,6 @@ import java.util.Properties;
 
 import javax.inject.Inject;
 
-import com.app.ioapp.init.Initializer;
-import com.google.inject.Module;
-
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.Tile;
@@ -35,17 +32,16 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.ioapp.init.Initializer;
+
 public class RunningActivity extends RoboActivity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = RunningActivity.class.getName();
 	private InfrastructureModule board;
-	private MapModuleView boardView;
 	private LinearLayout menu;
-	private Properties boardConfig; // debug only
 	private List<String> modules;
 	private ConcreteModulesBroker view;
-	private Map<String, ModulePresenter> presentersMap = new HashMap<String, ModulePresenter>();
 
 	private LinearLayout menuBar;
 	private LinearLayout mainSpace;

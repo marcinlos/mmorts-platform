@@ -400,6 +400,7 @@ public class Initializer{
 			// register with the dispatcher
 			Log.d(ID, "Registering modules with a dispatcher");
 			dispatcher.registerModules(configuredModules);
+			
 		} catch (ModuleConfigException e) {
 			Log.e(ID, "Error while readin module configuration");
 			Log.e(ID, e.getMessage());

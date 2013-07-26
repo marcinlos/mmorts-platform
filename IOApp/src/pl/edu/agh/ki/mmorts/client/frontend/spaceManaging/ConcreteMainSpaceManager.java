@@ -33,6 +33,7 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 	 */
 	@Override
 	public void register(String id, View view) throws ViewAlreadyRegisteredException{
+		Log.d(ID, String.format("Registered view: %s", view));
 		if (viewMap.containsKey(id)) {
 			throw new ViewAlreadyRegisteredException("Your ID is not as unique as you think");
 		}
@@ -51,11 +52,14 @@ public class ConcreteMainSpaceManager implements MainSpaceManager {
 
 	@Override
 	public void toTop(String id) {
+		Log.d(ID, String.format("Pushing to top %s", id));
 		if(topView != null){
 			topView.setVisibility(View.GONE);
 		}
 		topView = viewMap.get(id);
 		topView.setVisibility(View.VISIBLE);
+		topView.postInvalidate();
+		topView.invalidate();
 	}
 
 	@Override
