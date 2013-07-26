@@ -13,8 +13,6 @@ import android.util.AttributeSet;
 public class MapModuleView extends AbstractModuleView {
 	
 	private static final String viewId = "MapView";
-	private MapModuleData mapData;
-	private BuildingModuleData buildingData;
 	
 
 	public MapModuleView(Context context) {
@@ -56,14 +54,6 @@ public class MapModuleView extends AbstractModuleView {
 	public void init(List<String> moduleNames, ConcreteModulesBroker view) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	public void updateMapData(MapModuleData data) {
-		this.mapData = data;
-	}
-	
-	public void updateBuildingData(BuildingModuleData data) {
-		this.buildingData = data;
 	}
 
 	public static String getViewId() {
