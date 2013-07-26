@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 
 public abstract class AbstractModuleView extends View {
 	
-	@Inject
+	@Inject(optional = true)
 	protected ConcreteModulesBroker modulesBroker;
 	
 	protected String moduleName;

@@ -24,7 +24,7 @@ public class LoginView extends LinearLayout {
 	private static final String ID = "LoginView";
 	private static final String viewId = "LoginView";
 	
-	private LoginModulePresenter presenter;
+	private LoginListener presenter;
 	private EditText mEmailView;
 	private String mEmail;
 	private EditText mPasswordView;

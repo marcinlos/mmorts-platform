@@ -38,7 +38,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 	/**
 	 * Map of modules to send messages
 	 */
-	@Inject
+	@Inject(optional = true)
 	private Map<String, GUICommModule> modules; 
 
 

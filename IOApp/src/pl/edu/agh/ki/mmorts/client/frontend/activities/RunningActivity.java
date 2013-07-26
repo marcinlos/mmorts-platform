@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
@@ -35,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ioapp.init.Initializer;
+import com.google.inject.Inject;
 
 public class RunningActivity extends RoboActivity implements UIListener {
 
@@ -52,9 +51,9 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	private LinearLayout mainSpace;
 	private LinearLayout topSpace;
 	
-	@Inject
+	@Inject(optional = true)
 	private MainSpaceManager mainManager;
-	@Inject
+	@Inject(optional = true)
 	private TopSpaceManager topManager;
 
 		
@@ -64,7 +63,8 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	
 	//@Inject View mainActivityView;
 	
-	@Inject Initializer initializer;
+	@Inject(optional = true)
+	Initializer initializer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
