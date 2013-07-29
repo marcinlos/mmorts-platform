@@ -28,5 +28,9 @@ public class SingleThreadedDispatcher extends AbstractDispatcher {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public MessagePack sendWithResponse(Message message){
+		return channel().send(message);
+	}
 
 }

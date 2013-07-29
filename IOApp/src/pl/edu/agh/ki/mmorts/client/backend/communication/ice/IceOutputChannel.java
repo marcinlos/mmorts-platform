@@ -2,6 +2,7 @@ package pl.edu.agh.ki.mmorts.client.backend.communication.ice;
 
 import pl.edu.agh.ki.mmorts.Callback_Dispatcher_deliver;
 import pl.edu.agh.ki.mmorts.DispatcherPrx;
+import pl.edu.agh.ki.mmorts.DispatcherPrxHelper;
 import pl.edu.agh.ki.mmorts.Response;
 import pl.edu.agh.ki.mmorts.client.backend.common.ice.Translator;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
@@ -40,7 +41,7 @@ public class IceOutputChannel implements MessageOutputChannel {
         ObjectPrx obj = ice.stringToProxy(str);
         System.out.print("Obtaining server reference...");
         System.out.flush();
-        /*
+        
         try {
             dispatcher = DispatcherPrxHelper.checkedCast(obj);
             // if cast fails, the result is null - no exception!
@@ -58,7 +59,7 @@ public class IceOutputChannel implements MessageOutputChannel {
             shutdown();
             throw new RuntimeException(e);
         }
-        */
+        
         
     }
 

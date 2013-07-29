@@ -32,6 +32,7 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 		presenterId = "LoginModulePresenter";
 		createView(); 
 		mainSpaceManager.register(LoginView.getViewid(), myView);
+		//TODO: partly initiliazed in initiliazer, partly here - change next time
 		modulesBroker.registerPresenter(this, correspondingModuleName);
 		
 		//moduuu³, mamy plik do logowania?

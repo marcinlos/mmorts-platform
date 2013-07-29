@@ -7,7 +7,6 @@
 		"datatype" : "java.lang.String",
 		"login.number" : 3,
 		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod.LoginModulePresenter"
-		
 	}
 },  {
 	"name" : "InfrastructureModule",

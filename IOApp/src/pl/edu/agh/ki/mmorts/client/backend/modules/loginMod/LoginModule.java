@@ -5,9 +5,12 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
+import pl.edu.agh.ki.mmorts.client.backend.common.message.Mode;
 import pl.edu.agh.ki.mmorts.client.backend.init.LoginChecker;
+import pl.edu.agh.ki.mmorts.client.backend.modules.Context;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
+import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
@@ -95,6 +98,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	 */
 	@Override
 	public void receive(Message message, TransactionContext context) {
+		Log.d(ID, "Something came!");
 		return;
 	}
 
@@ -117,8 +121,19 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	}
 	
-	private void loginOnServer() {
+	private boolean loginOnServer() {
+		Log.d(ID, "Sending to server");
+		//send(name(), new Message(1, name(), name(), Mode.UNICAST, "auth", "test"));
+		//se
 		
+		send(name(), "auth");
+		return false;
 	}
+	
+	@MessageMapping("auth-success")
+	public void getSuccess(Message messg, Context ctx){
+		Log.d(ID, "Auth success!");
+	}
+	
 
 }

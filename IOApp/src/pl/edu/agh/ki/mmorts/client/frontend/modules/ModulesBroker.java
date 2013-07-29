@@ -15,7 +15,7 @@ public interface ModulesBroker {
 	 * Unregisters presenter
 	 * @param presenter
 	 */
-	public void unregisterPresenter(ModuleDataChangedListener presenter);
+	public void unregisterPresenter(String presenterName);
 	/**
 	 * Sends message from presenter to module. Presenter needs to know the name of module
 	 * @param message
@@ -28,5 +28,8 @@ public interface ModulesBroker {
 	 * @param moduleName
 	 */
 	public void tellPresenters(ModuleDataMessage message, String moduleName);
+	
+	public void registerModule(GUICommModule module, String moduleName);
+	public void unregisterModule(String moduleName);
 
 }

@@ -1,8 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod.LoginModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 
@@ -17,7 +15,7 @@ public class ModulesBrokerDummy implements ModulesBroker {
 	}
 
 	@Override
-	public void unregisterPresenter(ModuleDataChangedListener presenter) {
+	public void unregisterPresenter(String presenterName) {
 		return;
 		
 	}
@@ -45,6 +43,18 @@ public class ModulesBrokerDummy implements ModulesBroker {
 	@Override
 	public void tellPresenters(ModuleDataMessage message, String moduleName) {
 		p.dataChanged(message);
+		
+	}
+
+	@Override
+	public void registerModule(GUICommModule module, String moduleName) {
+		// stub
+		
+	}
+
+	@Override
+	public void unregisterModule(String presenterName) {
+		// stub
 		
 	}
 
