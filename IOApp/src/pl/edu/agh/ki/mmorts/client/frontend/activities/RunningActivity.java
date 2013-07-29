@@ -19,8 +19,11 @@ import roboguice.inject.ContextSingleton;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -66,6 +69,16 @@ public class RunningActivity extends RoboActivity implements UIListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		int height = displaymetrics.heightPixels;
+		int width = displaymetrics.widthPixels;
+		Log.d(ID, String.format("X: %d Y: %d", width, height));
+//		int width = size.x;
+//		int height = size.y;
+		
+		
 		/*try {
 			Log.d(ID, String.format("Initializer: %s", initializer));
 			initializer.initialize();
