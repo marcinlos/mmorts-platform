@@ -3,12 +3,13 @@ package pl.edu.agh.ki.mmorts.client.frontend.views;
 import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
 
 
 public class MenuButton extends Button {
 
-	private AbstractModuleView v;
+	private View v;
 	private RunningActivity context;
 	
 	public MenuButton(Context context) {
@@ -27,11 +28,11 @@ public class MenuButton extends Button {
 			this.context = (RunningActivity) context;
 	}
 	
-	public void setView(AbstractModuleView view){
+	public void setView(View view){
 		v = view;
 	}
 	
-	public AbstractModuleView getView(){
+	public View getView(){
 		return v;
 	}
 	

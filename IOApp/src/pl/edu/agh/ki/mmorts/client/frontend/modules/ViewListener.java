@@ -14,7 +14,7 @@ public interface ViewListener {
 	
 	/**
 	 * Example event handling (could be multitude of methods, each attached to a listener
-	 * within view. Here you implement logic of reacting to player input.
+	 * within view). Here you implement logic of reacting to player input.
 	 * Like building or destroying a building. Or something.
 	 */
 	public void touchEvent(float x, float y);

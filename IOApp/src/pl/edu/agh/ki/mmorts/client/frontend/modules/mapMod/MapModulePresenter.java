@@ -128,7 +128,9 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void drawStuff(Canvas c) {
 		// TODO Auto-generated method stub
@@ -144,6 +146,9 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	}
 
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void touchEvent(float x, float y) {
 		// TODO Auto-generated method stub

@@ -3,19 +3,16 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.OurView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModuleData;
-import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 
-public class MapModuleView extends AbstractModuleView {
+public class MapModuleView extends View implements OurView {
 	
 	private static final String viewId = "MapView";
 	
@@ -64,6 +61,9 @@ public class MapModuleView extends AbstractModuleView {
 		return viewId;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void createListeners() {
 		setOnTouchListener(new OnTouchListener() {
 			
@@ -81,9 +81,7 @@ public class MapModuleView extends AbstractModuleView {
 	}
 
 	/**
-	 * Every view that wants to draw or receive events or something like that needs to call this
-	 * and pass himself.
-	 * @param listener
+	 * {@inheritDoc}
 	 */
 	public void addListener(ViewListener listener) {
 		presentersListeners.add(listener);
