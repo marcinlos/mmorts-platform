@@ -11,6 +11,9 @@ public class MapModuleData {
 	/**
 	 * Stores information about which tile is occupied.
 	 * {@code true} if it is occupied
+	 * 
+	 * If you also wanted to have a state of "nothing stands here but you can't build here" or something
+	 * (like space buing in Crime City) this map should probably have more states than two.
 	 */
 	private boolean[][] map;
 	

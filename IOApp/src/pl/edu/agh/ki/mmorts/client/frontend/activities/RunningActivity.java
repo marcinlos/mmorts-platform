@@ -307,7 +307,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 					// String.valueOf(event.getX()) + "x" +
 					// String.valueOf(event.getY()));
 					AbstractModuleView view = (AbstractModuleView) v;
-					view.iWasClicked(event.getX(), event.getY());
+					//view.iWasClicked(event.getX(), event.getY());
 				}
 				return true;
 			}
