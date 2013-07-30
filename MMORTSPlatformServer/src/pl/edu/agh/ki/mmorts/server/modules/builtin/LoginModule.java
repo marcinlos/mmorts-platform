@@ -43,8 +43,8 @@ public class LoginModule extends ModuleBase {
     @MessageMapping("auth")
     public void handleAuth(Message message, Context ctx) {
         logger().debug("handleAuth!!!!");
+        logger().debug("Responding to message: " + message);
         outputResponse(message, "auth-success", 666);
-        output("some_module", "kill-yourself", new int[] {7, 4});
     }
     
     @MessageMapping
@@ -59,51 +59,51 @@ public class LoginModule extends ModuleBase {
     public void receive(final Message message, final Context ctx) {
         logger().debug("Message received");
         logger().debug(message);
-        //super.receive(message, ctx);
+        super.receive(message, ctx);
 
-        if (message.request.equals("auth")) {
-            call(_if(val(3).is(eq(3))).then(new Cont() {
-                public void execute(Control c) {
-                    logger().debug("3 == 3");
-                }
-            })._else(new Cont() {
-                public void execute(Control c) {
-                    logger().debug("3 != 3");
-                }
-            }));
-
-            transaction().addListener(new TransactionListener() {
-                @Override
-                public void rollback() {
-                    logger().debug("Rolled back :(");
-                    outputResponse(message, "info-fail", (Object) ":(");
-                }
-
-                @Override
-                public void commit() {
-                    logger().debug("Commited \\o/");
-                    outputResponse(message, "info-success",
-                            (Object) "Weeeeee :D");
-                }
-            });
-
-            ctx.put("n", 1);
-            Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))._do(
-                    seq(new Cont() {
-                        public void execute(Control c) {
-                            int n = ctx.get("n", Integer.class);
-                            logger().debug("Here goes " + n);
-                            Random rand = new Random();
-                            outputResponse(message, ":|",
-                                    (Object) ("So far so good, " + n));
-                            if (rand.nextInt(10) == 7) {
-                                //throw new RuntimeException("Evul exception!");
-                            }
-                            send("inc_mod", "increment", (Object) "n");
-                        }
-                    }));
-            call(c);
-        }
+//        if (message.request.equals("auth")) {
+//            call(_if(val(3).is(eq(3))).then(new Cont() {
+//                public void execute(Control c) {
+//                    logger().debug("3 == 3");
+//                }
+//            })._else(new Cont() {
+//                public void execute(Control c) {
+//                    logger().debug("3 != 3");
+//                }
+//            }));
+//
+//            transaction().addListener(new TransactionListener() {
+//                @Override
+//                public void rollback() {
+//                    logger().debug("Rolled back :(");
+//                    outputResponse(message, "info-fail", (Object) ":(");
+//                }
+//
+//                @Override
+//                public void commit() {
+//                    logger().debug("Commited \\o/");
+//                    outputResponse(message, "info-success",
+//                            (Object) "Weeeeee :D");
+//                }
+//            });
+//
+//            ctx.put("n", 1);
+//            Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))._do(
+//                    seq(new Cont() {
+//                        public void execute(Control c) {
+//                            int n = ctx.get("n", Integer.class);
+//                            logger().debug("Here goes " + n);
+//                            Random rand = new Random();
+//                            outputResponse(message, ":|",
+//                                    (Object) ("So far so good, " + n));
+//                            if (rand.nextInt(10) == 7) {
+//                                //throw new RuntimeException("Evul exception!");
+//                            }
+//                            send("inc_mod", "increment", (Object) "n");
+//                        }
+//                    }));
+//            call(c);
+//        }
     }
 
 }
