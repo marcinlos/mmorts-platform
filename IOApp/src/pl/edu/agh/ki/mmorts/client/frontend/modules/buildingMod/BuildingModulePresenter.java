@@ -47,9 +47,9 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	@Override
 	@OnInit
 	public void init() {
-		buildingImages.put("przedszkole", BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_orange));
-		buildingImages.put("mcdonalds", BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_fill));
-		buildingImages.put("cmentarz", BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_cross));
+		buildingImages.put(BuildingTypes.PRZEDSZKOLE.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_orange));
+		buildingImages.put(BuildingTypes.MCDONALDS.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_fill));
+		buildingImages.put(BuildingTypes.CMENTARZ.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_cross));
 		
 		presenterId = "BuildingModulePresenter";
 		modulesBroker.registerPresenter(this, MODULE_NAME);
