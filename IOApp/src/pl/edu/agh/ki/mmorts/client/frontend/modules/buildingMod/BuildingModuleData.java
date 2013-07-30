@@ -1,7 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a content of a message sent between {@code MapModulePresenter} and {@code MapModule}
@@ -9,20 +8,28 @@ import java.util.Map;
  */
 public class BuildingModuleData {
 	
-	 private List<BuildingInstance> l;
+	 private List<BuildingInstance> buildings;
 
-	public List<BuildingInstance> getL() {
-		return l;
+	public List<BuildingInstance> getBuildings() {
+		return buildings;
 	}
 
 	public void addBuilding(BuildingInstance b) {
-		l.add(b);
+		buildings.add(b);
 	}
 	
 	public void removeBuilding(BuildingInstance b){
-		l.remove(b);
+		buildings.remove(b);
 	}
 	
+	
+	public void removeBuilding(int x, int y) {
+		for (BuildingInstance building : buildings) {
+			if (building.getColumn() == x && building.getRow() == y) {
+				buildings.remove(building);
+			}
+		}
+	}
 	
 
 }
