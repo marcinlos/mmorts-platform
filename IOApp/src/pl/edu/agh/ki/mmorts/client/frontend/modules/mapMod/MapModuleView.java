@@ -1,20 +1,22 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModuleData;
-import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.OurView;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 
 
-public class MapModuleView extends AbstractModuleView {
+public class MapModuleView extends View implements OurView {
 	
 	private static final String viewId = "MapView";
-	private MapModuleData mapData;
-	private BuildingModuleData buildingData;
+	
+	private List<ViewListener> presentersListeners = new ArrayList<ViewListener>();
 	
 
 	public MapModuleView(Context context) {
@@ -32,42 +34,59 @@ public class MapModuleView extends AbstractModuleView {
 	
 	
 	/**
-	 * Called automatically after {@code invalidate()} or {@code postInvalidate()}. Implement this to do your drawing.
+	 * Called automatically after {@code invalidate()} or {@code postInvalidate()}.
+	 * In out model used to pass canvas to every presenter that registered listener to draw his stuff
+	 * Canvas is passed in the order in which listeners are registered
+	 * shouldn't be too hard to implement methods that would shift that around if needed
 	 */
 	@Override
 	public void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		for(ViewListener v : presentersListeners){
+			v.drawStuff(canvas);
+		}
 		
 	}
 
-	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
 	public void iWasClicked(float x, float y) {
-		// TODO Auto-generated method stub
+		for(ViewListener v : presentersListeners){
+			v.touchEvent(x, y);
+		}
 		
 	}
 
-	@Override
-	public void init(List<String> moduleNames, ConcreteModulesBroker view) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void updateMapData(MapModuleData data) {
-		this.mapData = data;
-	}
-	
-	public void updateBuildingData(BuildingModuleData data) {
-		this.buildingData = data;
-	}
 
 	public static String getViewId() {
 		return viewId;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void createListeners() {
+		setOnTouchListener(new OnTouchListener() {
+			
+			/**
+			 * if you want fancy menus to work, you should see whether your buttons were
+			 * clicked as View, and if so return with false for the event to go through
+			 */
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				iWasClicked(event.getX(), event.getY());
+				return true; //event does not go further
+			}
+		});
+		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addListener(ViewListener listener) {
+		presentersListeners.add(listener);
+		invalidate();
+		
 	}
 	
 	

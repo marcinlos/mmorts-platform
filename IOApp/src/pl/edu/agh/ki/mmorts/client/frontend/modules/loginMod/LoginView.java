@@ -38,7 +38,7 @@ public class LoginView extends LinearLayout {
 		this.presenter = presenter;
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		if (inflater != null) {
-			view = (LoginView)inflater.inflate(R.layout.activity_login, this, true);
+			view = (LoginView)LayoutInflater.from(context).inflate(R.layout.activity_login, this, true);
 			initialize();
 		}
 		else{
