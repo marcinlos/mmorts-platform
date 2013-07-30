@@ -32,7 +32,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	 */
 	private static final String MODULE_NAME = "MapModule";
 	
-	private static final int tileSize = 50;
+	private static final int TILE_SIZE = 50;
 	private final Bitmap emptySpace = BitmapFactory.decodeResource(context.getResources(),R.drawable.tile);
 
 	private MapModuleView mapModuleView;
@@ -132,7 +132,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 			for(int j=0;j<mapModuleData.getMapHeight();j++){
 				if (!map[i][j]){ //if there is nothing there, map wants to draw the nothing
 					//TODO check if changing around i and j is required, I never could tell
-					c.drawBitmap(emptySpace, i*tileSize, j*tileSize, null);
+					c.drawBitmap(emptySpace, i*TILE_SIZE, j*TILE_SIZE, null);
 				}
 			}
 		}
