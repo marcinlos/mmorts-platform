@@ -51,8 +51,12 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		createView();
 		
 		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);
+		
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);
+		menuButton.setId(presenterId);
+		menuButton.setMSM(mainSpaceManager);
+		
 		Log.d(ID, "context:");
 		Log.d(ID, String.format("%s", context));
 		Log.d(ID, "topSpaceManager:");
