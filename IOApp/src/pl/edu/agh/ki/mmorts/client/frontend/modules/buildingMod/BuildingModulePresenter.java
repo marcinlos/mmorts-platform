@@ -2,10 +2,12 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.Log;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
@@ -29,6 +31,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	 * Name of module that I want to communicate with
 	 */
 	private static final String MODULE_NAME = "BuildingModule";
+	private static final int TILE_SIZE = 50;
 	
 	private static final Map<String, Bitmap> buildingImages = new HashMap<String,Bitmap>();
 	
@@ -103,7 +106,26 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void touchEvent(float x, float y) {
-		// TODO Auto-generated method stub
+		Log.d(ID,"I was clicked on: x=" + x + " y=" + y);
+		float tmp = x/TILE_SIZE;
+		int truex = (int)tmp;
+		tmp = y/TILE_SIZE;
+		int truey = (int)tmp;
 		
+	}
+	
+	private BuildingTypes getBuildingType {
+		Random r = new Random();
+		int type = r.nextInt(3) {
+			if (type == 0) {
+				return BuildingTypes.PRZEDSZKOLE;
+			}
+			else if (type == 1) {
+				return BuildingTypes.MCDONALDS;
+			}
+			else {
+				return BuildingTypes.CMENTARZ; 
+			}
+		}
 	}
 }
