@@ -1,23 +1,14 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
-import com.google.inject.Inject;
-
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
-import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModuleDataChangedListener;
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModuleNotExists;
-import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
+
+import com.google.inject.Inject;
 
 
 /**
@@ -81,7 +72,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 
 	@Override
 	public void tellPresenters(ModuleDataMessage message, String moduleName) {
-		Log.d(ID, "Invoking presenters" + moduleName);
+		Log.d(ID, "Invoking presenters " + moduleName);
 		for (ModuleDataChangedListener presenter : modulePresenters.keySet()) {
 			if (modulePresenters.get(presenter).equals(moduleName)) {
 				presenter.dataChanged(message);

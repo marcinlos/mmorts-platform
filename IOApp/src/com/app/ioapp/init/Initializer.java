@@ -158,10 +158,6 @@ public class Initializer {
 	 */
 	private InputStream iceConfigInput;
 
-	/**
-	 * Stream to write player information if he is not registered yet
-	 */
-	private OutputStream logDataOutput;
 
 	/**
 	 * input stream with login contents, should never be null due to
@@ -493,10 +489,13 @@ public class Initializer {
 				}
 			};
 			Module module = DI.createWith(cl, configModule, dispatcherModule,
-					DI.objectModule(txManager.getProvider(),
-							TransactionProvider.class), properties,
+					DI.objectModule(txManager,
+							TransactionManager.class), properties,
 					playersPersistorModule, customPersistorModule, DI
-							.objectModule(desc, ModuleDescriptor.class));
+							.objectModule(desc, ModuleDescriptor.class),
+							DI.objectModule(loginInput, FileInputStream.class),
+							DI.objectModule(loginOutput, FileOutputStream.class),
+							modulesBrokerModule);
 			callInit(module);
 			return module;
 		} catch (Exception e) {

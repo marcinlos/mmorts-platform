@@ -44,7 +44,7 @@ public class IceOutputChannel implements MessageOutputChannel {
             throw new RuntimeException("No MMORTSServer.Proxy. Did you privede correct config?");
         }
         ObjectPrx obj = ice.stringToProxy(str);
-        obj=obj.ice_datagram();
+        //obj=obj.ice_datagram();
         
         System.out.print("Obtaining server reference...");
         System.out.flush();

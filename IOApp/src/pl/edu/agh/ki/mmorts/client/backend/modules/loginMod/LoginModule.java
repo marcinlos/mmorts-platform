@@ -104,6 +104,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
+		txManager.begin();
 		LoginMessageContent content = message.getMessage(LoginMessageContent.class);
 		LoginMessageContent responseContent;
 		if (content.getMode() == LoginMessageContent.TO_MODULE_FILE_LOGIN) {
@@ -116,17 +117,16 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 			responseContent = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE);
 			responseContent.setLogInSuccess(logInWithoutFile(mail, password));
 		}
-		ModuleDataMessage responseMessage = new ModuleDataMessage(ID, content);
+		ModuleDataMessage responseMessage = new ModuleDataMessage(ID, responseContent);
+		Log.d(ID, "Telling response to presenters");
 		modulesBroker.tellPresenters(responseMessage, ID);
-
+		txManager.commit();
 	}
 	
 	private boolean loginOnServer() {
-		Log.d(ID, "Sending to server");
-		//send(name(), new Message(1, name(), name(), Mode.UNICAST, "auth", "test"));
-		//se
 		
-		send(name(), "auth");
+		Log.d(ID, "Sending to server");
+		send(anyAddress(), "auth");
 		return false;
 	}
 	

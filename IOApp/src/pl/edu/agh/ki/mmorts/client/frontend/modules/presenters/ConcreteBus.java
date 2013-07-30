@@ -7,7 +7,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.Presente
 
 public class ConcreteBus implements Bus {
 	
-	private List<BusListener> l;
+	private List<BusListener> l = new ArrayList<BusListener>();
 
 	@Override
 	public void sendMessage(PresentersMessage m) {

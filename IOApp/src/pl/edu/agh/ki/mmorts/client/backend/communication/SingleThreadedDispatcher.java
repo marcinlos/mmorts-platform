@@ -32,5 +32,11 @@ public class SingleThreadedDispatcher extends AbstractDispatcher {
 	public MessagePack sendWithResponse(Message message){
 		return channel().send(message);
 	}
+	
+	//Hack!
+	@Override
+	public void send(Message message) {
+		channel().send(message);
+	}
 
 }
