@@ -5,14 +5,19 @@ import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.modules.OurView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
+import android.R.color;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 
 public class MapModuleView extends View implements OurView {
+	private static final String ID = "MapView";
 	
 	private static final String viewId = "MapView";
 	
@@ -21,14 +26,17 @@ public class MapModuleView extends View implements OurView {
 
 	public MapModuleView(Context context) {
 		super(context);
+		setBackgroundColor(Color.RED);
 	}
 
 	public MapModuleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		setBackgroundColor(Color.RED);
 	}
 
 	public MapModuleView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		setBackgroundColor(Color.RED);
 		
 	}
 	
@@ -94,6 +102,21 @@ public class MapModuleView extends View implements OurView {
 	 */
 	@Override
 	public void actionFinished(boolean result) {
+		if(!result){
+			Log.d(ID,"action failed");
+			setAlpha((float) 0.9);
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+			  @Override
+			  public void run() {
+				  setAlpha(1);
+				  Log.d(ID,"runnable bringing alpha back to normal fired");
+			  }
+			}, 2000);
+		}
+		else{
+			Log.d(ID,"action succeeded");
+		}
 		return;
 	}
 	

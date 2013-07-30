@@ -144,7 +144,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	 */
 	@Override
 	public void touchEvent(float x, float y) {
-		// TODO Auto-generated method stub
+		return;
 	}
 
 
