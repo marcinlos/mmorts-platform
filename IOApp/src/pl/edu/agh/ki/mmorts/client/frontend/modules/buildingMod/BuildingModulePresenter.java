@@ -64,8 +64,8 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		if (message.carries(BuildingModuleData.class)) {
 			ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
 			if (content instanceof ResponseContent) {
-				if (((ResponseContent) content).isResponseToChange() && !((ResponseContent) content).isPositive()) {
-					informViewAboutFailure();
+				if (((ResponseContent) content).isResponseToChange()) {
+					informViewAboutAction(((ResponseContent) content).isPositive());
 					return;
 				}
 					buildingModuleData = (BuildingModuleData) ((ResponseContent) content).getState();
@@ -87,9 +87,8 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	
 	}
 	
-	private void informViewAboutFailure() {
-		// TODO Auto-generated method stub
-		
+	private void informViewAboutAction(boolean result) {
+		mapModuleView.actionFinished(result);
 	}
 
 

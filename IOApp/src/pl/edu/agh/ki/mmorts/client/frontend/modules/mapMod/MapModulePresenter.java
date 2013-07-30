@@ -86,8 +86,8 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		if (message.carries(MapModuleData.class)) {
 			ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
 			if (content instanceof ResponseContent) {
-				if (((ResponseContent) content).isResponseToChange() && !((ResponseContent) content).isPositive()) {
-					informViewAboutFailure();
+				if (((ResponseContent) content).isResponseToChange() ) {
+					informViewAboutAction(((ResponseContent) content).isPositive());
 					return;
 				}
 					mapModuleData = (MapModuleData) ((ResponseContent) content).getState();
@@ -113,12 +113,11 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	
 
 	private void updateView() {
-		// TODO Auto-generated method stub
-		
+		mapModuleView.postInvalidate();
 	}
 
-	private void informViewAboutFailure() {
-		// TODO Auto-generated method stub
+	private void informViewAboutAction(boolean result) {
+		mapModuleView.actionFinished(result);
 		
 	}
 
@@ -146,7 +145,6 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	@Override
 	public void touchEvent(float x, float y) {
 		// TODO Auto-generated method stub
-		
 	}
 
 

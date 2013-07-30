@@ -88,6 +88,14 @@ public class MapModuleView extends View implements OurView {
 		invalidate();
 		
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void actionFinished(boolean result) {
+		return;
+	}
 	
 	
 
