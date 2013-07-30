@@ -6,7 +6,6 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.MapDrawnContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
@@ -18,9 +17,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 
 /**
@@ -101,8 +97,6 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 			}
 			updateView();
 			mainSpaceManager.toTop(MapModuleView.getViewId());
-			PresentersMessage presentersMessage = new PresentersMessage(ID, new MapDrawnContent());
-			bus.sendMessage(presentersMessage);
 		}
 		
 	}
