@@ -1,15 +1,9 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
-import java.util.Properties;
-
-import pl.edu.agh.ki.mmorts.client.frontend.activities.RunningActivity;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModulePresenter;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
