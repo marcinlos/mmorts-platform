@@ -117,7 +117,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	
 
 	private void updateView() {
-		mapModuleView.postInvalidate();
+		mapModuleView.postInvalidate(); //TODO toTop?
 	}
 
 	private void informViewAboutAction(boolean result) {
