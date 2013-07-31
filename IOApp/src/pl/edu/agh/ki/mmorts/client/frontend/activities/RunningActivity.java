@@ -4,33 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
-import pl.edu.agh.ki.mmorts.client.frontend.views.AbstractModuleView;
-import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContextSingleton;
-import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.app.ioapp.init.Initializer;
 import com.google.inject.Inject;
@@ -295,7 +281,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 
 	}
 
-	public void buttonWasClicked(MenuButton b) {
+	/*public void buttonWasClicked(MenuButton b) {
 		AbstractModuleView v = b.getView();
 		v.setOnTouchListener(new View.OnTouchListener() {
 			@Override
@@ -305,7 +291,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 					// String.valueOf(event.getX()) + "x" +
 					// String.valueOf(event.getY()));
 					AbstractModuleView view = (AbstractModuleView) v;
-					view.iWasClicked(event.getX(), event.getY());
+					//view.iWasClicked(event.getX(), event.getY());
 				}
 				return true;
 			}
@@ -317,7 +303,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		layout.addView(a);
 		layout.addView(v);
 
-	}
+	}*/
 
 	/**
 	 * called from menu_layout as a signal that we can return to main display

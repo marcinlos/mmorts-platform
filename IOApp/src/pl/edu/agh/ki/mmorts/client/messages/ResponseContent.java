@@ -4,7 +4,7 @@ package pl.edu.agh.ki.mmorts.client.messages;
  * A class sent from module to presenter as a response to {@code ChangeStateContent} or {@code GetStateContent}.
  *
  */
-public class ResponseContent {
+public class ResponseContent implements ModuleDataMessageContent {
 	/**
 	 * true if it's response to {@code ChangeStateContent}, otherwise false 
 	 */
