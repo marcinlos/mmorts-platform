@@ -91,7 +91,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		if (!message.carries(MapModuleData.class)) {
+		if (!message.carries(ResponseContent.class)) {
 			throw new IllegalArgumentException();
 		}
 		ResponseContent content = message.getMessage(ResponseContent.class);
@@ -126,14 +126,17 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
 		modulesBroker.tellModule(message, MODULE_NAME);
 		boolean[][] map = mapModuleData.getMap();
+		Log.d(ID,"byc moze cos rysuje no...");
 		for(int i=0;i<mapModuleData.getMapWidth();i++){
 			for(int j=0;j<mapModuleData.getMapHeight();j++){
 				if (!map[i][j]){ //if there is nothing there, map wants to draw the nothing
 					//TODO check if changing around i and j is required, I never could tell
 					c.drawBitmap(emptySpace, i*TILE_SIZE, j*TILE_SIZE, null);
+					Log.d(ID,"rysuje na "+i*TILE_SIZE+", " + j*TILE_SIZE);
 				}
 			}
 		}
+		Log.d(ID,"porysowalem, powinno byc");
 		
 	}
 

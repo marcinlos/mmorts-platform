@@ -13,10 +13,8 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 	
 	@Inject(optional = true)
 	protected Context context;
-	//@Inject(optional = true)
-	//DEBUUUUUUUUUUUUUUUUUUUUUUUUUG TODO
-	protected ModulesBroker modulesBroker = new ModulesBrokerDummy();
-	//DEGUUUUUUUUUUUUUUUUUUUUUUUUUG
+	@Inject(optional = true)
+	protected ModulesBroker modulesBroker;
 	@Inject(optional = true)
 	protected MainSpaceManager mainSpaceManager;
 	@Inject(optional = true)

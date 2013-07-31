@@ -70,7 +70,7 @@ public class ModulesBrokerDummy implements ModulesBroker {
 			}
 			else{
 				MapModuleData data = new MapModuleData();
-				data.setMap(new boolean[10][10]);
+				data.setMap(new boolean[11][9]);
 				Log.e(ID,"yeah, get new state from " + moduleName);
 				rc = new ResponseContent(false,true,data);
 				

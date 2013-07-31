@@ -65,7 +65,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		if (!message.carries(BuildingModuleData.class)) {
+		if (!message.carries(ResponseContent.class)) {
 			throw new IllegalArgumentException();
 		}
 		ResponseContent content = message.getMessage(ResponseContent.class);
@@ -99,6 +99,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		modulesBroker.tellModule(message, MODULE_NAME);
 		for(BuildingInstance b : buildingModuleData.getBuildings()){
 			c.drawBitmap(buildingImages.get(b.getData().getName()), b.getColumn()*TILE_SIZE, b.getRow()*TILE_SIZE, null);
+			Log.d(ID,"rysuje na "+b.getColumn()*TILE_SIZE+", " + b.getRow()*TILE_SIZE);
 		}
 	}
 

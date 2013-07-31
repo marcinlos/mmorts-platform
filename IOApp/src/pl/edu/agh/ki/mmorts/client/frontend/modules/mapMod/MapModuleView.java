@@ -49,6 +49,7 @@ public class MapModuleView extends View implements OurView {
 	@Override
 	public void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		Log.e(ID,"Rysujê coœ fajnego");
 		for(ViewListener v : presentersListeners){
 			v.drawStuff(canvas);
 		}
