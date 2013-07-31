@@ -1,9 +1,9 @@
 package pl.edu.agh.ki.mmorts.client.backend.communication;
 
-import android.util.Log;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionExecutor;
+import android.util.Log;
 
 
 public class SingleThreadedDispatcher extends AbstractDispatcher {
@@ -40,7 +40,8 @@ public class SingleThreadedDispatcher extends AbstractDispatcher {
 	//Hack!
 	@Override
 	public void send(Message message) {
-		receive(channel().send(message));
+		MessagePack mPack = channel().send(message);
+		receive(mPack);
 	}
 
 }

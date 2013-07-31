@@ -1,15 +1,12 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.presenters;
 
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.widget.Button;
 
 import com.google.inject.Inject;
-
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
-import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 
 public abstract class AbstractModulePresenter implements ModulePresenter, ModuleDataChangedListener, BusListener{
 	

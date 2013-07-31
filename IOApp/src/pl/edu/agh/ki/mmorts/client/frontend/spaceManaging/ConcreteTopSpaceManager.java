@@ -1,18 +1,12 @@
 package pl.edu.agh.ki.mmorts.client.frontend.spaceManaging;
 
-import java.util.HashMap;
-import java.util.Map;
+import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import android.util.Log;
+import android.view.View;
 
 import com.app.ioapp.init.Initializer;
 import com.google.inject.Inject;
-
-import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
-import roboguice.inject.InjectView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class ConcreteTopSpaceManager implements TopSpaceManager{
 

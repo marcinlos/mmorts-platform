@@ -1,15 +1,11 @@
 package com.app.ioapp.modules.example;
 
 
-import com.google.inject.Inject;
-
-import pl.edu.agh.ki.mmorts.client.GUIGenericMessage;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.BusListener;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
@@ -23,6 +19,8 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.google.inject.Inject;
 
 public class ExampleModulePresenter extends AbstractModulePresenter implements BusListener{
 	
