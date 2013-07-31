@@ -23,20 +23,24 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@Override
 	@OnInit
 	public void init() {
+		Log.d(ID, "Login module OnInit");
 		
 		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG TODO
-		modulesBroker = new ModulesBrokerDummy();
+		//modulesBroker = new ModulesBrokerDummy();
 		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG
 		
 		
 		presenterId = "LoginModulePresenter";
 		createView(); 
 		mainSpaceManager.register(LoginView.getViewid(), myView);
+		//TODO: partly initiliazed in initiliazer, partly here - change next time
 		modulesBroker.registerPresenter(this, correspondingModuleName);
+		bus.register(this);
 		
+		Log.d(ID, "Communicating with module");
 		//moduuu³, mamy plik do logowania?
 		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), correspondingModuleName);
-		
+		Log.d(ID, "Login module OnInit ended");
 	}
 
 	@Override
@@ -46,10 +50,12 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 			switch(m.getMode()){
 			case LoginMessageContent.TO_PRESENTER_FILE_LOGIN:
 				if(m.isLogInSuccess()){
+					Log.d(ID, "Logged with success");
 					sendBusMessage();
 					return;
 				}
 				else{
+					Log.d(ID, "Logged with fail");
 					mainSpaceManager.toTop(LoginView.getViewid());
 					return;
 				}

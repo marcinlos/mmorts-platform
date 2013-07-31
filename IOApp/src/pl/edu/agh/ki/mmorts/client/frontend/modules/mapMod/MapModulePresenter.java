@@ -48,6 +48,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	public void init() {
 		presenterId = "MapModulePresenter";
 		modulesBroker.registerPresenter(this, MODULE_NAME);
+		bus.register(this);
 		createView();
 		
 		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);

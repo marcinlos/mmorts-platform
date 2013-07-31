@@ -71,9 +71,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 			endProgram();
 		}*/
 		
-		Log.d(ID, "Started running Activity");
 		view  = initializer.getMainScreenView();
-		Log.d(ID, String.format("MainScreenView: %s", view));
 		setContentView(view);
 		//view.invalidate();
 		//((LinearLayout)view).removeAllViews();
@@ -82,7 +80,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 		
 		view.invalidate();
 		
-		Log.d(ID, String.format("Layout is: %s", view));
+		Log.d(ID, String.format("RNNING ACTIVITY STARTED"));
 		
 		//view.cr
 		

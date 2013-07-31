@@ -9,7 +9,7 @@ import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
  * Implementation of {@code CommunicatingModule}
  *
  */
-public abstract class AbstractCommunicatingModule implements CommunicatingModule{
+public abstract class AbstractCommunicatingModule implements Module{
 	 
 	@Override
 	 public void started() {
