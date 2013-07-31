@@ -56,6 +56,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		
 		presenterId = "BuildingModulePresenter";
 		modulesBroker.registerPresenter(this, MODULE_NAME);
+		bus.register(this);
 		mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
 		mapModuleView.addListener(this);
 		
