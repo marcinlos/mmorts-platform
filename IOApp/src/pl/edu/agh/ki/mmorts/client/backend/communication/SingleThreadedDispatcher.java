@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.backend.communication;
 
+import android.util.Log;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionExecutor;
@@ -7,12 +8,15 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionExecutor;
 
 public class SingleThreadedDispatcher extends AbstractDispatcher {
 	
+	private static final String ID =SingleThreadedDispatcher.class.getName();
+	
 	private TransactionExecutor executor = new TransactionExecutor();
 
 	@Override
 	public void receive(MessagePack message) {
 		System.out.println("Message: ");
 		System.out.println("version: " + message.version);
+		Log.d(ID, String.format("Got message %s", message));
 		for (Message msg: message.messages) {
 			dispatchMessage(msg);
 		}
@@ -36,7 +40,7 @@ public class SingleThreadedDispatcher extends AbstractDispatcher {
 	//Hack!
 	@Override
 	public void send(Message message) {
-		channel().send(message);
+		receive(channel().send(message));
 	}
 
 }
