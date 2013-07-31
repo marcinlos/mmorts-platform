@@ -40,7 +40,8 @@ public class SingleThreadedDispatcher extends AbstractDispatcher {
 	//Hack!
 	@Override
 	public void send(Message message) {
-		receive(channel().send(message));
+		MessagePack mPack = channel().send(message);
+		receive(mPack);
 	}
 
 }

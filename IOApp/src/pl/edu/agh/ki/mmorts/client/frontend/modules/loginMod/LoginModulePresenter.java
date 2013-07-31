@@ -24,23 +24,15 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	@OnInit
 	public void init() {
 		Log.d(ID, "Login module OnInit");
-		
-		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG TODO
-		//modulesBroker = new ModulesBrokerDummy();
-		//DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG
-		
-		
 		presenterId = "LoginModulePresenter";
 		createView(); 
 		mainSpaceManager.register(LoginView.getViewid(), myView);
 		//TODO: partly initiliazed in initiliazer, partly here - change next time
 		modulesBroker.registerPresenter(this, correspondingModuleName);
 		bus.register(this);
-		
-		Log.d(ID, "Communicating with module");
-		//moduuu³, mamy plik do logowania?
-		modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), correspondingModuleName);
+		mainSpaceManager.toTop(LoginView.getViewid());
 		Log.d(ID, "Login module OnInit ended");
+
 	}
 
 	@Override
@@ -98,7 +90,20 @@ public class LoginModulePresenter extends AbstractModulePresenter implements Log
 	
 	private void createView(){
 		
-		myView = new LoginView(context, this);
+		//Log.d(ID, "Communicating with module");
+		//moduuu³, mamy plik do logowania?
+		//modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), correspondingModuleName);
+		//Log.d(ID, "Login module OnInit ended");
+		myView = new LoginView(context, this, new LoginView.VisibilityListener() {
+			
+			@Override
+			public void visible() {
+				Log.d(ID, "Communicating with module");
+				modulesBroker.tellModule(new ModuleDataMessage(presenterId, new LoginMessageContent(LoginMessageContent.TO_MODULE_FILE_LOGIN)), correspondingModuleName);
+				
+				
+			}
+		});
 	}
 
 	

@@ -2,6 +2,7 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,9 +27,17 @@ public class LoginView extends LinearLayout {
 	
 	View view;
 	
+	public static abstract class VisibilityListener{
+		public abstract void visible();
+	}
+	
+	private final VisibilityListener visibilityListener;
+	
 	 //I think this one should be called when inflating like I do
-	public LoginView(Context context, LoginModulePresenter presenter){
+	public LoginView(Context context, LoginModulePresenter presenter, VisibilityListener visibilityListener){
 		super(context);
+		
+		this.visibilityListener = visibilityListener;
 		this.presenter = presenter;
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		if (inflater != null) {
@@ -137,7 +146,16 @@ public class LoginView extends LinearLayout {
 	public static String getViewid() {
 		return viewId;
 	}
-		
+
+	
+	@Override
+	protected void onWindowVisibilityChanged(int visibility) {
+		super.onWindowVisibilityChanged(visibility);
+		if(visibility == VISIBLE){
+			visibilityListener.visible();
+		}
+	}
+
 	
 
 }

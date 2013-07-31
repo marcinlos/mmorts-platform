@@ -13,6 +13,9 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod.LoginModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
@@ -41,6 +44,8 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	private String mail;
 	private String password;
 
+	
+	private boolean fromFile = false;
 
 	/**
 	 * Tries to log in from file
@@ -49,6 +54,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	 */
 	private boolean logInFromFile() throws LogInException {
 		Log.d(ID, "Trying to log in from file");
+		fromFile = true;
 		if(!checker.checkIfAccountExists(loginDataInputStream)) {
 			Log.d(ID, "File does not have correct properties");
 			return false;
@@ -64,6 +70,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	
 	private boolean logInWithoutFile(String mail, String password) throws LogInException {
 		Log.d(ID, "Trying to log in without file");
+		fromFile = false;
 		loginOnServer();
 		writePropertiesToFile(mail, password);
 		this.mail = mail;
@@ -93,15 +100,6 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 		Log.d(ID, "Logging out user");
 	}
 
-	/**
-	 * Does not need to do anything
-	 */
-	@Override
-	public void receive(Message message, TransactionContext context) {
-		Log.d(ID, "Something came!");
-		return;
-	}
-
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
 		LoginMessageContent content = message.getMessage(LoginMessageContent.class);
@@ -128,8 +126,9 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	}
 	
 	@MessageMapping("auth-success")
-	public void getSuccess(Message messg, Context ctx){
+	public void getSuccess(Message messg, TransactionContext ctx){
 		Log.d(ID, "Auth success!");
+		modulesBroker.tellPresenters(new ModuleDataMessage(messg.target, new LoginMessageContent(fromFile? LoginMessageContent.TO_MODULE_FILE_LOGIN: LoginMessageContent.TO_MODULE_LOGIN)), messg.target);
 	}
 	
 
