@@ -4,16 +4,13 @@ import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.ViewCreatedContent;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
-import pl.edu.agh.ki.mmorts.client.messages.StateChangedContent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -94,38 +91,27 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		if (message.carries(MapModuleData.class)) {
-			ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessageContent.class);
-			if (content instanceof ResponseContent) {
-				if (((ResponseContent) content).isResponseToChange() ) {
-					informViewAboutAction(((ResponseContent) content).isPositive());
-					return;
-				}
-					mapModuleData = (MapModuleData) ((ResponseContent) content).getState();
-			}
-			else {
-				mapModuleData = (MapModuleData) ((StateChangedContent) content).getState();
-			}
-			updateView();
-			mainSpaceManager.toTop(MapModuleView.getViewId());
+		if (!message.carries(MapModuleData.class)) {
+			throw new IllegalArgumentException();
 		}
+		ResponseContent content = message.getMessage(ResponseContent.class);
+		if (content.isResponseToChange()) {
+			informViewAboutAction(content.isPositive());
+			return;
+		}
+		mapModuleData = (MapModuleData) content.getState();
+		
 		
 	}
 	
 	@Override
 	public void gotMessage(PresentersMessage m) {
-		if (m.carries(LoginDoneMessageContent.class) || m.carries(DrawMapContent.class)) {
-			ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
-			modulesBroker.tellModule(message, MODULE_NAME);
+		if (m.carries(LoginDoneMessageContent.class)) {
+			mainSpaceManager.toTop(MapModuleView.getViewId());
 		}
 		
 	}
 
-	
-
-	private void updateView() {
-		mapModuleView.postInvalidate(); //TODO toTop?
-	}
 
 	private void informViewAboutAction(boolean result) {
 		mapModuleView.actionFinished(result);
@@ -137,7 +123,8 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	 */
 	@Override
 	public void drawStuff(Canvas c) {
-		// TODO Auto-generated method stub
+		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
+		modulesBroker.tellModule(message, MODULE_NAME);
 		boolean[][] map = mapModuleData.getMap();
 		for(int i=0;i<mapModuleData.getMapWidth();i++){
 			for(int j=0;j<mapModuleData.getMapHeight();j++){
@@ -147,6 +134,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 				}
 			}
 		}
+		
 	}
 
 	
