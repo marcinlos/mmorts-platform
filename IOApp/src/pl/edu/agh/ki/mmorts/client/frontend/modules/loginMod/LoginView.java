@@ -2,7 +2,6 @@ package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;

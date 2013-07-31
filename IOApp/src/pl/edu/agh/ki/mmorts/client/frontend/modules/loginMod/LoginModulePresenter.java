@@ -1,7 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod;
 
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;

@@ -1,8 +1,5 @@
 package pl.edu.agh.ki.mmorts.client.backend.modules.buildingModule;
 
-import com.google.inject.Inject;
-
-import android.util.Log;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
@@ -11,6 +8,9 @@ import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
+import android.util.Log;
+
+import com.google.inject.Inject;
 
 public class BuildingModule extends ModuleBase implements GUICommModule {
 	

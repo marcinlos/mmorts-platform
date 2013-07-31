@@ -8,7 +8,6 @@ import pl.edu.agh.ki.mmorts.client.backend.communication.Gateway;
 import pl.edu.agh.ki.mmorts.client.backend.config.Config;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.Transaction;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
-import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionProvider;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.TrivialMapperFactory;
 import android.util.Log;

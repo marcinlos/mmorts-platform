@@ -7,18 +7,14 @@ import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContextSingleton;
 import roboguice.inject.InjectResource;
-import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.app.ioapp.init.Initializer;
-import com.google.inject.spi.HasDependencies;
 
 @ContextSingleton
 public class InitialActivity extends RoboActivity {

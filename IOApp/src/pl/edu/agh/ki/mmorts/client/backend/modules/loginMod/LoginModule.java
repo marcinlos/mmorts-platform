@@ -5,17 +5,12 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
-import pl.edu.agh.ki.mmorts.client.backend.common.message.Mode;
 import pl.edu.agh.ki.mmorts.client.backend.init.LoginChecker;
-import pl.edu.agh.ki.mmorts.client.backend.modules.Context;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod.LoginModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
