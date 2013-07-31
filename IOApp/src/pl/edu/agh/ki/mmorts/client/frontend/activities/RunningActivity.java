@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.ITile;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModule;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.Tile;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContextSingleton;
 import android.graphics.BitmapFactory;
@@ -26,7 +23,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 
 	private static final List<String> arbitraryViewsList = new ArrayList<String>();
 	private static final String ID = RunningActivity.class.getName();
-	private InfrastructureModule board;
+	//private InfrastructureModule board;
 	private LinearLayout menu;
 	private List<String> modules;
 	//private ConcreteModulesBroker view;
@@ -254,7 +251,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 //	}
 
 	// debug only method - example board created
-	private void setupBoard() {
+/*	private void setupBoard() {
 		Log.e(ID, "setupBoard - it's debug only procedure!");
 		List<ITile> tiles = new ArrayList<ITile>();
 		Tile tile1 = new Tile("tile_fill", 0, 0, 1, 1);
@@ -267,7 +264,7 @@ public class RunningActivity extends RoboActivity implements UIListener {
 
 		board.setupFields(tiles);
 	}
-
+*/
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		// asfd@aboardView.invalidate();

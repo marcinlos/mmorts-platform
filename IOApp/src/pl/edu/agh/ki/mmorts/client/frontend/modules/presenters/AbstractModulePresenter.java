@@ -7,6 +7,7 @@ import android.widget.Button;
 import com.google.inject.Inject;
 
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBrokerDummy;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
 
@@ -14,8 +15,10 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 	
 	@Inject(optional = true)
 	protected Context context;
-	@Inject(optional = true)
-	protected ModulesBroker modulesBroker;
+	//@Inject(optional = true)
+	//DEBUUUUUUUUUUUUUUUUUUUUUUUUUG TODO
+	protected ModulesBroker modulesBroker = new ModulesBrokerDummy();
+	//DEGUUUUUUUUUUUUUUUUUUUUUUUUUG
 	@Inject(optional = true)
 	protected MainSpaceManager mainSpaceManager;
 	@Inject(optional = true)
