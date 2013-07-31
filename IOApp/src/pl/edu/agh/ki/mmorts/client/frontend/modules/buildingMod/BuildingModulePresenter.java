@@ -9,16 +9,12 @@ import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.ViewCreatedContent;
 import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
-import pl.edu.agh.ki.mmorts.client.messages.StateChangedContent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -48,7 +44,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	/**
 	 * Data displayed by {@code MapModuleView}
 	 */
-	private BuildingModuleData buildingModuleData;    //niezainicjalizowane
+	private BuildingModuleData buildingModuleData;
 	
 	@Override
 	@OnInit
@@ -69,19 +65,15 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessageContent.class);
-		if (content instanceof ResponseContent) {
-			if (((ResponseContent) content).isResponseToChange()) {
-				informViewAboutAction(((ResponseContent) content).isPositive());
-				return;
-			}
-			buildingModuleData = (BuildingModuleData) ((ResponseContent) content).getState();
+		if (!message.carries(BuildingModuleData.class)) {
+			throw new IllegalArgumentException();
 		}
-		else {
-			buildingModuleData = (BuildingModuleData) ((StateChangedContent) content).getState();
+		ResponseContent content = message.getMessage(ResponseContent.class);
+		if (content.isResponseToChange()) {
+			informViewAboutAction(content.isPositive());
+			return;
 		}
-		PresentersMessage presentersMessage = new PresentersMessage(ID, new DrawMapContent());
-		bus.sendMessage(presentersMessage);
+		buildingModuleData = (BuildingModuleData) content.getState();
 		
 	}
 
@@ -93,10 +85,6 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 			mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
 			mapModuleView.addListener(this);
 		}
-		if (m.carries(LoginDoneMessageContent.class)) {
-			ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
-			modulesBroker.tellModule(message, MODULE_NAME);
-		}
 	
 	}
 	
@@ -107,8 +95,10 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void drawStuff(Canvas c) {
+		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
+		modulesBroker.tellModule(message, MODULE_NAME);
 		for(BuildingInstance b : buildingModuleData.getBuildings()){
-			c.drawBitmap(buildingImages.get(b.getData().getName()), b.getColumn()*50, b.getRow()*50, null);
+			c.drawBitmap(buildingImages.get(b.getData().getName()), b.getColumn()*TILE_SIZE, b.getRow()*TILE_SIZE, null);
 		}
 	}
 
@@ -149,6 +139,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		}
 		return false;
 	}
+	
 	
 	private BuildingTypes getBuildingType() {
 		Random r = new Random();
