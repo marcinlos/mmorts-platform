@@ -115,6 +115,7 @@ public class MapModuleView extends View implements OurView {
 		}
 		else{
 			Log.d(ID,"action succeeded");
+			invalidate();
 		}
 		return;
 	}
