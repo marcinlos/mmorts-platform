@@ -10,8 +10,11 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.ViewCreatedContent;
 import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
+import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
@@ -50,6 +53,8 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	@Override
 	@OnInit
 	public void init() {
+		buildingModuleData = new BuildingModuleData();
+		
 		buildingImages.put(BuildingTypes.PRZEDSZKOLE.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_orange));
 		buildingImages.put(BuildingTypes.MCDONALDS.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_fill));
 		buildingImages.put(BuildingTypes.CMENTARZ.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_cross));
@@ -57,21 +62,20 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		presenterId = "BuildingModulePresenter";
 		modulesBroker.registerPresenter(this, MODULE_NAME);
 		bus.register(this);
-		mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
-		mapModuleView.addListener(this);
+
 		
 	}
 
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
+		ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessageContent.class);
 		if (content instanceof ResponseContent) {
 			if (((ResponseContent) content).isResponseToChange()) {
 				informViewAboutAction(((ResponseContent) content).isPositive());
 				return;
 			}
-				buildingModuleData = (BuildingModuleData) ((ResponseContent) content).getState();
+			buildingModuleData = (BuildingModuleData) ((ResponseContent) content).getState();
 		}
 		else {
 			buildingModuleData = (BuildingModuleData) ((StateChangedContent) content).getState();
@@ -85,7 +89,14 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void gotMessage(PresentersMessage m) {
-		//currently not used
+		if (m.carries(ViewCreatedContent.class)) {
+			mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
+			mapModuleView.addListener(this);
+		}
+		if (m.carries(LoginDoneMessageContent.class)) {
+			ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
+			modulesBroker.tellModule(message, MODULE_NAME);
+		}
 	
 	}
 	
