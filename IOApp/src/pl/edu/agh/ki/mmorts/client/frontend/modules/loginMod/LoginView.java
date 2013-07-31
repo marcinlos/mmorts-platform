@@ -26,9 +26,17 @@ public class LoginView extends LinearLayout {
 	
 	View view;
 	
+	public static abstract class VisibilityListener{
+		public abstract void visible();
+	}
+	
+	private final VisibilityListener visibilityListener;
+	
 	 //I think this one should be called when inflating like I do
-	public LoginView(Context context, LoginModulePresenter presenter){
+	public LoginView(Context context, LoginModulePresenter presenter, VisibilityListener visibilityListener){
 		super(context);
+		
+		this.visibilityListener = visibilityListener;
 		this.presenter = presenter;
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		if (inflater != null) {
@@ -137,7 +145,16 @@ public class LoginView extends LinearLayout {
 	public static String getViewid() {
 		return viewId;
 	}
-		
+
+	
+	@Override
+	protected void onWindowVisibilityChanged(int visibility) {
+		super.onWindowVisibilityChanged(visibility);
+		if(visibility == VISIBLE){
+			visibilityListener.visible();
+		}
+	}
+
 	
 
 }

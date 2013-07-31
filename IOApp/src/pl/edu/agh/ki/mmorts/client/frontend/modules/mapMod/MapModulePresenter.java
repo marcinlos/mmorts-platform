@@ -7,6 +7,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePre
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.ViewCreatedContent;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
@@ -33,7 +34,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	private static final String MODULE_NAME = "MapModule";
 	
 	private static final int TILE_SIZE = 50;
-	private final Bitmap emptySpace = BitmapFactory.decodeResource(context.getResources(),R.drawable.tile);
+	private Bitmap emptySpace; 
 
 	private MapModuleView mapModuleView;
 	private MenuButton menuButton;
@@ -50,8 +51,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		modulesBroker.registerPresenter(this, MODULE_NAME);
 		bus.register(this);
 		createView();
-		
-		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);
+		emptySpace = BitmapFactory.decodeResource(context.getResources(),R.drawable.tile);
 		
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);
@@ -73,6 +73,12 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		mapModuleView.addListener(this);
 		mapModuleView.createListeners();
 		
+		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);
+		
+		PresentersMessage createdMessage = 
+				new PresentersMessage(presenterId, new ViewCreatedContent());
+		bus.sendMessage(createdMessage);
+		
 	}
 
 	@Override
@@ -89,7 +95,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
 		if (message.carries(MapModuleData.class)) {
-			ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
+			ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessageContent.class);
 			if (content instanceof ResponseContent) {
 				if (((ResponseContent) content).isResponseToChange() ) {
 					informViewAboutAction(((ResponseContent) content).isPositive());

@@ -9,7 +9,6 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ViewNotRegistered
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.app.ioapp.init.Initializer;
