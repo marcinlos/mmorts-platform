@@ -1,7 +1,7 @@
 package pl.edu.agh.ki.mmorts.client.messages;
 
 
-public class LoginMessageContent implements ModuleDataMessageContent{
+public class LoginMessageContent {
 	
 	private final String login;
 	private final String password;

@@ -6,7 +6,6 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModuleData;
 import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import android.util.Log;
 
@@ -25,10 +24,9 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
 		Log.d(ID, "Got message");
-		ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
 		BuildingModuleData dataFromServer = null;
 		ResponseContent responseContent;
-		if (content instanceof ChangeStateContent) {
+		if (message.carries(ChangeStateContent.class)) {
 			Log.d(ID, "It was change state request");
 			boolean success = false;
 			// TODO wyslac wiadomosc do serwera

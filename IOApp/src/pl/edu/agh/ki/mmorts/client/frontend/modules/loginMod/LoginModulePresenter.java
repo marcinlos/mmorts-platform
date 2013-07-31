@@ -7,7 +7,6 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.Presente
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import android.util.Log;
-import android.view.View;
 
 public class LoginModulePresenter extends AbstractModulePresenter implements
 		LoginListener {

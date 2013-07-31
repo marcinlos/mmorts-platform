@@ -9,12 +9,21 @@
 		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod.LoginModulePresenter"
 	}
 },  {
-	"name" : "InfrastructureModule",
-	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.infMod.InfrastructureModule",
-	"unicast" : [ "i_mod" ],
-	"groups" : [ "i_mod_group" ],
+	"name" : "MapModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.mapModule.MapModule",
+	"unicast" : [ "map_mod" ],
+	"groups" : [ "map_mod_group" ],
 	"properties" : {
 		"example.number" : 3,
-		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.infMod.InfrastructureModulePresenter"
+		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModulePresenter"
+	}
+}, {
+	"name" : "BuildingModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.buildingModule.BuildingModule",
+	"unicast" : [ "build_mod" ],
+	"groups" : [ "build_mod_group" ],
+	"properties" : {
+		"example.number" : 3,
+		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModulePresenter"
 	}
 }]

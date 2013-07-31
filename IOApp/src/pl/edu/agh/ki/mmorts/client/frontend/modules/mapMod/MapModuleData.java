@@ -35,6 +35,8 @@ public class MapModuleData {
 	}
 	public void setMap(boolean[][] map) {
 		this.map = map;
+		this.setMapWidth(map.length);
+		this.setMapHeight(map[0].length);
 	}
 	
 	

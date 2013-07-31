@@ -9,13 +9,12 @@ import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleView;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.ViewCreatedContent;
 import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
+import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
-import pl.edu.agh.ki.mmorts.client.messages.StateChangedContent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -45,38 +44,35 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	/**
 	 * Data displayed by {@code MapModuleView}
 	 */
-	private BuildingModuleData buildingModuleData;    //niezainicjalizowane
+	private BuildingModuleData buildingModuleData;
 	
 	@Override
 	@OnInit
 	public void init() {
+		buildingModuleData = new BuildingModuleData();
+		
 		buildingImages.put(BuildingTypes.PRZEDSZKOLE.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_orange));
 		buildingImages.put(BuildingTypes.MCDONALDS.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_fill));
 		buildingImages.put(BuildingTypes.CMENTARZ.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_cross));
 		
 		modulesBroker.registerPresenter(this, MODULE_NAME);
 		bus.register(this);
-		mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
-		mapModuleView.addListener(this);
+
 		
 	}
 
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
-		if (content instanceof ResponseContent) {
-			if (((ResponseContent) content).isResponseToChange()) {
-				informViewAboutAction(((ResponseContent) content).isPositive());
-				return;
-			}
-				buildingModuleData = (BuildingModuleData) ((ResponseContent) content).getState();
+		if (!message.carries(ResponseContent.class)) {
+			throw new IllegalArgumentException();
 		}
-		else {
-			buildingModuleData = (BuildingModuleData) ((StateChangedContent) content).getState();
+		ResponseContent content = message.getMessage(ResponseContent.class);
+		if (content.isResponseToChange()) {
+			informViewAboutAction(content.isPositive());
+			return;
 		}
-		PresentersMessage presentersMessage = new PresentersMessage(ID, new DrawMapContent());
-		bus.sendMessage(presentersMessage);
+		buildingModuleData = (BuildingModuleData) content.getState();
 		
 	}
 
@@ -84,7 +80,10 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void gotMessage(PresentersMessage m) {
-		//currently not used
+		if (m.carries(ViewCreatedContent.class)) {
+			mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
+			mapModuleView.addListener(this);
+		}
 	
 	}
 	
@@ -95,8 +94,11 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void drawStuff(Canvas c) {
+		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
+		modulesBroker.tellModule(message, MODULE_NAME);
 		for(BuildingInstance b : buildingModuleData.getBuildings()){
-			c.drawBitmap(buildingImages.get(b.getData().getName()), b.getColumn()*50, b.getRow()*50, null);
+			c.drawBitmap(buildingImages.get(b.getData().getName()), b.getColumn()*TILE_SIZE, b.getRow()*TILE_SIZE, null);
+			Log.d(ID,"rysuje na "+b.getColumn()*TILE_SIZE+", " + b.getRow()*TILE_SIZE);
 		}
 	}
 
@@ -137,6 +139,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		}
 		return false;
 	}
+	
 	
 	private BuildingTypes getBuildingType() {
 		Random r = new Random();

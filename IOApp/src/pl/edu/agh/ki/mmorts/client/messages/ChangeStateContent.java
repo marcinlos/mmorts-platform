@@ -4,7 +4,7 @@ package pl.edu.agh.ki.mmorts.client.messages;
  * A content of message sent from presenter to module when presenter wants to change state.
  *
  */
-public class ChangeStateContent implements ModuleDataMessageContent{
+public class ChangeStateContent {
 
 	private Object state;
 	

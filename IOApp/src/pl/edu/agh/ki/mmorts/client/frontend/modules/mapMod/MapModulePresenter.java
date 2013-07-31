@@ -4,15 +4,13 @@ import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ViewListener;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.AbstractModulePresenter;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.DrawMapContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.LoginDoneMessageContent;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.PresentersMessage;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.messages.ViewCreatedContent;
 import pl.edu.agh.ki.mmorts.client.frontend.views.MenuButton;
 import pl.edu.agh.ki.mmorts.client.messages.GetStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
-import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
-import pl.edu.agh.ki.mmorts.client.messages.StateChangedContent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,14 +24,8 @@ import android.widget.Button;
 public class MapModulePresenter extends AbstractModulePresenter implements ViewListener{
 	private static final String ID = "MapModulePresenter";
 	
-
-	/**
-	 * Name of module that I want to communicate with
-	 */
-	private static final String MODULE_NAME = "MapModule";
-	
 	private static final int TILE_SIZE = 50;
-	private final Bitmap emptySpace = BitmapFactory.decodeResource(context.getResources(),R.drawable.tile);
+	private Bitmap emptySpace; 
 
 	private MapModuleView mapModuleView;
 	private MenuButton menuButton;
@@ -46,13 +38,16 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	@Override
 	@OnInit
 	public void init() {
-		modulesBroker.registerPresenter(this, MODULE_NAME);
+		modulesBroker.registerPresenter(this, name());
 		bus.register(this);
 		createView();
+		emptySpace = BitmapFactory.decodeResource(context.getResources(),R.drawable.tile);
 		
-		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);
 		menuButton = new MenuButton(context);
 		menuButton.setView(mapModuleView);
+		menuButton.setId(name());
+		menuButton.setMSM(mainSpaceManager);
+		
 		Log.d(ID, "context:");
 		Log.d(ID, String.format("%s", context));
 		Log.d(ID, "topSpaceManager:");
@@ -67,6 +62,12 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		mapModuleView = new MapModuleView(context);
 		mapModuleView.addListener(this);
 		mapModuleView.createListeners();
+		
+		mainSpaceManager.register(MapModuleView.getViewId(), mapModuleView);
+		
+		PresentersMessage createdMessage = 
+				new PresentersMessage(name(), new ViewCreatedContent());
+		bus.sendMessage(createdMessage);
 		
 	}
 
@@ -83,38 +84,27 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		if (message.carries(MapModuleData.class)) {
-			ModuleDataMessageContent content = (ModuleDataMessageContent) message.getMessage(ModuleDataMessage.class);
-			if (content instanceof ResponseContent) {
-				if (((ResponseContent) content).isResponseToChange() ) {
-					informViewAboutAction(((ResponseContent) content).isPositive());
-					return;
-				}
-					mapModuleData = (MapModuleData) ((ResponseContent) content).getState();
-			}
-			else {
-				mapModuleData = (MapModuleData) ((StateChangedContent) content).getState();
-			}
-			updateView();
-			mainSpaceManager.toTop(MapModuleView.getViewId());
+		if (!message.carries(ResponseContent.class)) {
+			throw new IllegalArgumentException();
 		}
+		ResponseContent content = message.getMessage(ResponseContent.class);
+		if (content.isResponseToChange()) {
+			informViewAboutAction(content.isPositive());
+			return;
+		}
+		mapModuleData = (MapModuleData) content.getState();
+		
 		
 	}
 	
 	@Override
 	public void gotMessage(PresentersMessage m) {
-		if (m.carries(LoginDoneMessageContent.class) || m.carries(DrawMapContent.class)) {
-			ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
-			modulesBroker.tellModule(message, MODULE_NAME);
+		if (m.carries(LoginDoneMessageContent.class)) {
+			mainSpaceManager.toTop(MapModuleView.getViewId());
 		}
 		
 	}
 
-	
-
-	private void updateView() {
-		mapModuleView.postInvalidate();
-	}
 
 	private void informViewAboutAction(boolean result) {
 		mapModuleView.actionFinished(result);
@@ -126,16 +116,21 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	 */
 	@Override
 	public void drawStuff(Canvas c) {
-		// TODO Auto-generated method stub
+		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
+		modulesBroker.tellModule(message, name());
 		boolean[][] map = mapModuleData.getMap();
+		Log.d(ID,"byc moze cos rysuje no...");
 		for(int i=0;i<mapModuleData.getMapWidth();i++){
 			for(int j=0;j<mapModuleData.getMapHeight();j++){
 				if (!map[i][j]){ //if there is nothing there, map wants to draw the nothing
 					//TODO check if changing around i and j is required, I never could tell
 					c.drawBitmap(emptySpace, i*TILE_SIZE, j*TILE_SIZE, null);
+					Log.d(ID,"rysuje na "+i*TILE_SIZE+", " + j*TILE_SIZE);
 				}
 			}
 		}
+		Log.d(ID,"porysowalem, powinno byc");
+		
 	}
 
 	

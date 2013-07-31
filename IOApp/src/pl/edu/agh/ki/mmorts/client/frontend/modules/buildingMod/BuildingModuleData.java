@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  */
 public class BuildingModuleData {
 	
-	 private List<BuildingInstance> buildings;
+	 private List<BuildingInstance> buildings = new ArrayList<BuildingInstance>();
 
 	public List<BuildingInstance> getBuildings() {
 		return buildings;
