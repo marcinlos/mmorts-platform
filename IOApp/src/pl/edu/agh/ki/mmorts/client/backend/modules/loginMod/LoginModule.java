@@ -80,6 +80,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	}
 	
 	private void writePropertiesToFile(String mail, String password) {
+		Log.d(ID, "Writing user data to file");
 		Properties properties = new Properties();
 		properties.setProperty("mail",mail);
 		properties.setProperty("password", password);
@@ -105,10 +106,12 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 		LoginMessageContent content = message.getMessage(LoginMessageContent.class);
 		LoginMessageContent responseContent;
 		if (content.getMode() == LoginMessageContent.TO_MODULE_FILE_LOGIN) {
+			Log.d(ID, "It was file login");
 			responseContent = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_FILE_LOGIN);
 			responseContent.setLogInSuccess(logInFromFile());
 		}
 		else {
+			Log.d(ID, "It was login without file");
 			String mail = content.getLogin();
 			String password = content.getPassword();
 			responseContent = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE);
