@@ -129,7 +129,7 @@ public class LoginView extends LinearLayout {
 		} else {
 			mEmailView.setTextColor(Color.GRAY);
 			findViewById(R.id.sign_in_button).setClickable(false);
-			presenter.LogMeIn(mEmail, mPassword);
+			presenter.login(mEmail, mPassword);
 		}
 	}
 	

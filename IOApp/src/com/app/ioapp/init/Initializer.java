@@ -424,7 +424,8 @@ public class Initializer {
 								.asSubclass(ModulePresenter.class);
 						ModulePresenter pres = DI.createWith(presenterClass,
 								modulesBrokerModule, mainSpaceManagerModule,
-								topSpaceManagerModule, busModule);
+								topSpaceManagerModule, busModule,DI
+								.objectModule(desc, ModuleDescriptor.class));
 						RoboGuice.getInjector(context).injectMembers(pres);
 						// TODO: EVIL CAST - remove next time
 						modulesBroker.registerModule((GUICommModule) m, desc.name);

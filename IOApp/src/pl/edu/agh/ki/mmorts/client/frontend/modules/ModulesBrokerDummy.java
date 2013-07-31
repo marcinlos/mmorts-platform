@@ -22,7 +22,7 @@ public class ModulesBrokerDummy implements ModulesBroker {
 
 	@Override
 	public void tellModule(ModuleDataMessage message, String moduleName) {
-		if (message.carries(LoginMessageContent.class)){
+		/*if (message.carries(LoginMessageContent.class)){
 			LoginMessageContent m = message.getMessage(LoginMessageContent.class);
 			switch(m.getMode()){
 			case LoginMessageContent.TO_MODULE_FILE_LOGIN:
@@ -36,7 +36,7 @@ public class ModulesBrokerDummy implements ModulesBroker {
 				tellPresenters(new ModuleDataMessage("", mnew2), moduleName);
 				break;
 			}
-		}
+		}*/
 		
 	}
 

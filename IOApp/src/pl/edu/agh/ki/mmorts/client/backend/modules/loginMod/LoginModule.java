@@ -36,6 +36,8 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	@Inject(optional= true)
 	ModulesBroker modulesBroker;
 	
+	private boolean loggedCorrectly = false; 
+	
 	private String mail;
 	private String password;
 
@@ -98,35 +100,46 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
-		LoginMessageContent content = message.getMessage(LoginMessageContent.class);
-		LoginMessageContent responseContent;
-		if (content.getMode() == LoginMessageContent.TO_MODULE_FILE_LOGIN) {
-			Log.d(ID, "It was file login");
-			responseContent = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_FILE_LOGIN);
-			responseContent.setLogInSuccess(logInFromFile());
+		
+		if (!message.carries(LoginMessageContent.class)) {
+			throw new IllegalArgumentException("Unacceptable message passed");
+		}
+		LoginMessageContent m = message.getMessage(LoginMessageContent.class);
+
+		if (!m.isRequest()) {
+			throw new IllegalArgumentException("Unacceptable message passed");
+		}
+		
+		if (m.getLogin()==null) {
+			Log.d(ID, "Logging from file");
+			//logInFromFile();
 		}
 		else {
-			Log.d(ID, "It was login without file");
-			String mail = content.getLogin();
-			String password = content.getPassword();
-			responseContent = new LoginMessageContent(LoginMessageContent.TO_PRESENTER_LOGIN_RESPONSE);
-			responseContent.setLogInSuccess(logInWithoutFile(mail, password));
+			Log.d(ID, "Logging without file");
+			//logInWithoutFile(m.getLogin(), m.getPassword());
 		}
-		ModuleDataMessage responseMessage = new ModuleDataMessage(ID, responseContent);
-		Log.d(ID, "Telling response to presenters");
-		modulesBroker.tellPresenters(responseMessage, ID);
+		loginOnServer();
+		if(loggedCorrectly){
+			Log.d(ID, "Correctly logged");
+			LoginMessageContent responseContent = new LoginMessageContent.Builder().logged().reply().build();
+			ModuleDataMessage responseMessage = new ModuleDataMessage(name(), responseContent);
+			modulesBroker.tellPresenters(responseMessage, name());
+		}else{
+			Log.d(ID, "Uncorrectly logged");
+		}
+		
+		
 	}
 	
-	private boolean loginOnServer() {
+	private void loginOnServer() {
 		Log.d(ID, "Sending to server");
 		send(anyAddress(), "auth");
-		return false;
 	}
 	
 	@MessageMapping("auth-success")
 	public void getSuccess(Message messg, TransactionContext ctx){
 		Log.d(ID, "Auth success!");
-		modulesBroker.tellPresenters(new ModuleDataMessage(messg.target, new LoginMessageContent(fromFile? LoginMessageContent.TO_MODULE_FILE_LOGIN: LoginMessageContent.TO_MODULE_LOGIN)), messg.target);
+		loggedCorrectly = true;
 	}
 	
 

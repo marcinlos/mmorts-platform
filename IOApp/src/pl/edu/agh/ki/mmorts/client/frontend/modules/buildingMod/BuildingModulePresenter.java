@@ -54,7 +54,6 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		buildingImages.put(BuildingTypes.MCDONALDS.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_fill));
 		buildingImages.put(BuildingTypes.CMENTARZ.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_cross));
 		
-		presenterId = "BuildingModulePresenter";
 		modulesBroker.registerPresenter(this, MODULE_NAME);
 		bus.register(this);
 		mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
@@ -123,8 +122,8 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		}
 		
 		ChangeStateContent content = new ChangeStateContent(buildingModuleData);
-		ModuleDataMessage message = new ModuleDataMessage(presenterId, content);
-		modulesBroker.tellModule(message, presenterId);
+		ModuleDataMessage message = new ModuleDataMessage(name(), content);
+		modulesBroker.tellModule(message, name());
 		
 	}
 	

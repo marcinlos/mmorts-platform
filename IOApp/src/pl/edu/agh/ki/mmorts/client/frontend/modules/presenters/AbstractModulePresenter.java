@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.modules.presenters;
 
+import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleDescriptor;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
 import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
@@ -20,7 +21,8 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 	protected TopSpaceManager topSpaceManager;
 	@Inject(optional = true)
 	protected Bus bus;
-	protected String presenterId; 
+	@Inject(optional = true)
+	protected ModuleDescriptor descriptor;
 
 	@Override
 	public boolean hasMenuButton() {
@@ -32,6 +34,10 @@ public abstract class AbstractModulePresenter implements ModulePresenter, Module
 		return null;
 	}
 	
+	
+	protected String name(){
+		return descriptor.name;
+	}
 	public abstract void init();
 
 }

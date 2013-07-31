@@ -23,7 +23,7 @@ public class GUIGenericMessage {
 		return clazz.cast(content);
 	
 	}
-
+	
 	/**
 	 * Checks whether message is of type clazz
 	 * @param clazz type we check with

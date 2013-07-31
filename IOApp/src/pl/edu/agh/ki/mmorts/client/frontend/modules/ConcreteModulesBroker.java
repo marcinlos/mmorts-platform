@@ -44,7 +44,7 @@ public class ConcreteModulesBroker implements ModulesBroker{
 	
 	@Override
 	public void registerPresenter(ModuleDataChangedListener presenter, String moduleName) {
-		Log.d(ID, "Registering presenter" + moduleName);
+		Log.d(ID, "Registering presenter " + moduleName);
 		if (modulePresenters.containsKey(presenter)) {
 			Log.e(ID, "Trying to register presenter again");
 			throw new ModulesBrokerException("Presenter is already registered.");
@@ -59,13 +59,13 @@ public class ConcreteModulesBroker implements ModulesBroker{
 
 	@Override
 	public void unregisterPresenter(String presenterName) {
-		Log.d(ID, "Unregistering presenter" + presenterName);
+		Log.d(ID, "Unregistering presenter " + presenterName);
 		modulePresenters.remove(presenterName);
 	}
 
 	@Override
 	public void tellModule(ModuleDataMessage message, String moduleName) {
-		Log.d(ID, "Sending to module" + moduleName);
+		Log.d(ID, "Sending to module " + moduleName);
 		modules.get(moduleName).dataChanged(message);
 		
 	}
