@@ -102,6 +102,8 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 			Log.d(ID, "Logging from file");
 			if(isLoginFromFilePossible()){
 				loginMessage=getLoginDataFromFile();
+			} else{
+				return;
 			}
 		} else {
 			Log.d(ID, "Logging without file");

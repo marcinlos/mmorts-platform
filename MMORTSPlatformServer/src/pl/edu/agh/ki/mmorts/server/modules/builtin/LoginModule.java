@@ -45,14 +45,14 @@ public class LoginModule extends ModuleBase {
 		if(databasePlayerData == null){
 			//new player created
 			players.createPlayer(new PlayerDataImpl(playerRequest, passwordRequest, playerRequest));
-	        outputResponse(message, "auth-success", "");
+	        outputResponse(message, "auth-success");
 	        return;
 		}
 		
 		if(databasePlayerData.getPasswordHash().equals(passwordRequest)){
-	        outputResponse(message, "auth-success", "");
+	        outputResponse(message, "auth-success");
 		}else{
-	        outputResponse(message, "auth-failed", "");
+	        outputResponse(message, "auth-failed");
 		}
     }
     
