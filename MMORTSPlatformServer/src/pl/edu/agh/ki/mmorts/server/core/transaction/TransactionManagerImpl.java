@@ -38,7 +38,7 @@ public class TransactionManagerImpl implements TransactionManager {
         
         @Override
         public Transaction getCurrent() {
-            return getCurrent();
+            return TransactionManagerImpl.this.getCurrent();
         }
     };
     

@@ -8,5 +8,6 @@ public interface MainSpaceManager {
 	void unregister(String id);
 	void toTop(String id);
 	View getTop();
+	View getViewById(String id);
 
 }

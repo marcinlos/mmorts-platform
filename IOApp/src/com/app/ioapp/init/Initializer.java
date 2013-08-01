@@ -1,11 +1,11 @@
 package com.app.ioapp.init;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -22,7 +22,6 @@ import pl.edu.agh.ki.mmorts.client.backend.config.ModuleConfigReader;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManagerImpl;
-import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionProvider;
 import pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.backend.data.Database;
@@ -30,8 +29,6 @@ import pl.edu.agh.ki.mmorts.client.backend.data.InMemDatabase;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.data.PlayersPersistorImpl;
 import pl.edu.agh.ki.mmorts.client.backend.init.InitException;
-import pl.edu.agh.ki.mmorts.client.backend.loginMod.LogInException;
-import pl.edu.agh.ki.mmorts.client.backend.loginMod.LoginModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ConfiguredModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleDescriptor;
@@ -39,13 +36,28 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleInitException;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ServiceLocator;
 import pl.edu.agh.ki.mmorts.client.backend.util.DI;
 import pl.edu.agh.ki.mmorts.client.backend.util.reflection.Methods;
+import pl.edu.agh.ki.mmorts.client.frontend.generated.R;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ConcreteModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
-import pl.edu.agh.ki.mmorts.client.frontend.view.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.Bus;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ConcreteBus;
+import pl.edu.agh.ki.mmorts.client.frontend.modules.presenters.ModulePresenter;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteMainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.ConcreteTopSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.MainSpaceManager;
+import pl.edu.agh.ki.mmorts.client.frontend.spaceManaging.TopSpaceManager;
+import roboguice.RoboGuice;
 import Ice.Util;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 
 /**
@@ -59,7 +71,17 @@ import com.google.inject.name.Names;
  * Methods should be called in the following order: 1. {@code initialize()} 2.
  * {@code logIn()} 3. {@code getMainView()}
  */
+
+@Singleton
 public class Initializer {
+
+	@Inject
+	private AssetManager assetManager;
+
+	@Inject
+	private Context context;
+	@Inject
+	private LayoutInflater inflater;
 	/**
 	 * Used by logger
 	 */
@@ -69,6 +91,7 @@ public class Initializer {
 	 * Facade between phone application and module views
 	 */
 	private ModulesBroker modulesBroker;
+	private com.google.inject.Module modulesBrokerModule;
 
 	/**
 	 * Stores properties read from configuration file
@@ -112,6 +135,14 @@ public class Initializer {
 	private Database database;
 	private com.google.inject.Module databaseModule;
 
+	private TopSpaceManager topSpaceManager;
+	private com.google.inject.Module topSpaceManagerModule;
+
+	private MainSpaceManager mainSpaceManager;
+	private com.google.inject.Module mainSpaceManagerModule;
+
+	private Bus bus;
+	private com.google.inject.Module busModule;
 	/**
 	 * Stream to read configuration from file
 	 */
@@ -125,31 +156,36 @@ public class Initializer {
 	 */
 	private InputStream iceConfigInput;
 
+
 	/**
-	 * Stream to write player information if he is not registered yet
+	 * input stream with login contents, should never be null due to
+	 * implementation
 	 */
-	private OutputStream logDataOutput;
+
+	private FileInputStream loginInput;
+
+	/**
+	 * output stream to file with login contents, starts at the end of already
+	 * existing file if it had some content
+	 */
+	private FileOutputStream loginOutput;
 
 	/**
 	 * Transaction manager object
 	 */
 	private TransactionManager txManager;
 	private com.google.inject.Module txManagerModule;
-	
+
 	private List<ConfiguredModule> configuredModules;
-	
-	
-	private Context context;
 
-	/**
-	 * @param context
-	 */
+	private View mainScreenView;
+	// private com.google.inject.Module mainScreenViewModule;
+	private View topView;
+	// private com.google.inject.Module topViewModule;
+	private View mainModulesView;
 
-	public Initializer(Context context) {
-		this.context = context;
-	}
-	
-	
+	// private com.google.inject.Module mainModulesViewModule;
+
 	/**
 	 * Initializes all classes. Called after logging in Exceptions must be
 	 * handled by phone application
@@ -159,6 +195,7 @@ public class Initializer {
 	public void initialize() throws InitException {
 		try {
 			Log.d(ID, "Initializing environment started");
+			prepareViewModules();
 			openFiles();
 			readConfig();
 			createTransactionManager();
@@ -167,8 +204,12 @@ public class Initializer {
 			createDataSource();
 			createCustomPersistor();
 			createPlayersPersistor();
-			initModules();
+			createBus();
+			createMainSpaceManager();
+			createTopSpaceManager();
 			initModulesBroker();
+			initModules();
+
 			Log.d(ID, "Successfully initialized");
 		} catch (Exception e) {
 			Log.e(ID, "Error during initialization");
@@ -176,17 +217,65 @@ public class Initializer {
 		}
 
 	}
-	
+
+	public View getMainScreenView() {
+		return mainScreenView;
+	}
+
+	public View getTopView() {
+		return topView;
+	}
+
+	public View getMainModulesView() {
+		return mainModulesView;
+	}
+
+	private void prepareViewModules() {
+		Log.d(ID, "Preparing Views");
+		mainScreenView = inflater.inflate(R.layout.activity_main, null);
+		Log.d(ID, String.format("MainScreenView: %s", mainScreenView));
+		topView = mainScreenView.findViewById(R.id.topSpace);
+		Log.d(ID, String.format("TopView: %s", topView));
+		Log.d(ID, String.format("TopViewParent: %s", topView.getParent()));
+		View v = mainScreenView.findViewById(R.id.topParentForDebug); // TODO
+																		// remove
+		Log.d(ID, String.format("TopViewTrueParent: %s", v));
+		Log.d(ID, String.format("TopViewTrueParentsParent: %s", v.getParent()));
+		mainModulesView = mainScreenView.findViewById(R.id.mainSpace);
+		Log.d(ID, String.format("MainModulesView: %s", mainModulesView));
+
+		// mainActivityViewModule = DI.objectModule(mainActivityView,
+		// View.class);
+		// topViewModule = DI.objectModule(topView, View.class);
+		// mainModulesViewModule = DI.objectModule(mainModulesView, View.class);
+		// mainScreenView = inflater.inflate(R.layout.activity_main, null);
+		// LayoutInflater inf =inflater.cloneInContext(context);
+		// inf.setFactory(new FactoryMine());
+
+	}
+
 	private void openFiles() {
+		Log.d(ID, "Opening files");
 		try {
-			iceConfigInput = context.getAssets().open("iceClient.config");
-			configInput = context.getAssets().open("client.properties");
-			moduleConfigInput = context.getAssets().open("modules.json");
+			iceConfigInput = assetManager.open("iceClient.config");
+			configInput = assetManager.open("client.properties");
+			moduleConfigInput = assetManager.open("modules.json");
+			loginOutput = context.openFileOutput("loginDataFile",
+					Context.MODE_APPEND);
+			try {
+				loginInput = context.openFileInput("loginDataFile");
+			} catch (FileNotFoundException e) {
+				Log.e(ID,
+						"file with login not found, shouldn't be possible with this order of creating",
+						e);
+			}
+
 		} catch (IOException e) {
 			Log.e(ID, "Exception during opening config files");
 			e.printStackTrace();
 		}
-		
+		Log.d(ID, "Files opened");
+
 	}
 
 	private void readConfig() {
@@ -216,8 +305,6 @@ public class Initializer {
 		Log.d(ID, "Message channel created");
 	}
 
-
-
 	private void createDispatcher() {
 		Log.d(ID, "Creating dispatcher");
 		Class<? extends Dispatcher> cl = SingleThreadedDispatcher.class;
@@ -242,17 +329,21 @@ public class Initializer {
 		databaseModule = DI.objectModule(database, Database.class);
 		Log.d(ID, "Database connection successfully initialized");
 	}
-	
+
 	private void createCustomPersistor() {
 		Log.d(ID, "Creating custom persistor");
 		Class<CustomPersistor> ifcl = CustomPersistor.class;
 		Class<? extends CustomPersistor> cl = CustomPersistorImpl.class;
 		customPersistor = DI.createWith(cl, databaseModule);
-		customPersistorModule = DI.objectModuleAnnotated(customPersistor, ifcl, pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor.class);
+		customPersistorModule = DI
+				.objectModuleAnnotated(
+						customPersistor,
+						ifcl,
+						pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor.class);
 		callInit(customPersistor);
 		Log.d(ID, "Custom persistor created");
 	}
-	
+
 	private void createPlayersPersistor() {
 		Log.d(ID, "Creating players persistor");
 		Class<? extends PlayersPersistor> cl = PlayersPersistorImpl.class;
@@ -262,7 +353,47 @@ public class Initializer {
 		callInit(playersPersistor);
 		Log.d(ID, "Players manager created");
 	}
-	
+
+	private void createBus() {
+		Log.d(ID, "Creating frontend bus");
+		bus = DI.createWith(ConcreteBus.class);
+		RoboGuice.injectMembers(context, bus);
+		busModule = DI.objectModule(bus, Bus.class);
+		Log.d(ID, "Frontend bus created");
+	}
+
+	private void createMainSpaceManager() {
+		Log.d(ID, "Initiliazing main space manager");
+		mainSpaceManager = DI.createWith(ConcreteMainSpaceManager.class,
+				busModule);
+		RoboGuice.injectMembers(context, mainSpaceManager);
+		mainSpaceManagerModule = DI.objectModule(mainSpaceManager,
+				MainSpaceManager.class);
+		callInit(mainSpaceManager);
+		Log.d(ID, "Main space manager initialized");
+	}
+
+	private void createTopSpaceManager() {
+		Log.d(ID, "Initiliazing top space manager");
+		topSpaceManager = DI.createWith(ConcreteTopSpaceManager.class,
+				busModule);
+		RoboGuice.injectMembers(context, topSpaceManager);
+		topSpaceManagerModule = DI.objectModule(topSpaceManager,
+				TopSpaceManager.class);
+		callInit(topSpaceManager);
+		Log.d(ID, "Top space manager initialized");
+	}
+
+	private void initModulesBroker() {
+		Log.d(ID, "Initiliazing broker");
+
+		modulesBroker = DI.createWith(ConcreteModulesBroker.class, busModule);
+		modulesBrokerModule = DI.objectModule(modulesBroker,
+				ModulesBroker.class);
+		callInit(modulesBroker);
+		Log.d(ID, "Broker initialized");
+	}
+
 	/**
 	 * Uses {@linkplain ModuleConfigReader} to read module config file, creates
 	 * the modules and registers them with a dispatcher.
@@ -283,72 +414,41 @@ public class Initializer {
 					Module m = createModule(desc);
 					Log.d(ID, "Module " + desc.name + " created");
 					configuredModules.add(new ConfiguredModule(m, desc));
+					// TODO: oki, ale brzydkie
+					Log.d(ID, String.format("Creating %s module presenter",
+							desc.config.get("presenter")));
+					if (desc.config.get("presenter") != null) {
+						
+						Class<? extends ModulePresenter> presenterClass = Class
+								.forName(desc.config.get("presenter"))
+								.asSubclass(ModulePresenter.class);
+						ModulePresenter pres = DI.createWith(presenterClass,
+								modulesBrokerModule, mainSpaceManagerModule,
+								topSpaceManagerModule, busModule,DI
+								.objectModule(desc, ModuleDescriptor.class));
+						RoboGuice.getInjector(context).injectMembers(pres);
+						// TODO: EVIL CAST - remove next time
+						modulesBroker.registerModule((GUICommModule) m, desc.name);
+						callInit(pres);
+					}
 				} catch (ModuleInitException e) {
 					Log.e(ID, "Module " + desc.name + " creation failed", e);
+				} catch (ClassNotFoundException e) {
+					// TODO wrzuciæ do konfiguracji modu³u!
+					Log.e(ID, "Module " + desc.name + " presenter isn't valid",
+							e);
 				}
 			}
 			// register with the dispatcher
 			Log.d(ID, "Registering modules with a dispatcher");
 			dispatcher.registerModules(configuredModules);
+
 		} catch (ModuleConfigException e) {
 			Log.e(ID, "Error while readin module configuration");
 			Log.e(ID, e.getMessage());
 			throw new InitException(e);
 		}
 	}
-	
-	private void initModulesBroker() {
-		Log.d(ID, "Initiliazing broker and his modules");
-		Map<String, GUICommModule> communicatingModules = new HashMap<String, GUICommModule>();
-		for(ConfiguredModule module :configuredModules){
-			try {
-				communicatingModules.put(module.descriptor.name, (GUICommModule)module.module);
-			} catch (Exception e) {
-				Log.e(ID, module.descriptor.name + " cannot be load as communicating module");
-			}
-		}
-		modulesBroker = new ModulesBroker(communicatingModules, configuredModules);
-		Log.d(ID, "Broker initialized");
-	}
-
-
-	/**
-	 * Called after initializing the rest of environment
-	 * 
-	 * @param mail
-	 * @param password
-	 * @param alreadyRegistered
-	 *            true if player has been registered (a file with mail and
-	 *            password exists and is correct) Exceptions must be handled by
-	 *            phone application
-	 * @throws LogInxception
-	 */
-/*	public void logIn(String mail, String password, boolean alreadyRegistered)
-			throws LogInException {
-		try {
-			Log.d(ID, "Logging in started");
-			if (alreadyRegistered) {
-				Log.d(ID, "User has already been registered");
-				loginModule.logIn();
-			} else {
-				Log.d(ID, "User needs to be registered");
-				Log.d(ID, "Registering");
-				loginModule.register(mail, password);
-				Log.d(ID, "Writing mail and password to file");
-				Properties ps = new Properties();
-				ps.setProperty("mail", mail);
-				ps.setProperty("password", password);
-				ps.store(logDataOutput, null);
-				Log.d(ID, "User's data stored in a file");
-			}
-		} catch (Exception e) {
-			Log.e(ID, "Exception during logging in");
-			throw new LogInException(e);
-		}
-
-	}*/
-
-	
 
 	/**
 	 * Attempts to call method annotated with {@linkplain OnInit}.
@@ -376,8 +476,6 @@ public class Initializer {
 		}
 	}
 
-	
-
 	private Module createModule(final ModuleDescriptor desc) {
 		try {
 			Class<? extends Module> cl = desc.moduleClass;
@@ -390,35 +488,18 @@ public class Initializer {
 				}
 			};
 			Module module = DI.createWith(cl, configModule, dispatcherModule,
-					DI.objectModule(txManager.getProvider(),
-							TransactionProvider.class), properties,
+					DI.objectModule(txManager,
+							TransactionManager.class), properties,
 					playersPersistorModule, customPersistorModule, DI
-							.objectModule(desc, ModuleDescriptor.class));
+							.objectModule(desc, ModuleDescriptor.class),
+							DI.objectModule(loginInput, FileInputStream.class),
+							DI.objectModule(loginOutput, FileOutputStream.class),
+							modulesBrokerModule);
 			callInit(module);
 			return module;
 		} catch (Exception e) {
 			throw new ModuleInitException(e);
 		}
-	}
-
-	
-
-	/**
-	 * Returns MainView for Module Views
-	 * 
-	 * @return MainView object
-	 */
-	public ModulesBroker getModulesBroker() {
-		return modulesBroker;
-	}
-
-	public MessageOutputChannel getChannel() {
-		return channel;
-	}
-
-	public List<String> getModules() {
-		// TODO Kasiaa, uzupeï¿½nij tï¿½ metodï¿½
-		return Arrays.asList(new String[] { "JEDNE", "DRUGIE" });
 	}
 
 }

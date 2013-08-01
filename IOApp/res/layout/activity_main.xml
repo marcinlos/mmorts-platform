@@ -8,7 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".RunningActivity" >
+    tools:context=".RunningActivity"
+    >
 
     <LinearLayout
         android:id="@+id/menusBar"
@@ -16,27 +17,63 @@
         android:layout_height="fill_parent"
         android:gravity="left"
         android:orientation="vertical" >
+
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/topParentForDebug"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:fillViewport="true"	 >
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:orientation="vertical" >
+   
+        <LinearLayout
+            android:id="@+id/topSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
         
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            <LinearLayout 
+            android:id="@+id/iconSpace"
+        	android:layout_width="wrap_content"
+       		android:layout_height="fill_parent"
+       		android:orientation="horizontal">
 
-	        <LinearLayout
-	            android:id="@+id/ModulesPresentationView"
-	            android:layout_width="wrap_content"
+            </LinearLayout>
+            <LinearLayout 
+            android:id="@+id/statSpace"
+        	android:layout_width="wrap_content"
+       		android:layout_height="fill_parent"
+       		android:orientation="horizontal">
+
+            </LinearLayout>
+            
+        </LinearLayout>
+    
+	    <ScrollView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="fill_vertical|fill_horizontal"
+	        android:layout_weight="0.98"
+	        android:fillViewport="true" >
+	        
+	        <HorizontalScrollView
+	            android:layout_width="match_parent"
 	            android:layout_height="fill_parent"
-	            android:gravity="right|fill_vertical|fill_horizontal"
-	            android:orientation="horizontal" >
-	        </LinearLayout>
-        </HorizontalScrollView>
+	            android:fillViewport="true" >
+	
+		        <LinearLayout
+		            android:id="@+id/mainSpace"
+		            android:layout_width="wrap_content"
+		            android:layout_height="fill_parent"
+		            android:layout_gravity="center"
+		            android:gravity="center"
+		            android:orientation="horizontal" >
 
-    </ScrollView>
+		        </LinearLayout>
+	        </HorizontalScrollView>
+	
+	    </ScrollView>
+     </LinearLayout>
 
 </LinearLayout>

@@ -1,28 +1,29 @@
 [ {
 	"name" : "LoginModule",
-	"class" : "pl.edu.agh.ki.mmorts.server.modules.builtin.LoginModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.loginMod.LoginModule",
 	"unicast" : [ "login_module" ],
 	"groups" : [ "core", "cool_modules" ],
 	"properties" : {
 		"datatype" : "java.lang.String",
-		"login.number" : 3
+		"login.number" : 3,
+		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.loginMod.LoginModulePresenter"
 	}
-}, {
-	"name" : "ExampleModule",
-	"class" : "com.app.ioapp.modules.example.ExampleModuleComm",
-	"unicast" : [ "ex_mod" ],
-	"groups" : [ "ex_mod_group" ],
+},  {
+	"name" : "MapModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.mapModule.MapModule",
+	"unicast" : [ "map_mod" ],
+	"groups" : [ "map_mod_group" ],
 	"properties" : {
 		"example.number" : 3,
-		"presenter" : "com.app.ioapp.modules.example.ExampleModulePresenter"
+		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModulePresenter"
 	}
 }, {
-	"name" : "InfrastructureModule",
-	"class" : "com.app.ioapp.modules.InfMod.InfrastructureModule",
-	"unicast" : [ "i_mod" ],
-	"groups" : [ "i_mod_group" ],
+	"name" : "BuildingModule",
+	"class" : "pl.edu.agh.ki.mmorts.client.backend.modules.buildingModule.BuildingModule",
+	"unicast" : [ "build_mod" ],
+	"groups" : [ "build_mod_group" ],
 	"properties" : {
 		"example.number" : 3,
-		"presenter" : "com.app.ioapp.modules.InfMod.InfrastructureModulePresenter"
+		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModulePresenter"
 	}
 }]

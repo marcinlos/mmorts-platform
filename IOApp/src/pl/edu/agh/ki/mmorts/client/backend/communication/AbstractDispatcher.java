@@ -7,11 +7,10 @@ import pl.edu.agh.ki.mmorts.client.backend.config.Config;
 import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
 import pl.edu.agh.ki.mmorts.client.backend.modules.AbstractModuleContainer;
-import pl.edu.agh.ki.mmorts.client.backend.modules.CommunicatingModule;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ContAdapter;
-import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Continuation;
 import pl.edu.agh.ki.mmorts.client.backend.modules.Module;
+import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionExecutor;
 import android.util.Log;
 
@@ -229,7 +228,7 @@ public abstract class AbstractDispatcher extends AbstractModuleContainer
     private void deliver(Message message) {
         final String addr = message.target;
         if (message.isUnicast()) {
-            CommunicatingModule module = unicast().get(addr);
+            Module module = unicast().get(addr);
             if (module != null) {
                 module.receive(message, executor().getContext());
             } else {
@@ -237,9 +236,9 @@ public abstract class AbstractDispatcher extends AbstractModuleContainer
             }
         } else {
             // Multicast
-            Iterable<CommunicatingModule> interested = multicast().get(addr);
+            Iterable<Module> interested = multicast().get(addr);
             if (interested != null) {
-                for (CommunicatingModule module : interested) {
+                for (Module module : interested) {
                     module.receive(message, executor().getContext());
                 }
             } else {

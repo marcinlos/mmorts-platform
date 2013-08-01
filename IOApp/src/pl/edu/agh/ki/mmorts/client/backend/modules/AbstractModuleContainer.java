@@ -29,8 +29,8 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
     protected final Lock writeLock = rwLock.writeLock();
 
     private final Map<String, ConfiguredModule> modules;
-    private final Map<String, CommunicatingModule> unicast;
-    private final Map<String, Set<CommunicatingModule>> multicast;
+    private final Map<String, Module> unicast;
+    private final Map<String, Set<Module>> multicast;
     
 
     /** Implementation of service locator */
@@ -42,19 +42,19 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
     
     public AbstractModuleContainer() {
         modules = new HashMap<String, ConfiguredModule>();
-        unicast = new HashMap<String, CommunicatingModule>();
-        multicast = new HashMap<String, Set<CommunicatingModule>>();
+        unicast = new HashMap<String, Module>();
+        multicast = new HashMap<String, Set<Module>>();
     }
 
     protected Map<String, ConfiguredModule> modules() {
         return modules;
     }
 
-    protected Map<String, CommunicatingModule> unicast() {
+    protected Map<String, Module> unicast() {
         return unicast;
     }
 
-    protected Map<String, Set<CommunicatingModule>> multicast() {
+    protected Map<String, Set<Module>> multicast() {
         return multicast;
     }
     
@@ -112,7 +112,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         try {
             Module module = conf.module;
 //            module.init();
-            Log.e(ID, "Adding to internal map structures");
+            Log.d(ID, "Adding to internal map structures");
             modules.put(desc.name, conf);
             // Register module with all its' unicast addresses
             for (String address : desc.unicast) {
@@ -121,7 +121,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
             // Same for multicast groups
             for (String group : desc.multicast) {
             	// TODO: EVIL CAST, fix it
-                registerMulticast(group, (CommunicatingModule) module);
+                registerMulticast(group, module);
             }
         } catch (Exception e) {
         	Log.e(ID, "Module " + desc.name + " registration failed");
@@ -137,8 +137,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         ModuleDescriptor desc = conf.descriptor;
         Module module = conf.module;
         Log.d(ID, "Module " + desc.name + " registered as " + address);
-        // TODO: EVIL CAST, fix it
-        Module prev = unicast.put(address, (CommunicatingModule) module);
+        Module prev = unicast.put(address, module);
         if (prev != null) {
             for (Entry<String, ConfiguredModule> e : modules.entrySet()) {
                 if (e.getValue().module == module) {
@@ -155,11 +154,11 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
     /**
      * Subscribes a module to a given multicast group.
      */
-    private void registerMulticast(String group, CommunicatingModule module) {
+    private void registerMulticast(String group, Module module) {
     	Log.d(ID, "Module " + module + " added to [" + group + "]");
-        Set<CommunicatingModule> set = multicast.get(group);
+        Set<Module> set = multicast.get(group);
         if (set == null) {
-            set = new HashSet<CommunicatingModule>();
+            set = new HashSet<Module>();
             multicast.put(group, set);
         }
         set.add(module);
@@ -188,7 +187,7 @@ public abstract class AbstractModuleContainer implements ModuleContainer {
         Set<String> moduleNames = new HashSet<String>(modules.keySet());
         for (String name : moduleNames) {
             ConfiguredModule conf = modules.get(name);
-            Log.e(ID, "Calling started() on " + name);
+            Log.d(ID, "Calling started() on " + name);
             Module module = conf.module;
             try {
 //                module.started();

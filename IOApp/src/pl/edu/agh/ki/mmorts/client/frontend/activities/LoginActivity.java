@@ -1,24 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.frontend.activities;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Properties;
-
-import pl.edu.agh.ki.mmorts.client.backend.init.RegisteringChecker;
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import com.app.ioapp.R;
 
 
 
@@ -30,6 +12,13 @@ import com.app.ioapp.R;
  * Boolean keyed LoginActivity.FILEEXISTS whether the info was read from existing file or not (true if file existed)
  */
 public class LoginActivity extends Activity {
+	
+	
+	/*
+	
+	
+	
+	
 	
 	private int test;
 	
@@ -61,9 +50,9 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		/*File dir = getFilesDir();
+		File dir = getFilesDir();
 		File f = new File(dir, loginFile);
-		f.delete();*/ //uncomment this if you want to see how it goes before first login again
+		f.delete(); //uncomment this if you want to see how it goes before first login again
 		File file = getFileStreamPath(loginFile);
 		if(file.exists())
 		{
@@ -110,7 +99,7 @@ public class LoginActivity extends Activity {
 		} catch (FileNotFoundException e) {
 			Log.e(ID,"SHOULD NOT HAPPEN",e);
 		}
-		RegisteringChecker chk = new RegisteringChecker(loginconf);
+		LoginChecker chk = new LoginChecker(loginconf);
 		Properties p;
 		if(chk.checkIfAccountExists()){
 			Log.d(ID,"Got valid things from file, gonna start the program");
@@ -138,12 +127,12 @@ public class LoginActivity extends Activity {
 		return true;
 	}
 
-	/**
+	*//**
 	 * Attempts to log in with data filled into forms, starts MainActivity with that data
 	 * put into intent extra.
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
-	 */
+	 *//*
 	public void attemptLogin() {
 
 		// Reset errors.
@@ -198,5 +187,5 @@ public class LoginActivity extends Activity {
 	public void endProgram(){
     	finish();
     	System.exit(0);
-    }
+    }*/
 }
