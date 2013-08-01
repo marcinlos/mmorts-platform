@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
+import messages.login.LoginMessage;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.init.LoginChecker;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
@@ -133,7 +134,7 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 	
 	private void loginOnServer() {
 		Log.d(ID, "Sending to server");
-		send(anyAddress(), "auth");
+		send(anyAddress(), "auth", new LoginMessage("TestEmail@Email.org", "ala123"));
 	}
 	
 	@MessageMapping("auth-success")

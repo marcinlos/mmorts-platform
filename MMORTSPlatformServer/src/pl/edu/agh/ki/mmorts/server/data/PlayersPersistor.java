@@ -23,9 +23,8 @@ public interface PlayersPersistor {
 	 * 
 	 * @param name - name of requested player's data
 	 * @return {@link PlayerData} representing information about player
-	 * @throws IllegalArgumentException - when player with this name doesn't exist
 	 */
-	PlayerData receivePlayer(String name) throws IllegalArgumentException;
+	PlayerData receivePlayer(String name);
 	/**
 	 * 
 	 * Updates player with given name with given information.

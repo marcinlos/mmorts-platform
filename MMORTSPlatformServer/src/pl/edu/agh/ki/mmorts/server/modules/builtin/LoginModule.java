@@ -1,27 +1,13 @@
 package pl.edu.agh.ki.mmorts.server.modules.builtin;
 
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL._if;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL._while;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.eq;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.map;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.neq;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.seq;
-import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
-
-import java.util.Random;
-
-import messages.loginModule.LoginMessage;
-
+import messages.login.LoginMessage;
 import pl.edu.agh.ki.mmorts.common.message.Message;
-import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
 import pl.edu.agh.ki.mmorts.server.data.PlayerData;
 import pl.edu.agh.ki.mmorts.server.data.PlayerDataImpl;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
-import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
-import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -55,18 +41,18 @@ public class LoginModule extends ModuleBase {
 		String passwordRequest = loginMessage.getPassword();
 		
 		PlayerData databasePlayerData = null;
-		try{
-			databasePlayerData = players.receivePlayer(playerRequest);
-		}catch(IllegalArgumentException e){
+		databasePlayerData = players.receivePlayer(playerRequest);
+		if(databasePlayerData == null){
 			//new player created
 			players.createPlayer(new PlayerDataImpl(playerRequest, passwordRequest, playerRequest));
-	        outputResponse(message, "auth-success", null);
+	        outputResponse(message, "auth-success", "");
+	        return;
 		}
 		
 		if(databasePlayerData.getPasswordHash().equals(passwordRequest)){
-	        outputResponse(message, "auth-success", null);
+	        outputResponse(message, "auth-success", "");
 		}else{
-	        outputResponse(message, "auth-failed", null);
+	        outputResponse(message, "auth-failed", "");
 		}
     }
     
@@ -75,17 +61,6 @@ public class LoginModule extends ModuleBase {
         logger().debug("=================general()====================");
     }
     
-<<<<<<< Updated upstream
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void receive(final Message message, final Context ctx) {
-        logger().debug("Message received");
-        logger().debug(message);
-        super.receive(message, ctx);
-
-=======
     
     
 //    /**
@@ -97,7 +72,6 @@ public class LoginModule extends ModuleBase {
 //        logger().debug(message);
 //        super.receive(message, ctx);
 //
->>>>>>> Stashed changes
 //        if (message.request.equals("auth")) {
 //            call(_if(val(3).is(eq(3))).then(new Cont() {
 //                public void execute(Control c) {
