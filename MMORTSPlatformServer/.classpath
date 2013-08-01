@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="generated"/>
+	<classpathentry exported="true" kind="lib" path="lib/Ice.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="example"/>
 	<classpathentry kind="src" path="client"/>
-	<classpathentry kind="src" path="generated"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/Ice.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-9.2-1002.jdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.2.4-javadoc.jar"/>
@@ -23,8 +23,9 @@
 	<classpathentry kind="lib" path="lib/apacheDerby/derbynet.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbyrun.jar"/>
 	<classpathentry kind="lib" path="lib/apacheDerby/derbytools.jar"/>
-	<classpathentry kind="con" path="com.zeroc.Slice2JavaPlugin.ICE_FRAMEWORK"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jline-1.0.jar"/>
+	<classpathentry kind="con" path="com.zeroc.Slice2JavaPlugin.ICE_FRAMEWORK"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Shared"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

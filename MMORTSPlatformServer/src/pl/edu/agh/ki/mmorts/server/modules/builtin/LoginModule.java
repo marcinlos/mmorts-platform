@@ -10,8 +10,12 @@ import static pl.edu.agh.ki.mmorts.server.modules.dsl.DSL.val;
 
 import java.util.Random;
 
+import messages.loginModule.LoginMessage;
+
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.core.transaction.TransactionListener;
+import pl.edu.agh.ki.mmorts.server.data.PlayerData;
+import pl.edu.agh.ki.mmorts.server.data.PlayerDataImpl;
 import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
@@ -42,9 +46,28 @@ public class LoginModule extends ModuleBase {
     
     @MessageMapping("auth")
     public void handleAuth(Message message, Context ctx) {
-        logger().debug("handleAuth!!!!");
-        logger().debug("Responding to message: " + message);
-        outputResponse(message, "auth-success", 666);
+        logger().debug("Got auth message");
+        if(!message.carries(LoginMessage.class)){
+        	throw new IllegalArgumentException("Bad message received!");
+        }
+        LoginMessage loginMessage = message.get(LoginMessage.class);
+		String playerRequest = loginMessage.getLogin();
+		String passwordRequest = loginMessage.getPassword();
+		
+		PlayerData databasePlayerData = null;
+		try{
+			databasePlayerData = players.receivePlayer(playerRequest);
+		}catch(IllegalArgumentException e){
+			//new player created
+			players.createPlayer(new PlayerDataImpl(playerRequest, passwordRequest, playerRequest));
+	        outputResponse(message, "auth-success", null);
+		}
+		
+		if(databasePlayerData.getPasswordHash().equals(passwordRequest)){
+	        outputResponse(message, "auth-success", null);
+		}else{
+	        outputResponse(message, "auth-failed", null);
+		}
     }
     
     @MessageMapping
@@ -52,6 +75,7 @@ public class LoginModule extends ModuleBase {
         logger().debug("=================general()====================");
     }
     
+<<<<<<< Updated upstream
     /**
      * {@inheritDoc}
      */
@@ -61,6 +85,19 @@ public class LoginModule extends ModuleBase {
         logger().debug(message);
         super.receive(message, ctx);
 
+=======
+    
+    
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void receive(final Message message, final Context ctx) {
+//        logger().debug("Message received");
+//        logger().debug(message);
+//        super.receive(message, ctx);
+//
+>>>>>>> Stashed changes
 //        if (message.request.equals("auth")) {
 //            call(_if(val(3).is(eq(3))).then(new Cont() {
 //                public void execute(Control c) {
@@ -100,10 +137,6 @@ public class LoginModule extends ModuleBase {
 //                                //throw new RuntimeException("Evul exception!");
 //                            }
 //                            send("inc_mod", "increment", (Object) "n");
-//                        }
-//                    }));
-//            call(c);
-//        }
-    }
+//    
 
 }
