@@ -100,6 +100,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 	@Override
 	public void gotMessage(PresentersMessage m) {
 		if (m.carries(LoginDoneMessageContent.class)) {
+			Log.d(ID,"Yup, map got the login message");
 			mainSpaceManager.toTop(MapModuleView.getViewId());
 		}
 		
