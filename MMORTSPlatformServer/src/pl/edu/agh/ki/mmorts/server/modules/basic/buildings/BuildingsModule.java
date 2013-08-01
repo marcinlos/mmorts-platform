@@ -10,9 +10,7 @@ import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.FieldContent;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.ImmutableBoard;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.MapModuleData;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.DetailedMessage;
-import pl.edu.agh.ki.mmorts.server.modules.dsl.Cont;
-import pl.edu.agh.ki.mmorts.server.modules.dsl.Control;
+import protocol.mapModule.DetailedMessage;
 
 import com.google.inject.Inject;
 
