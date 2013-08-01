@@ -83,24 +83,28 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 				}
 			}
 			buildingToChange = oldBuilding;
-			sendRemoveBuildingRequest();
+			sendRemoveBuildingQuery();
 		}
 		
 	}
 	
-	private void sendRemoveBuildingRequest() {
+	private void sendRemoveBuildingQuery() {
+		Log.d(ID, "Sending remove building query");
 		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
-		Message m = new Message(0, name(), name(), Mode.UNICAST, "demolish", buildingMessage);
+		Message m = new Message(0, name(), name(), Mode.UNICAST, "can-demolish", buildingMessage);
 		gateway().send(m);
 		
 	}
 
 	private void sendAddBuildingQuery() {
+		Log.d(ID, "Sending add building query");
 		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
 		Message m = new Message(0, name(), name(), Mode.UNICAST, "can-build", buildingMessage);
 		gateway().send(m);
 		
 	}
+
+	
 
 	private void getState() {
 		BuildingModuleData buildingData = persistor().receiveBinding(name(), "", BuildingModuleData.class);
@@ -112,13 +116,17 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 		}
 	}
 	
+	
+	////////////////////////////////////////////////////////////
 	private void sendGetStateRequest() {
 		Message m = new Message(0, name(), name(), Mode.UNICAST, "GetState", null);
 		gateway().send(m);
 		
 	}
-
+/////////////////////////////////////////////////////////////////
+	
 	private void sendResponse() {
+		Log.d(ID, "Sending response");
 		ResponseContent content = new ResponseContent(change, success, requestedData);
 		ModuleDataMessage message = new ModuleDataMessage(name(), content);
 		modulesBroker.tellPresenters(message, name());
@@ -126,11 +134,15 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	
 	@MessageMapping("yes-can-build")
 	public void canBuild(Message messg, TransactionContext ctx){
-		
+		Log.d(ID, "Received yes - can build");
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		Message m = new Message(0, name(), name(), Mode.UNICAST, "build", buildingMessage);
+		gateway().send(m);
 	}
 	
 	@MessageMapping("no-can-build")
 	public void cannotBuild(Message messg, TransactionContext ctx){
+		Log.d(ID, "Received no - cannnot build");
 		success = false;
 		requestedData = persistor().receiveBinding(name(), "", BuildingModuleData.class);
 		sendResponse();
@@ -138,6 +150,31 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	
 	@MessageMapping("build-success")
 	public void buildSucceeded(Message messg, TransactionContext ctx){
+		Log.d(ID, "Received build success");
+		success = true;
+		persistor().updateBinding(name(), "", requestedData);
+		sendResponse();
+	}
+	
+	@MessageMapping("yes-can-demolish")
+	public void canDemolish(Message messg, TransactionContext ctx){
+		Log.d(ID, "Received yes - can demolish");
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		Message m = new Message(0, name(), name(), Mode.UNICAST, "demolish", buildingMessage);
+		gateway().send(m);
+	}
+	
+	@MessageMapping("no-can-demolish")
+	public void cannotDemolish(Message messg, TransactionContext ctx){
+		Log.d(ID, "Received no - cannot demolish");
+		success = false;
+		requestedData = persistor().receiveBinding(name(), "", BuildingModuleData.class);
+		sendResponse();
+	}
+	
+	@MessageMapping("demolish-success")
+	public void demolishSucceeded(Message messg, TransactionContext ctx){
+		Log.d(ID, "Received demolish succeded");
 		success = true;
 		persistor().updateBinding(name(), "", requestedData);
 		sendResponse();
