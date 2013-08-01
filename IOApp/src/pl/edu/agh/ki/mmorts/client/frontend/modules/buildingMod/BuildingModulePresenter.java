@@ -84,6 +84,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 			mapModuleView = (MapModuleView) mainSpaceManager.getViewById(MapModuleView.getViewId());
 			mapModuleView.addListener(this);
 		}
+		Log.d(ID,"got message, ignored it");
 	
 	}
 	
