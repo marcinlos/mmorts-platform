@@ -110,7 +110,7 @@ public class BuildingsModule extends ModuleBase {
                 .receiveBinding(name(), player, List.class);
         list.remove(building);
         persistor.updateBinding(name(), player, list);
-        output(name(), "build-success");
+        output(name(), "demolish-success");
     }
 
 }

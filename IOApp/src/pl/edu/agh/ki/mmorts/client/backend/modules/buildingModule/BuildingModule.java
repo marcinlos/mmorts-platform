@@ -32,6 +32,10 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	/**
 	 * Field set when communicating with presenter
 	 */
+	private BuildingInstance buildingToChange;
+	/**
+	 * Field set when communicating with presenter
+	 */
 	private boolean success;
 	/**
 	 * Field set when communicating with presenter
@@ -68,7 +72,8 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 					newBuilding = building;
 				}
 			}
-			sendAddBuildingRequest(newBuilding);
+			buildingToChange = newBuilding;
+			sendAddBuildingQuery();
 		}
 		else {
 			BuildingInstance oldBuilding = null;
@@ -77,20 +82,22 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 					oldBuilding = building;
 				}
 			}
-			sendRemoveBuildingRequest(oldBuilding);
+			buildingToChange = oldBuilding;
+			sendRemoveBuildingRequest();
 		}
 		
 	}
 	
-	private void sendRemoveBuildingRequest(BuildingInstance oldBuilding) {
-		Message m = new Message(0, name(), name(), Mode.UNICAST, "RemoveBuilding", oldBuilding);
+	private void sendRemoveBuildingRequest() {
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		Message m = new Message(0, name(), name(), Mode.UNICAST, "demolish", buildingMessage);
 		gateway().send(m);
 		
 	}
 
-	private void sendAddBuildingRequest(BuildingInstance newBuilding) {
-		BuildingMessage buildingMessage = new BuildingMessage(newBuilding, "");
-		Message m = new Message(0, name(), name(), Mode.UNICAST, "build", buildingMessage);
+	private void sendAddBuildingQuery() {
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		Message m = new Message(0, name(), name(), Mode.UNICAST, "can-build", buildingMessage);
 		gateway().send(m);
 		
 	}
@@ -118,16 +125,21 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	}
 	
 	@MessageMapping("yes-can-build")
-	public void buildSucceeded(Message messg, TransactionContext ctx){
-		success = true;
-		persistor().updateBinding(name(), "", requestedData);
-		sendResponse();
+	public void canBuild(Message messg, TransactionContext ctx){
+		
 	}
 	
 	@MessageMapping("no-can-build")
-	public void buildNotSucceeded(Message messg, TransactionContext ctx){
+	public void cannotBuild(Message messg, TransactionContext ctx){
 		success = false;
 		requestedData = persistor().receiveBinding(name(), "", BuildingModuleData.class);
+		sendResponse();
+	}
+	
+	@MessageMapping("build-success")
+	public void buildSucceeded(Message messg, TransactionContext ctx){
+		success = true;
+		persistor().updateBinding(name(), "", requestedData);
 		sendResponse();
 	}
 
