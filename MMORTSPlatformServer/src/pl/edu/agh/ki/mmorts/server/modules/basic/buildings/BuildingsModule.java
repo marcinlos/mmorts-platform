@@ -63,8 +63,8 @@ public class BuildingsModule extends ModuleBase {
         BuildingInstance building = msg.getBuilding();
         ctx.put("building", building);
         ctx.put("message", message);
-        ctx.put(BUILD, PLACEHOLDER);
-        send("map_mod", "check", building);
+//        ctx.put(BUILD, PLACEHOLDER);
+        send("map_mod", "full");
     }
 
     @MessageMapping("full")
@@ -118,7 +118,6 @@ public class BuildingsModule extends ModuleBase {
                 .receiveBinding(name(), player, List.class);
         outputResponse(message, "get-buildings", list);
     }
-    
     
     @MessageMapping("demolish")
     public void demolish(Message message, Context ctx) {
