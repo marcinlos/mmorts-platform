@@ -1,4 +1,4 @@
-package messages.login;
+package protocol.loginModule;
 
 
 import java.io.Serializable;

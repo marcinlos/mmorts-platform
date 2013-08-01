@@ -16,9 +16,9 @@ import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.RequestType;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.DetailedMessage;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.SimpleMessage;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
+import protocol.mapModule.DetailedMessage;
+import protocol.mapModule.SimpleMessage;
 
 /**
  * Test client application.

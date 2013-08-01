@@ -11,8 +11,8 @@ import pl.edu.agh.ki.mmorts.server.modules.ModuleLogicException;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.FieldContent;
 import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.MapModuleData;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.DetailedMessage;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol.SimpleMessage;
+import protocol.mapModule.DetailedMessage;
+import protocol.mapModule.SimpleMessage;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -52,6 +52,7 @@ public class MapModule extends ModuleBase {
 	public void checkHandler(Message message, Context ctx) {
 		logger.debug(CHECK + " message got");
 		DetailedMessage msg = extractMessage(message, DetailedMessage.class);
+		
 		MapModuleData playerData = getFromDatabase(msg.getPlayerName());
 		//Message response  = message.response(CHECK, (Object) isFieldAvailable(msg, playerData));
 		//output(response);
@@ -133,6 +134,9 @@ public class MapModule extends ModuleBase {
 	}
 
 	private <T> T extractMessage(Message msg, Class<T> clazz) {
+		if(!msg.carries(clazz)){
+			throw new IllegalArgumentException("Not valid message got");
+		}
 		return msg.get(clazz);
 	}
 }

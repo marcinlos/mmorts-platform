@@ -29,10 +29,10 @@ public class MapModule extends ModuleBase implements GUICommModule{
 	}
 
 	private void getState() {
-		Message m = new Message(0, name(), name(), Mode.UNICAST, "full", null);
+		//Message m = new Message(0, name(), name(), Mode.UNICAST, "full", null);
 		Log.d(ID, "Sending request to gateway");
-		gateway().send(m);
-		
+		//gateway().send();
+		send(anyAddress(), "full");
 	}
 	
 	@MessageMapping("full")

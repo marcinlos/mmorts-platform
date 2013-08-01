@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import messages.login.LoginMessage;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.init.LoginChecker;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
@@ -14,6 +13,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
+import protocol.loginModule.LoginMessage;
 import android.util.Log;
 
 import com.google.inject.Inject;

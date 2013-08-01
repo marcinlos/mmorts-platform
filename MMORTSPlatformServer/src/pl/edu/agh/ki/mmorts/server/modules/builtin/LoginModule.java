@@ -1,6 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.modules.builtin;
 
-import messages.login.LoginMessage;
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.data.PlayerData;
 import pl.edu.agh.ki.mmorts.server.data.PlayerDataImpl;
@@ -8,6 +7,7 @@ import pl.edu.agh.ki.mmorts.server.data.PlayersPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
+import protocol.loginModule.LoginMessage;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

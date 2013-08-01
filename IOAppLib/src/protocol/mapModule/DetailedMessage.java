@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.server.modules.basic.map.protocol;
+package protocol.mapModule;
 
 
 public class DetailedMessage extends SimpleMessage {
