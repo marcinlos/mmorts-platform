@@ -75,7 +75,8 @@ public class MapModule extends ModuleBase {
 		}
 		//Message response = message.response(FULL, returnMapMessage);
 		//output(response);
-		respond(message, FULL, returnMapMessage);
+		outputResponse(message,FULL,returnMapMessage);
+		//respond(message, FULL, returnMapMessage);
 	}
 	
 	@MessageMapping()
