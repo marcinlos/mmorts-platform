@@ -87,7 +87,7 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 		if (!message.carries(ResponseContent.class)) {
 			throw new IllegalArgumentException();
 		}
-		ResponseContent content = message.getMessage(ResponseContent.class);
+		ResponseContent content = message.getMessage(ResponseContent.class);	
 		if (content.isResponseToChange()) {
 			informViewAboutAction(content.isPositive());
 			return;
