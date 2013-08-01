@@ -95,5 +95,22 @@ public class BuildingsModule extends ModuleBase {
         persistor.updateBinding(name(), player, list);
         output(name(), "build-success");
     }
+    
+    @MessageMapping("demolish")
+    public void demolish(Message message, Context ctx) {
+        BuildingMessage msg = message.get(BuildingMessage.class);
+        BuildingInstance building = msg.getBuilding();
+        String player = msg.getPlayer();
+        int row = building.getRow();
+        int col = building.getColumn();
+        DetailedMessage details = new DetailedMessage(player, row, col);
+        send("map_mod", "releaseAt", details);
+        @SuppressWarnings("unchecked")
+        List<BuildingInstance> list = (List<BuildingInstance>) persistor
+                .receiveBinding(name(), player, List.class);
+        list.remove(building);
+        persistor.updateBinding(name(), player, list);
+        output(name(), "demolish-success");
+    }
 
 }

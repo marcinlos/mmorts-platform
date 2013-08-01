@@ -8,6 +8,7 @@ import pl.edu.agh.ki.mmorts.client.backend.communication.Gateway;
 import pl.edu.agh.ki.mmorts.client.backend.config.Config;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.Transaction;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
+import pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.TrivialMapperFactory;
 import android.util.Log;
@@ -36,8 +37,12 @@ public abstract class ModuleBase implements Module {
     /** Module-specific configuration */
     @Inject(optional = true)
     private ModuleDescriptor descriptor;
+    
+    /** Persistor */
+    @Inject(optional = true)
+    private CustomPersistor persistor;
 
-    /** Transaction provider Protected, to open it form children*/
+    /** Transaction provider Protected, to open it from children*/
     @Inject(optional = true)
     protected TransactionManager txManager;
 
@@ -123,6 +128,13 @@ public abstract class ModuleBase implements Module {
      */
     protected final ModuleDescriptor descriptor() {
         return descriptor;
+    }
+    
+    /**
+     * @return Persistor
+     */
+    protected final CustomPersistor persistor() {
+        return persistor;
     }
 
     /**

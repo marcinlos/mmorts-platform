@@ -69,7 +69,7 @@ public class MapModule extends ModuleBase {
 					.getPlayerName());
 		} catch (IllegalArgumentException e) {
 			// TODO think bout it!
-			returnMapMessage = new MapModuleData(Board.getFactory().getTypicalBoard(defaultRows, defaultColumns));
+			returnMapMessage = new MapModuleData(Board.getFactory().getEasyBoard(defaultRows, defaultColumns));
 			persistor.createBinding(name(), extractedMsg.getPlayerName(),
 					returnMapMessage);
 		}

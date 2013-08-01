@@ -93,6 +93,16 @@ public class Board implements ImmutableBoard {
 			}
 			return new Board(newBoard);
 		}
+		public Board getEasyBoard(int rows, int cols) {
+			List<List<FieldContent>> newBoard = new ArrayList<List<FieldContent>>();
+			for (int r = 0; r < rows; ++r) {
+				newBoard.add(new ArrayList<FieldContent>());
+				for (int c = 0; c < cols; ++c) {
+					newBoard.get(r).add(FieldContent.G);
+				}
+			}
+			return new Board(newBoard);
+		}
 
 		private boolean isRoadBecauseOfRow(int r) {
 			return r % ROAD_ROW == ROAD_ROW - 1;
