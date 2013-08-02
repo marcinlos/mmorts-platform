@@ -14,6 +14,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.messages.LoginMessageContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import protocol.loginModule.LoginMessage;
+import protocol.loginModule.Requests;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -123,13 +124,12 @@ public class LoginModule extends ModuleBase implements GUICommModule {
 
 	}
 
-
 	private void loginOnServer(LoginMessage message) {
 		Log.d(ID, "Sending to server");
-		send(anyAddress(), "auth", message);
+		send(anyAddress(), Requests.AUTH_REQ, message);
 	}
 
-	@MessageMapping("auth-success")
+	@MessageMapping(Requests.AUTH_SUCC)
 	public void getSuccess(Message messg, TransactionContext ctx) {
 		if(fromFile){
 			writePropertiesToFile();

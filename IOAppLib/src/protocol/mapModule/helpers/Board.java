@@ -1,11 +1,9 @@
-package pl.edu.agh.ki.mmorts.server.modules.basic.map;
+package protocol.mapModule.helpers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.FieldContent;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.ImmutableBoard;
 
 /**
  * This class represents board(map) as polygon mesh of squares. It cannot be
@@ -65,7 +63,7 @@ public class Board implements ImmutableBoard {
 	 * @author drew
 	 * 
 	 */
-	static class BoardFactory {
+	public static class BoardFactory {
 
 		private static final int ROAD_COL = 10;
 		private static final int ROAD_ROW = 10;

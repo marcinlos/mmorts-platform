@@ -1,7 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.map;
 
-import org.apache.log4j.Logger;
-
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
@@ -9,10 +7,12 @@ import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleLogicException;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.FieldContent;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.MapModuleData;
-import protocol.mapModule.DetailedMessage;
+import protocol.mapModule.MapModuleData;
+import protocol.mapModule.Requests;
 import protocol.mapModule.SimpleMessage;
+import protocol.mapModule.helpers.Board;
+import protocol.mapModule.helpers.DetailedMessage;
+import protocol.mapModule.helpers.FieldContent;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -20,8 +20,6 @@ import com.google.inject.name.Named;
 //TODO new interface, no casting;)
 
 public class MapModule extends ModuleBase {
-
-	private static final Logger logger = Logger.getLogger(MapModule.class);
 
 	@Inject(optional = true)
 	@pl.edu.agh.ki.mmorts.server.core.annotations.CustomPersistor
@@ -38,35 +36,41 @@ public class MapModule extends ModuleBase {
 	
     @OnInit
     public void init(){
-    	System.out.println("=========================================" + persistor);
+    	logger().debug("On init");
     }
 	
 
-	/* Protocol */
-	private static final String CHECK = "check";
-	private static final String FULL = "full";
-	private static final String PUT_ON = "putOn";
-	private static final String REL_AT = "releaseAt";
 
-	@MessageMapping(CHECK)
+	@MessageMapping(Requests.CHECK)
 	public void checkHandler(Message message, Context ctx) {
-		logger.debug(CHECK + " message got");
+		logger().debug(Requests.CHECK + " message got");
 		DetailedMessage msg = extractMessage(message, DetailedMessage.class);
-		
 		MapModuleData playerData = getFromDatabase(msg.getPlayerName());
-		//Message response  = message.response(CHECK, (Object) isFieldAvailable(msg, playerData));
-		//output(response);
-		respond(message, CHECK, isFieldAvailable(msg, playerData));
+		respond(message, Requests.CHECK, isFieldAvailable(msg, playerData));
 	}
 
-	@MessageMapping(FULL)
-	public void fullHandler(Message message, Context ctx) {
-		logger.debug(FULL + " message got");
-		Object returnMapMessage = null;
+	@MessageMapping(Requests.FULL_INTERNAL)
+	public void fullInternalReceived(Message message, Context ctx) {
+		Object returnMapMessage = handleFull(message);
+		outputResponse(message,Requests.FULL_INTERNAL,returnMapMessage);
+		logger().debug("Responding internal");
+		respond(message, Requests.FULL_INTERNAL, returnMapMessage);
+	}
+	
+	@MessageMapping(Requests.FULL_EXTERNAL)
+	public void fullExternalReceived(Message message, Context ctx) {
+		Object returnMapMessage = handleFull(message);
+		logger().debug("Responding external");
+		outputResponse(message,Requests.FULL_EXTERNAL,returnMapMessage);
+	}
+
+	private MapModuleData handleFull(Message message) {
+		logger().debug("full message got");
+		MapModuleData returnMapMessage = null;
 		SimpleMessage extractedMsg = extractMessage(message,
 				SimpleMessage.class);
 		try {
-			returnMapMessage = (Object) getFromDatabase(extractedMsg
+			returnMapMessage = getFromDatabase(extractedMsg
 					.getPlayerName());
 		} catch (IllegalArgumentException e) {
 			// TODO think bout it!
@@ -74,20 +78,17 @@ public class MapModule extends ModuleBase {
 			persistor.createBinding(name(), extractedMsg.getPlayerName(),
 					returnMapMessage);
 		}
-		//Message response = message.response(FULL, returnMapMessage);
-		//output(response);
-		outputResponse(message,FULL,returnMapMessage);
-		//respond(message, FULL, returnMapMessage);
+		return returnMapMessage;
 	}
 	
 	@MessageMapping()
 	public void genHandler(Message message, Context ctx) {
-		logger.debug("general message got");
+		logger().debug("general message got");
 	}
 
-	@MessageMapping(PUT_ON)
+	@MessageMapping(Requests.PUT_ON)
 	public void putOnHandler(Message message, Context ctx) {
-		logger.debug(PUT_ON + " message got");
+		logger().debug(Requests.PUT_ON + " message got");
 
 		final DetailedMessage extractedMsg = extractMessage(message,
 				DetailedMessage.class);
@@ -109,21 +110,19 @@ public class MapModule extends ModuleBase {
 
 	}
 
-	@MessageMapping(REL_AT)
+	@MessageMapping(Requests.REL_AT)
 	public void releaseAtHandler(Message message, Context ctx) {
-		logger.debug(REL_AT + " message got");
+		logger().debug(Requests.REL_AT + " message got");
 		final DetailedMessage extractedMsg = extractMessage(message,
 				DetailedMessage.class);
 		final Board board = (Board) getFromDatabase(
 				extractedMsg.getPlayerName()).getBoard();
 		board.realeaseAt(extractedMsg.getRow(), extractedMsg.getCol());
 		persistor.updateBinding(name(), extractedMsg.getPlayerName(), new MapModuleData(board));
-
 	}
 
 	private boolean isFieldAvailable(DetailedMessage msg,
 			MapModuleData playerData) {
-		System.out.println("!!!!" + playerData.getBoard());
 		return playerData.getBoard().getAt(msg.getRow(), msg.getCol())
 				.equals(FieldContent.G);
 	}

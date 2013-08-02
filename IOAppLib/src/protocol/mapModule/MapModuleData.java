@@ -1,8 +1,11 @@
-package pl.edu.agh.ki.mmorts.server.modules.basic.map.commons;
+package protocol.mapModule;
 
 import java.io.Serializable;
 
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.Board;
+import protocol.mapModule.helpers.Board;
+import protocol.mapModule.helpers.ImmutableBoard;
+
+
 
 
 

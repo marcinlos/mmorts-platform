@@ -1,4 +1,6 @@
-package protocol.mapModule;
+package protocol.mapModule.helpers;
+
+import protocol.mapModule.SimpleMessage;
 
 
 public class DetailedMessage extends SimpleMessage {

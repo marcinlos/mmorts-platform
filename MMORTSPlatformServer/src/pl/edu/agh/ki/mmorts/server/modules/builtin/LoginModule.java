@@ -8,6 +8,7 @@ import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
 import protocol.loginModule.LoginMessage;
+import protocol.loginModule.Requests;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -28,9 +29,7 @@ public class LoginModule extends ModuleBase {
     @Named("login.number")
     private int number;
     
-
-    
-    @MessageMapping("auth")
+    @MessageMapping(Requests.AUTH_REQ)
     public void handleAuth(Message message, Context ctx) {
         logger().debug("Got auth message");
         if(!message.carries(LoginMessage.class)){
@@ -43,74 +42,21 @@ public class LoginModule extends ModuleBase {
 		PlayerData databasePlayerData = null;
 		databasePlayerData = players.receivePlayer(playerRequest);
 		if(databasePlayerData == null){
-			//new player created
+			logger().debug(String.format("Player %s created", playerRequest));
 			players.createPlayer(new PlayerDataImpl(playerRequest, passwordRequest, playerRequest));
-	        outputResponse(message, "auth-success");
+	        outputResponse(message, Requests.AUTH_SUCC);
 	        return;
 		}
 		
+		String request = null;
 		if(databasePlayerData.getPasswordHash().equals(passwordRequest)){
-	        outputResponse(message, "auth-success");
+			logger().debug(String.format("Player %s: login succedeed", playerRequest));
+			request = Requests.AUTH_SUCC;
 		}else{
-	        outputResponse(message, "auth-failed");
+			logger().debug(String.format("Player %s: login failed", playerRequest));
+			request = Requests.AUTH_FAIL;
 		}
+		outputResponse(message, request);
     }
     
-    @MessageMapping
-    public void general(Message message, Context ctx) {
-        logger().debug("=================general()====================");
-    }
-    
-    
-    
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public void receive(final Message message, final Context ctx) {
-//        logger().debug("Message received");
-//        logger().debug(message);
-//        super.receive(message, ctx);
-//
-//        if (message.request.equals("auth")) {
-//            call(_if(val(3).is(eq(3))).then(new Cont() {
-//                public void execute(Control c) {
-//                    logger().debug("3 == 3");
-//                }
-//            })._else(new Cont() {
-//                public void execute(Control c) {
-//                    logger().debug("3 != 3");
-//                }
-//            }));
-//
-//            transaction().addListener(new TransactionListener() {
-//                @Override
-//                public void rollback() {
-//                    logger().debug("Rolled back :(");
-//                    outputResponse(message, "info-fail", (Object) ":(");
-//                }
-//
-//                @Override
-//                public void commit() {
-//                    logger().debug("Commited \\o/");
-//                    outputResponse(message, "info-success",
-//                            (Object) "Weeeeee :D");
-//                }
-//            });
-//
-//            ctx.put("n", 1);
-//            Cont c = _while(map("n", ctx, Integer.class).is(neq(10)))._do(
-//                    seq(new Cont() {
-//                        public void execute(Control c) {
-//                            int n = ctx.get("n", Integer.class);
-//                            logger().debug("Here goes " + n);
-//                            Random rand = new Random();
-//                            outputResponse(message, ":|",
-//                                    (Object) ("So far so good, " + n));
-//                            if (rand.nextInt(10) == 7) {
-//                                //throw new RuntimeException("Evul exception!");
-//                            }
-//                            send("inc_mod", "increment", (Object) "n");
-//    
-
 }

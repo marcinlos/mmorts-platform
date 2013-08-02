@@ -15,10 +15,10 @@ import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.common.message.MessagePack;
 import pl.edu.agh.ki.mmorts.common.message.Mode;
 import pl.edu.agh.ki.mmorts.server.core.annotations.OnShutdown;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.RequestType;
 import pl.edu.agh.ki.mmorts.server.util.reflection.Methods;
-import protocol.mapModule.DetailedMessage;
+import protocol.mapModule.Requests;
 import protocol.mapModule.SimpleMessage;
+import protocol.mapModule.helpers.DetailedMessage;
 
 /**
  * Test client application.
@@ -78,20 +78,20 @@ public class Client implements Interpreter {
 			int row = scanner.nextInt();
 			int col = scanner.nextInt();
 			messg = new DetailedMessage(player, row, col);
-			reqString = RequestType.CHECK.getMessg();
+			reqString = Requests.CHECK;
 		}else if(messgType.equals("F")){
 			messg = new SimpleMessage(player);
-			reqString = RequestType.FULL.getMessg();
+			reqString = Requests.FULL_EXTERNAL;
 		}else if(messgType.equals("R")){
 			int row = scanner.nextInt();
 			int col = scanner.nextInt();
 			messg = new DetailedMessage(player, row, col);
-			reqString = RequestType.REL_AT.getMessg();
+			reqString = Requests.REL_AT;
 		}else if(messgType.equals("P")){
 			int row = scanner.nextInt();
 			int col = scanner.nextInt();
 			messg = new DetailedMessage(player, row, col);
-			reqString = RequestType.PUT_ON.getMessg();
+			reqString = Requests.PUT_ON;
 		}
 		System.out.println("message creating");
 		toSendMessage = new Message(2, "test", address, mode, reqString , messg);

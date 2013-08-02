@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.server.modules.basic.map.commons;
+package protocol.mapModule.helpers;
 
 import java.io.Serializable;
 

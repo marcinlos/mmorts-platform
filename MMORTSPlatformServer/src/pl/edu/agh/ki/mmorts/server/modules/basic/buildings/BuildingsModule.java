@@ -7,10 +7,11 @@ import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.FieldContent;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.ImmutableBoard;
-import pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.MapModuleData;
-import protocol.mapModule.DetailedMessage;
+import protocol.mapModule.MapModuleData;
+import protocol.mapModule.Requests;
+import protocol.mapModule.helpers.DetailedMessage;
+import protocol.mapModule.helpers.FieldContent;
+import protocol.mapModule.helpers.ImmutableBoard;
 
 import com.google.inject.Inject;
 
@@ -62,10 +63,10 @@ public class BuildingsModule extends ModuleBase {
         ctx.put("building", building);
         ctx.put("message", message);
 //        ctx.put(BUILD, PLACEHOLDER);
-        send("map_mod", "full");
+        send("map_mod", Requests.FULL_INTERNAL);
     }
 
-    @MessageMapping("full")
+    @MessageMapping(Requests.FULL_INTERNAL)
     public void receiveMap(Message message, Context ctx) {
         ImmutableBoard board = message.get(MapModuleData.class).getBoard();
         BuildingInstance building = ctx.get("building", BuildingInstance.class);
@@ -98,7 +99,7 @@ public class BuildingsModule extends ModuleBase {
         int row = building.getRow();
         int col = building.getColumn();
         DetailedMessage details = new DetailedMessage(player, row, col);
-        send("map_mod", "putOn", details);
+        send("map_mod", Requests.PUT_ON, details);
         @SuppressWarnings("unchecked")
         List<BuildingInstance> list = (List<BuildingInstance>) persistor
                 .receiveBinding(name(), player, List.class);
@@ -125,7 +126,7 @@ public class BuildingsModule extends ModuleBase {
         int row = building.getRow();
         int col = building.getColumn();
         DetailedMessage details = new DetailedMessage(player, row, col);
-        send("map_mod", "releaseAt", details);
+        send("map_mod", Requests.REL_AT, details);
         @SuppressWarnings("unchecked")
         List<BuildingInstance> list = (List<BuildingInstance>) persistor
                 .receiveBinding(name(), player, List.class);
