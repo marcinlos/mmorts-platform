@@ -1,7 +1,6 @@
 package pl.edu.agh.ki.mmorts.client.backend.modules.mapModule;
 
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
-import pl.edu.agh.ki.mmorts.client.backend.common.message.Mode;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
@@ -10,7 +9,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleData;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
-
+import protocol.mapModule.Requests;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -32,10 +31,10 @@ public class MapModule extends ModuleBase implements GUICommModule{
 		//Message m = new Message(0, name(), name(), Mode.UNICAST, "full", null);
 		Log.d(ID, "Sending request to gateway");
 		//gateway().send();
-		send(anyAddress(), "full");
+		send(anyAddress(), Requests.FULL_EXTERNAL);
 	}
 	
-	@MessageMapping("full")
+	@MessageMapping(Requests.FULL_EXTERNAL)
 	public void stateReceived(Message messg, TransactionContext ctx) {
 		MapModuleData receivedData = messg.get(MapModuleData.class);
 		ResponseContent content = new ResponseContent(false, true, receivedData);

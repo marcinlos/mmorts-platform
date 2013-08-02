@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class BuildingModuleData {
 	
-	 private List<BuildingInstance> buildings = new ArrayList<BuildingInstance>();
+	private List<BuildingInstance> buildings = new ArrayList<BuildingInstance>();
 
 	public List<BuildingInstance> getBuildings() {
 		return buildings;

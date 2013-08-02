@@ -7,8 +7,8 @@ import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
+import protocol.buildingsModule.Requests;
 import protocol.mapModule.MapModuleData;
-import protocol.mapModule.Requests;
 import protocol.mapModule.helpers.DetailedMessage;
 import protocol.mapModule.helpers.FieldContent;
 import protocol.mapModule.helpers.ImmutableBoard;
@@ -56,7 +56,7 @@ public class BuildingsModule extends ModuleBase {
         logger().debug("Initialized");
     }
 
-    @MessageMapping("can-build")
+    @MessageMapping(Requests.CAN_BUILD)
     public void canBuild(Message message, Context ctx) {
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
@@ -74,8 +74,8 @@ public class BuildingsModule extends ModuleBase {
         int height = building.getData().getHeight();
         int row = building.getRow();
         int col = building.getColumn();
-        String response = checkRect(row, col, width, height, board) ? "yes-can-build"
-                : "no-can-build";
+        String response = checkRect(row, col, width, height, board) ? Requests.YES_CAN_BUILD
+                : Requests.NO_CAN_BUILD;
         outputResponse(ctx.get("message", Message.class), response);
     }
 
@@ -91,7 +91,7 @@ public class BuildingsModule extends ModuleBase {
         return true;
     }
 
-    @MessageMapping("build")
+    @MessageMapping(Requests.BUILD)
     public void build(Message message, Context ctx) {
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
@@ -105,20 +105,20 @@ public class BuildingsModule extends ModuleBase {
                 .receiveBinding(name(), player, List.class);
         list.add(building);
         persistor.updateBinding(name(), player, list);
-        outputResponse(message, "build-success");
+        outputResponse(message, Requests.BUILD_SUCCESS);
     }
     
-    @MessageMapping("get-buildings")
+    @MessageMapping(Requests.GET_BUILDINGS)
     public void getBuildings(Message message, Context ctx) {
         BuildingMessage msg = message.get(BuildingMessage.class);
         String player = msg.getPlayer();
         @SuppressWarnings("unchecked")
         List<BuildingInstance> list = (List<BuildingInstance>) persistor
                 .receiveBinding(name(), player, List.class);
-        outputResponse(message, "get-buildings", list);
+        outputResponse(message, Requests.GET_BUILDINGS, list);
     }
     
-    @MessageMapping("demolish")
+    @MessageMapping(Requests.DEMOLISH)
     public void demolish(Message message, Context ctx) {
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
@@ -132,7 +132,7 @@ public class BuildingsModule extends ModuleBase {
                 .receiveBinding(name(), player, List.class);
         list.remove(building);
         persistor.updateBinding(name(), player, list);
-        outputResponse(message, "demolish-success");
+        outputResponse(message, Requests.DEMOLISH_SUCCESS);
     }
 
 }
