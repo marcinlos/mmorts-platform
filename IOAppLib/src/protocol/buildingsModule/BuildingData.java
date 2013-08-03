@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
+package protocol.buildingsModule;
 
 /**
  * Contains all the necessary information about the building.

@@ -7,6 +7,8 @@ import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
 import pl.edu.agh.ki.mmorts.server.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.server.modules.annotations.MessageMapping;
+import protocol.buildingsModule.BuildingInstance;
+import protocol.buildingsModule.BuildingMessage;
 import protocol.buildingsModule.Requests;
 import protocol.mapModule.MapModuleData;
 import protocol.mapModule.helpers.DetailedMessage;

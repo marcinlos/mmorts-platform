@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.server.modules.basic.buildings;
+package protocol.buildingsModule;
 
 import java.io.Serializable;
 

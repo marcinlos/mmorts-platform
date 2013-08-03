@@ -434,7 +434,8 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 		} catch (SQLException e) {
 			logger.warn("Cannot receive data");
 			e.printStackTrace();
-		} finally {
+			
+		}finally {
 			if (stm != null) {
 				try {
 					stm.close();

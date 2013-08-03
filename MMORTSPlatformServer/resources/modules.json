@@ -31,7 +31,7 @@
 	"unicast" : [ "map_mod" ],
 	"groups" : [],
 	"properties" : {
-		"datatype" : "pl.edu.agh.ki.mmorts.server.modules.basic.map.commons.MapModuleData",
+		"datatype" : "protocol.mapModule.MapModuleData",
 		"row.default" : 30,
 		"column.default" : 30
 	}

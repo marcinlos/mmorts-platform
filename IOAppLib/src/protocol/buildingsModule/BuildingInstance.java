@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
+package protocol.buildingsModule;
 
 public class BuildingInstance {
     

@@ -1,0 +1,7 @@
+presenterZmienia -> modu³.getmessage(changedState) [odbieramy wiadomoœæ, ustawiamy stan ze zmian¹ jako state_pending] -> modu³.sendStateChange(change) [wysy³amy na serwer zmianê w jakiejœ postaci] -> modu³.receiveServerMessage(changestateResponse) [serwer odes³a³ wiadomoœæ czy siê uda³o czy nie, jak tak to return, jak nie to ustawia state_pending na null i return]
+<return return>
+(cont) modu³.changedState [jeœli state_pending nie jest nullem to ustawiamy na stan, wysy³amy response ze stanem do presenterów]
+
+serwerUpdatuje -> modu³.receiveServerMessage(stateUpdate) [ustawia stan na ten podes³any, wysy³a wiadomosc do presenterow ze stanem] -> presenter.receiveModu³Message(stan changed) [przerysowywuje czy whateva, return]
+
+presenterGetuje -> modu³.getmessage(getState) [jesli stan istnieje, to wysy³amy do presenterów response ze stanem i return, a jesli nie to -> modu³.sendServerMessage(getState) [wysy³amy prosbe o stan] -> modu³.receiveServerMessage[ustawiamy stan, wysy³amy do presenterów response ze stanem, return]

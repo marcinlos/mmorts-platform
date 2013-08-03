@@ -10,6 +10,7 @@ import pl.edu.agh.ki.mmorts.client.frontend.modules.mapMod.MapModuleData;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import protocol.mapModule.Requests;
+import protocol.mapModule.SimpleMessage;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -31,12 +32,12 @@ public class MapModule extends ModuleBase implements GUICommModule{
 		//Message m = new Message(0, name(), name(), Mode.UNICAST, "full", null);
 		Log.d(ID, "Sending request to gateway");
 		//gateway().send();
-		send(anyAddress(), Requests.FULL_EXTERNAL);
+		send(anyAddress(), Requests.FULL_EXTERNAL, new SimpleMessage("test"));
 	}
 	
 	@MessageMapping(Requests.FULL_EXTERNAL)
 	public void stateReceived(Message messg, TransactionContext ctx) {
-		MapModuleData receivedData = messg.get(MapModuleData.class);
+		MapModuleData receivedData = messg.get(MapModuleData.class); //TODO wrong data, two different classes
 		ResponseContent content = new ResponseContent(false, true, receivedData);
 		ModuleDataMessage message = new ModuleDataMessage(name(), content);
 		Log.d(ID, "Sending reply");
