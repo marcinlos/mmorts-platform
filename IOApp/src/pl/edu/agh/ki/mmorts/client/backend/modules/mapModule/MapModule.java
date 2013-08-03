@@ -11,6 +11,9 @@ import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import protocol.mapModule.Requests;
 import protocol.mapModule.SimpleMessage;
+import protocol.mapModule.helpers.Board;
+import protocol.mapModule.helpers.FieldContent;
+import protocol.mapModule.helpers.ImmutableBoard;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -37,12 +40,34 @@ public class MapModule extends ModuleBase implements GUICommModule{
 	
 	@MessageMapping(Requests.FULL_EXTERNAL)
 	public void stateReceived(Message messg, TransactionContext ctx) {
-		MapModuleData receivedData = messg.get(MapModuleData.class); //TODO wrong data, two different classes
-		ResponseContent content = new ResponseContent(false, true, receivedData);
+		 //TODO wrong data, two different classes
+		protocol.mapModule.MapModuleData receivedData = messg.get(protocol.mapModule.MapModuleData.class);
+		MapModuleData convertedData = convert(receivedData);
+		ResponseContent content = new ResponseContent(false, true, convertedData);
 		ModuleDataMessage message = new ModuleDataMessage(name(), content);
 		Log.d(ID, "Sending reply");
 		modulesBroker.tellPresenters(message, name());
 		
+	}
+
+	private MapModuleData convert(protocol.mapModule.MapModuleData receivedData) {
+		ImmutableBoard b = receivedData.getBoard();
+		boolean[][] map = new boolean[b.getRowsSize()][b.getColsSize()];
+		for(int i=0;i<b.getRowsSize();i++){
+			for(int j=0;j<b.getColsSize();j++){
+				if(b.getAt(i, j).equals(FieldContent.G) || b.getAt(i, j).equals(FieldContent.R)){
+					map[i][j] = false;
+				}
+				else{
+					map[i][j] = true;
+				}
+			}
+		}
+		MapModuleData converted = new MapModuleData();
+		converted.setMapWidth(b.getRowsSize());
+		converted.setMapHeight(b.getColsSize()); //this might be upside down, I dunno, it might throw nullPointers if it is
+		converted.setMap(map);
+		return converted;
 	}
 	
 

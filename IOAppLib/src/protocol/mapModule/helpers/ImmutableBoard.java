@@ -10,4 +10,7 @@ import java.io.Serializable;
  */
 public interface ImmutableBoard extends Serializable{
 	public FieldContent getAt(int row, int col);
+	public int getRowsSize();
+	public int getColsSize();
+	
 }

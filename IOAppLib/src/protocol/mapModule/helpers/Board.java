@@ -56,6 +56,13 @@ public class Board implements ImmutableBoard {
 	public void realeaseAt(int row, int col) {
 		fieldContents.get(row).set(col, startingContents.get(row).get(col));
 	}
+	
+	public int getRowsSize(){
+		return fieldContents.size();
+	}
+	public int getColsSize(){
+		return fieldContents.get(0).size();
+	}
 
 	/**
 	 * Factory class for producing predefined boards.
