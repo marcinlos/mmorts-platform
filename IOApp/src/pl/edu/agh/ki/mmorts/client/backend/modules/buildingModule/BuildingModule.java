@@ -4,6 +4,7 @@ import java.util.List;
 
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Mode;
+import pl.edu.agh.ki.mmorts.client.backend.core.annotations.OnInit;
 import pl.edu.agh.ki.mmorts.client.backend.modules.ModuleBase;
 import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
@@ -49,6 +50,11 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	@Inject(optional= true)
 	ModulesBroker modulesBroker;
 
+	
+	@OnInit
+	public void debug(){
+		Log.d(ID,persistor().toString());
+	}
 	@Override
 	public void dataChanged(ModuleDataMessage message) {
 		Log.d(ID, "Got message");
@@ -138,11 +144,12 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	@MessageMapping(Requests.GET_BUILDINGS)
 	public void gotState(Message messg, TransactionContext ctx) {
 		Log.d(ID, "Received full state");
-		persistor().createBinding(name(), "test", requestedData);
+		
 		requestedData = new BuildingModuleData();
 		for (BuildingInstance building :  (List<BuildingInstance>) messg.get(List.class)) {
 			requestedData.addBuilding(building);
 		} 
+		persistor().createBinding(name(), "test", requestedData);
 		sendResponse();
 	}
 	

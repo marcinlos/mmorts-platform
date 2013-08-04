@@ -13,7 +13,7 @@
 	"unicast" : [ "build_mod" ],
 	"groups" : [],
 	"properties" : {
-		"datatype" : "protocol.buildingsModule.BuildingData"
+		"datatype" : "java.util.List"
 		}
 }, {
 	"name" : "MoneyModule",

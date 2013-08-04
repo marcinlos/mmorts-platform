@@ -6,9 +6,9 @@ import pl.edu.agh.ki.mmorts.client.backend.common.message.Message;
 import pl.edu.agh.ki.mmorts.client.backend.common.message.Messages;
 import pl.edu.agh.ki.mmorts.client.backend.communication.Gateway;
 import pl.edu.agh.ki.mmorts.client.backend.config.Config;
+import pl.edu.agh.ki.mmorts.client.backend.core.annotations.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.Transaction;
 import pl.edu.agh.ki.mmorts.client.backend.core.transaction.TransactionManager;
-import pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.CallDispatcher;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.impl.TrivialMapperFactory;
 import android.util.Log;
@@ -40,7 +40,8 @@ public abstract class ModuleBase implements Module {
     
     /** Persistor */
     @Inject(optional = true)
-    private CustomPersistor persistor;
+    @CustomPersistor
+    private pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistor persistor;
 
     /** Transaction provider Protected, to open it from children*/
     @Inject(optional = true)
@@ -133,7 +134,7 @@ public abstract class ModuleBase implements Module {
     /**
      * @return Persistor
      */
-    protected final CustomPersistor persistor() {
+    protected final pl.edu.agh.ki.mmorts.client.backend.data.CustomPersistor persistor() {
         return persistor;
     }
 
