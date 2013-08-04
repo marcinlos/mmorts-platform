@@ -1,5 +1,6 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.buildings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.ki.mmorts.common.message.Message;
@@ -42,11 +43,11 @@ import com.google.inject.Inject;
  * @author los
  */
 public class BuildingsModule extends ModuleBase {
-    
+
     private static final Object PLACEHOLDER = new Object();
-    
+
     private static final String BUILD = "processing-can-build";
-    
+
     private static final String DEMOLISH = "processing-can-demolish";
 
     @Inject(optional = true)
@@ -60,18 +61,18 @@ public class BuildingsModule extends ModuleBase {
 
     @MessageMapping(Requests.CAN_BUILD)
     public void canBuild(Message message, Context ctx) {
-    	logger().debug("parsing CAN_BUILD message");
+        logger().debug("parsing CAN_BUILD message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
         ctx.put("building", building);
         ctx.put("message", message);
-//        ctx.put(BUILD, PLACEHOLDER);
+        // ctx.put(BUILD, PLACEHOLDER);
         send("map_mod", Requests.FULL_INTERNAL);
     }
 
     @MessageMapping(Requests.FULL_INTERNAL)
     public void receiveMap(Message message, Context ctx) {
-    	logger().debug("parsing FULL_INTERNAL message");
+        logger().debug("parsing FULL_INTERNAL message");
         ImmutableBoard board = message.get(MapModuleData.class).getBoard();
         BuildingInstance building = ctx.get("building", BuildingInstance.class);
         int width = building.getData().getWidth();
@@ -97,7 +98,7 @@ public class BuildingsModule extends ModuleBase {
 
     @MessageMapping(Requests.BUILD)
     public void build(Message message, Context ctx) {
-    	logger().debug("parsing BUILD message");
+        logger().debug("parsing BUILD message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
         String player = msg.getPlayer();
@@ -112,21 +113,35 @@ public class BuildingsModule extends ModuleBase {
         persistor.updateBinding(name(), player, list);
         outputResponse(message, Requests.BUILD_SUCCESS);
     }
-    
+
     @MessageMapping(Requests.GET_BUILDINGS)
     public void getBuildings(Message message, Context ctx) {
-    	logger().debug("parsing GET_BUILDINGS message");
+        logger().debug("parsing GET_BUILDINGS message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         String player = msg.getPlayer();
-        @SuppressWarnings("unchecked")
-        List<BuildingInstance> list = (List<BuildingInstance>) persistor
-                .receiveBinding(name(), player, List.class);
+        List<BuildingInstance> list;
+        try {
+            list = getBuildingList(player);
+        } catch (IllegalArgumentException e) {
+            list = new ArrayList<BuildingInstance>();
+            try {
+                persistor.createBinding(name(), player, list);
+            } catch (IllegalArgumentException e2) {
+                list = getBuildingList(player);
+            }
+        }
         outputResponse(message, Requests.GET_BUILDINGS, list);
     }
-    
+
+    @SuppressWarnings("unchecked")
+    private List<BuildingInstance> getBuildingList(String player) {
+        return (List<BuildingInstance>) persistor.receiveBinding(name(),
+                player, List.class);
+    }
+
     @MessageMapping(Requests.DEMOLISH)
     public void demolish(Message message, Context ctx) {
-    	logger().debug("parsing DEMOLISH message");
+        logger().debug("parsing DEMOLISH message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
         String player = msg.getPlayer();
