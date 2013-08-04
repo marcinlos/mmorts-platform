@@ -51,7 +51,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 	@Override
 	@OnInit
 	public void init() {
-		buildingModuleData = new BuildingModuleData();
+		//buildingModuleData = new BuildingModuleData();
 		
 		buildingImages.put(BuildingTypes.PRZEDSZKOLE.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_orange));
 		buildingImages.put(BuildingTypes.MCDONALDS.getCaption(), BitmapFactory.decodeResource(context.getResources(),R.drawable.tile_fill));

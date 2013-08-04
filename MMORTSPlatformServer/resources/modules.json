@@ -9,10 +9,12 @@
 	}
 }, {
 	"name" : "BuildingModule",
-	"class" : "com.example.BuildingModule",
+	"class" : "pl.edu.agh.ki.mmorts.server.modules.basic.buildings.BuildingsModule",
 	"unicast" : [ "build_mod" ],
-	"groups" : [ "cool_modules" ],
-	"properties" : {}
+	"groups" : [],
+	"properties" : {
+		"datatype" : "protocol.buildingsModule.BuildingData"
+		}
 }, {
 	"name" : "MoneyModule",
 	"class" : "com.example.MoneyModule",

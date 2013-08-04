@@ -60,6 +60,7 @@ public class BuildingsModule extends ModuleBase {
 
     @MessageMapping(Requests.CAN_BUILD)
     public void canBuild(Message message, Context ctx) {
+    	logger().debug("parsing CAN_BUILD message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
         ctx.put("building", building);
@@ -70,6 +71,7 @@ public class BuildingsModule extends ModuleBase {
 
     @MessageMapping(Requests.FULL_INTERNAL)
     public void receiveMap(Message message, Context ctx) {
+    	logger().debug("parsing FULL_INTERNAL message");
         ImmutableBoard board = message.get(MapModuleData.class).getBoard();
         BuildingInstance building = ctx.get("building", BuildingInstance.class);
         int width = building.getData().getWidth();
@@ -95,6 +97,7 @@ public class BuildingsModule extends ModuleBase {
 
     @MessageMapping(Requests.BUILD)
     public void build(Message message, Context ctx) {
+    	logger().debug("parsing BUILD message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
         String player = msg.getPlayer();
@@ -112,6 +115,7 @@ public class BuildingsModule extends ModuleBase {
     
     @MessageMapping(Requests.GET_BUILDINGS)
     public void getBuildings(Message message, Context ctx) {
+    	logger().debug("parsing GET_BUILDINGS message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         String player = msg.getPlayer();
         @SuppressWarnings("unchecked")
@@ -122,6 +126,7 @@ public class BuildingsModule extends ModuleBase {
     
     @MessageMapping(Requests.DEMOLISH)
     public void demolish(Message message, Context ctx) {
+    	logger().debug("parsing DEMOLISH message");
         BuildingMessage msg = message.get(BuildingMessage.class);
         BuildingInstance building = msg.getBuilding();
         String player = msg.getPlayer();

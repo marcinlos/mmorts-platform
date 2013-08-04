@@ -16,6 +16,7 @@ import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import protocol.buildingsModule.BuildingInstance;
 import protocol.buildingsModule.BuildingMessage;
 import protocol.buildingsModule.Requests;
+import protocol.buildingsModule.BuildingMessage;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -65,7 +66,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 
 	private void changeState(BuildingModuleData newState) {
 		List<BuildingInstance> oldBuildings = 
-				persistor().receiveBinding(name(), "", BuildingModuleData.class).getBuildings();
+				persistor().receiveBinding(name(), "test", BuildingModuleData.class).getBuildings();
 		List<BuildingInstance> newBuildings = newState.getBuildings();
 		if (newBuildings.size() > oldBuildings.size()) {
 			BuildingInstance newBuilding = null;
@@ -92,7 +93,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	
 	private void sendRemoveBuildingRequest() {
 		Log.d(ID, "Sending remove building request");
-		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
 		Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.DEMOLISH, buildingMessage);
 		gateway().send(m);
 		
@@ -100,7 +101,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 
 	private void sendAddBuildingQuery() {
 		Log.d(ID, "Sending add building query");
-		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
 		Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.CAN_BUILD, buildingMessage);
 		gateway().send(m);
 		
@@ -109,11 +110,11 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	
 
 	private void getState() {
-		BuildingModuleData buildingData = persistor().receiveBinding(name(), "", BuildingModuleData.class);
-		if (buildingData != null) {
+		try{
+			BuildingModuleData buildingData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
 			sendResponse();	
 		}
-		else {
+		catch(NullPointerException e){ //receiveBinding throws a nullpointer when there is no binding
 			sendGetStateRequest();
 		}
 	}
@@ -121,8 +122,9 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	
 	private void sendGetStateRequest() {
 		Log.d(ID, "Sending get state request");
-		Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.GET_BUILDINGS, null);
-		gateway().send(m);
+		//Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.GET_BUILDINGS, null);
+		//gateway().send(m);
+		send(anyAddress(), Requests.GET_BUILDINGS, new BuildingMessage(null,"test"));
 		
 	}
 	
@@ -136,7 +138,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	@MessageMapping(Requests.GET_BUILDINGS)
 	public void gotState(Message messg, TransactionContext ctx) {
 		Log.d(ID, "Received full state");
-		persistor().createBinding(name(), "", requestedData);
+		persistor().createBinding(name(), "test", requestedData);
 		requestedData = new BuildingModuleData();
 		for (BuildingInstance building :  (List<BuildingInstance>) messg.get(List.class)) {
 			requestedData.addBuilding(building);
@@ -147,7 +149,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	@MessageMapping(Requests.YES_CAN_BUILD)
 	public void canBuild(Message messg, TransactionContext ctx){
 		Log.d(ID, "Received yes - can build");
-		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "");
+		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
 		Message m = new Message(0, name(), name(), Mode.UNICAST, "build", buildingMessage);
 		gateway().send(m);
 	}
@@ -156,7 +158,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	public void cannotBuild(Message messg, TransactionContext ctx){
 		Log.d(ID, "Received no - cannnot build");
 		success = false;
-		requestedData = persistor().receiveBinding(name(), "", BuildingModuleData.class);
+		requestedData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
 		sendResponse();
 	}
 	
@@ -164,7 +166,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	public void buildSucceeded(Message messg, TransactionContext ctx){
 		Log.d(ID, "Received build success");
 		success = true;
-		persistor().updateBinding(name(), "", requestedData);
+		persistor().updateBinding(name(), "test", requestedData);
 		sendResponse();
 	}
 	
@@ -173,7 +175,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	public void demolishSucceeded(Message messg, TransactionContext ctx){
 		Log.d(ID, "Received demolish succeded");
 		success = true;
-		persistor().updateBinding(name(), "", requestedData);
+		persistor().updateBinding(name(), "test", requestedData);
 		sendResponse();
 	}
 
