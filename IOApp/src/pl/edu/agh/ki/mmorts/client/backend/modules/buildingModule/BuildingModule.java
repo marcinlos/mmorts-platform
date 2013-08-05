@@ -17,7 +17,6 @@ import protocol.buildingsModule.BuildingInstance;
 import protocol.buildingsModule.BuildingMessage;
 import protocol.buildingsModule.BuildingModuleData;
 import protocol.buildingsModule.Requests;
-import protocol.buildingsModule.BuildingMessage;
 import android.util.Log;
 
 import com.google.inject.Inject;
