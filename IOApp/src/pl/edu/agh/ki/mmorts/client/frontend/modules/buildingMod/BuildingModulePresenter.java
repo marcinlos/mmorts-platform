@@ -17,6 +17,7 @@ import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import protocol.buildingsModule.BuildingData;
 import protocol.buildingsModule.BuildingInstance;
+import protocol.buildingsModule.BuildingModuleData;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -100,7 +101,9 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
 		modulesBroker.tellModule(message, MODULE_NAME);
 		for(BuildingInstance b : buildingModuleData.getBuildings()){
-			c.drawBitmap(buildingImages.get(b.getData().getName()), b.getColumn()*TILE_SIZE, b.getRow()*TILE_SIZE, null);
+			String name = b.getData().getName();
+			Bitmap bit = buildingImages.get(name);
+			c.drawBitmap(bit, b.getColumn()*TILE_SIZE, b.getRow()*TILE_SIZE, null);
 			Log.d(ID,"rysuje na "+b.getColumn()*TILE_SIZE+", " + b.getRow()*TILE_SIZE);
 		}
 	}
@@ -118,7 +121,7 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		}
 		else {
 			BuildingInstance building = new BuildingInstance();
-			BuildingData data = new BuildingData(getBuildingType().toString(), 1, 1);
+			BuildingData data = new BuildingData(getBuildingType().getCaption(), 1, 1);
 			building.setColumn(truex);
 			building.setRow(truey);
 			building.setData(data);

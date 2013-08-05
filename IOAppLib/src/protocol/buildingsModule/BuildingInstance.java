@@ -1,6 +1,8 @@
 package protocol.buildingsModule;
 
-public class BuildingInstance {
+import java.io.Serializable;
+
+public class BuildingInstance implements Serializable {
     
     private int row;
     private int column;

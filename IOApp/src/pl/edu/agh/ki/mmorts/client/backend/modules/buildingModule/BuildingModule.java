@@ -10,12 +10,12 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModuleData;
 import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import protocol.buildingsModule.BuildingInstance;
 import protocol.buildingsModule.BuildingMessage;
+import protocol.buildingsModule.BuildingModuleData;
 import protocol.buildingsModule.Requests;
 import protocol.buildingsModule.BuildingMessage;
 import android.util.Log;
@@ -99,29 +99,35 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 	
 	private void sendRemoveBuildingRequest() {
 		Log.d(ID, "Sending remove building request");
-		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
-		Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.DEMOLISH, buildingMessage);
-		gateway().send(m);
+		//BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
+		//Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.DEMOLISH, buildingMessage);
+		//gateway().send(m);
+		send(anyAddress(), Requests.DEMOLISH, new BuildingMessage(buildingToChange,"test"));
 		
 	}
 
 	private void sendAddBuildingQuery() {
 		Log.d(ID, "Sending add building query");
-		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
-		Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.CAN_BUILD, buildingMessage);
-		gateway().send(m);
+		//BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
+		//Message m = new Message(0, name(), name(), Mode.UNICAST, Requests.CAN_BUILD, buildingMessage);
+		//gateway().send(m);
+		send(anyAddress(), Requests.CAN_BUILD, new BuildingMessage(buildingToChange,"test"));
 		
 	}
 
 	
 
 	private void getState() {
-		try{
-			requestedData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
-			sendResponse();	
-		}
-		catch(NullPointerException e){ //receiveBinding throws a nullpointer when there is no binding
+		BuildingModuleData dbData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
+		requestedData = new BuildingModuleData();
+		if (dbData == null) {
 			sendGetStateRequest();
+		}
+		else {
+			for (BuildingInstance building : dbData.getBuildings()) {
+				requestedData.addBuilding(building);
+			}
+		sendResponse();	
 		}
 	}
 	
@@ -146,19 +152,24 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 		Log.d(ID, "Received full state");
 		
 		requestedData = new BuildingModuleData();
-		for (BuildingInstance building :  (List<BuildingInstance>) messg.get(List.class)) {
+		for (BuildingInstance building :   messg.get(BuildingModuleData.class).getBuildings()) {
 			requestedData.addBuilding(building);
 		} 
-		persistor().createBinding(name(), "test", requestedData);
+		BuildingModuleData inDatabase = new BuildingModuleData();
+		for (BuildingInstance building : requestedData.getBuildings()) {
+			inDatabase.addBuilding(building);
+		}
+		persistor().createBinding(name(), "test", inDatabase);
 		sendResponse();
 	}
 	
 	@MessageMapping(Requests.YES_CAN_BUILD)
 	public void canBuild(Message messg, TransactionContext ctx){
 		Log.d(ID, "Received yes - can build");
-		BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
-		Message m = new Message(0, name(), name(), Mode.UNICAST, "build", buildingMessage);
-		gateway().send(m);
+		//BuildingMessage buildingMessage = new BuildingMessage(buildingToChange, "test");
+		//Message m = new Message(0, name(), name(), Mode.UNICAST, "build", buildingMessage);
+		//gateway().send(m);
+		send(anyAddress(), Requests.BUILD, new BuildingMessage(buildingToChange,"test"));
 	}
 	
 	@MessageMapping(Requests.NO_CAN_BUILD)

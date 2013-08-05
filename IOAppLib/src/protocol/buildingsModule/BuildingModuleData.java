@@ -1,15 +1,16 @@
-package pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod;
+package protocol.buildingsModule;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import protocol.buildingsModule.BuildingInstance;
 
 /**
  * Represents a content of a message sent between {@code MapModulePresenter} and {@code MapModule}
  * If {@code MapModule} gets a message with the content of {@code null} then it's a request for data.
  */
-public class BuildingModuleData {
+public class BuildingModuleData implements Serializable {
 	
 	private List<BuildingInstance> buildings = new ArrayList<BuildingInstance>();
 
@@ -27,9 +28,11 @@ public class BuildingModuleData {
 	
 	
 	public void removeBuilding(int x, int y) {
-		for (BuildingInstance building : buildings) {
-			if (building.getColumn() == x && building.getRow() == y) {
-				buildings.remove(building);
+		Iterator<BuildingInstance> i = buildings.iterator();
+		while(i.hasNext()){
+			BuildingInstance b = i.next();
+			if(b.getColumn() == x && b.getRow() == y){
+				i.remove();
 			}
 		}
 	}

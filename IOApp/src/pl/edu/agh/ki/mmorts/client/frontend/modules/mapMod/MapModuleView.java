@@ -61,6 +61,7 @@ public class MapModuleView extends View implements OurView {
 		for(ViewListener v : presentersListeners){
 			v.touchEvent(x, y);
 		}
+		invalidate();
 		
 	}
 
@@ -81,7 +82,8 @@ public class MapModuleView extends View implements OurView {
 			 */
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				iWasClicked(event.getX(), event.getY());
+				if(event.getAction() == MotionEvent.ACTION_DOWN)
+					iWasClicked(event.getX(), event.getY());
 				return true; //event does not go further
 			}
 		});

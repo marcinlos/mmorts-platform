@@ -1,11 +1,13 @@
 package protocol.buildingsModule;
 
+import java.io.Serializable;
+
 /**
  * Contains all the necessary information about the building.
  * 
  * @author los
  */
-public class BuildingData {
+public class BuildingData implements Serializable {
 
     private String name;
     private int width;

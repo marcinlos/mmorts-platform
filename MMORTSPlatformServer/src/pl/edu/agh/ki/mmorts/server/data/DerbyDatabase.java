@@ -396,6 +396,7 @@ public class DerbyDatabase implements Database, ModuleEventsListener{
 	 * 				declared by config of module
 	 */
 	private Object deserialize(String moduleName, String stringData) {
+		logger.error("ODBYTODBYT:::: " + stringData);
 		return gson.fromJson(stringData, namesObjectMap.get(moduleName));
 	}
 	

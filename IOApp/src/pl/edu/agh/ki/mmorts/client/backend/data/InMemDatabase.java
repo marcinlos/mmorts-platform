@@ -124,7 +124,11 @@ public class InMemDatabase implements Database {
 		if(moduleMap==null){
 			return null;
 		}
-		return moduleMap.get(playerName);
+		Object o = moduleMap.get(playerName);
+		if (o == null) {
+			throw new Error("Nie jest dobrze");
+		}
+		return o;
 	}
 
 	/**
