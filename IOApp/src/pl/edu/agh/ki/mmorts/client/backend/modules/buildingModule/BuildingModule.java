@@ -117,7 +117,7 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 
 	private void getState() {
 		try{
-			BuildingModuleData buildingData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
+			requestedData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
 			sendResponse();	
 		}
 		catch(NullPointerException e){ //receiveBinding throws a nullpointer when there is no binding

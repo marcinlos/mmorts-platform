@@ -25,5 +25,6 @@
 	"properties" : {
 		"example.number" : 3,
 		"presenter" : "pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModulePresenter"
+		"datatype" : "protocol.buildingsModule.BuildingModuleData"
 	}
 }]
