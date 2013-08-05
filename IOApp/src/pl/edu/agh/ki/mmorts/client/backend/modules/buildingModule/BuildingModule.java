@@ -10,14 +10,13 @@ import pl.edu.agh.ki.mmorts.client.backend.modules.TransactionContext;
 import pl.edu.agh.ki.mmorts.client.backend.modules.annotations.MessageMapping;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.GUICommModule;
 import pl.edu.agh.ki.mmorts.client.frontend.modules.ModulesBroker;
-import pl.edu.agh.ki.mmorts.client.frontend.modules.buildingMod.BuildingModuleData;
 import pl.edu.agh.ki.mmorts.client.messages.ChangeStateContent;
 import pl.edu.agh.ki.mmorts.client.messages.ModuleDataMessage;
 import pl.edu.agh.ki.mmorts.client.messages.ResponseContent;
 import protocol.buildingsModule.BuildingInstance;
 import protocol.buildingsModule.BuildingMessage;
+import protocol.buildingsModule.BuildingModuleData;
 import protocol.buildingsModule.Requests;
-import protocol.buildingsModule.BuildingMessage;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -117,10 +116,10 @@ public class BuildingModule extends ModuleBase implements GUICommModule {
 
 	private void getState() {
 		try{
-			BuildingModuleData buildingData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
+			requestedData = persistor().receiveBinding(name(), "test", BuildingModuleData.class);
 			sendResponse();	
 		}
-		catch(NullPointerException e){ //receiveBinding throws a nullpointer when there is no binding
+		catch(NullPointerException e){ 
 			sendGetStateRequest();
 		}
 	}
