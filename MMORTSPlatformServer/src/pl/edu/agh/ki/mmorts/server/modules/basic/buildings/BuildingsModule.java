@@ -1,8 +1,5 @@
 package pl.edu.agh.ki.mmorts.server.modules.basic.buildings;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pl.edu.agh.ki.mmorts.common.message.Message;
 import pl.edu.agh.ki.mmorts.server.data.CustomPersistor;
 import pl.edu.agh.ki.mmorts.server.modules.Context;
@@ -112,6 +109,7 @@ public class BuildingsModule extends ModuleBase {
 				.receiveBinding(name(), player, BuildingModuleData.class);
 		data.addBuilding(building);
 		persistor.updateBinding(name(), player, data);
+		logger().debug("sending response to BUILD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		outputResponse(message, Requests.BUILD_SUCCESS);
 	}
 

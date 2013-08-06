@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">IOApp</string>
+    <string name="app_name">VerySimpleGame</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Loading the game, please wait</string>
     <string name="title_activity_gridd">GriddActivity</string>

@@ -128,7 +128,6 @@ public class LoginView extends LinearLayout {
 			focusView.requestFocus();
 		} else {
 			mEmailView.setTextColor(Color.GRAY);
-			findViewById(R.id.sign_in_button).setClickable(false);
 			presenter.login(mEmail, mPassword);
 		}
 	}

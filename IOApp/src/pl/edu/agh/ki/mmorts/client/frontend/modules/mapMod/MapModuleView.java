@@ -84,7 +84,7 @@ public class MapModuleView extends View implements OurView {
 			public boolean onTouch(View v, MotionEvent event) {
 				if(event.getAction() == MotionEvent.ACTION_DOWN)
 					iWasClicked(event.getX(), event.getY());
-				return true; //event does not go further
+				return false; //moving the screen around might want the event? hopefully
 			}
 		});
 		

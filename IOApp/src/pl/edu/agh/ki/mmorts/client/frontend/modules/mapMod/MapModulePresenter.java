@@ -125,8 +125,8 @@ public class MapModulePresenter extends AbstractModulePresenter implements ViewL
 			for(int j=0;j<mapModuleData.getMapHeight();j++){
 				if (!map[i][j]){ //if there is nothing there, map wants to draw the nothing
 					//TODO check if changing around i and j is required, I never could tell
-					c.drawBitmap(emptySpace, i*TILE_SIZE, j*TILE_SIZE, null);
-					Log.d(ID,"rysuje na "+i*TILE_SIZE+", " + j*TILE_SIZE);
+					c.drawBitmap(emptySpace, j*TILE_SIZE, i*TILE_SIZE, null);
+					Log.d(ID,"rysuje na "+j*TILE_SIZE+", " + i*TILE_SIZE);
 				}
 			}
 		}

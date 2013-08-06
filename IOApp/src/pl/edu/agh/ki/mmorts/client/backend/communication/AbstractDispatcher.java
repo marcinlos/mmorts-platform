@@ -123,7 +123,7 @@ public abstract class AbstractDispatcher extends AbstractModuleContainer
             	Log.e(ID,"Exception inside a commit handler");
             }
         } catch (Exception e) {
-        	Log.e(ID,"Transaction rolled back due to exception");
+        	Log.e(ID,"Transaction rolled back due to exception",e);
             tm.rollback();
         } finally {
             // After commit/rollback reset the executor

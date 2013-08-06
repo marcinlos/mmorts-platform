@@ -98,14 +98,18 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 
 	@Override
 	public void drawStuff(Canvas c) {
+		if(buildingModuleData != null)
+			Log.e(ID,"size: " +buildingModuleData.getBuildings().size());
 		ModuleDataMessage message = new ModuleDataMessage(ID, new GetStateContent());
 		modulesBroker.tellModule(message, MODULE_NAME);
+		Log.e(ID,"size: " +buildingModuleData.getBuildings().size());
 		for(BuildingInstance b : buildingModuleData.getBuildings()){
 			String name = b.getData().getName();
 			Bitmap bit = buildingImages.get(name);
 			c.drawBitmap(bit, b.getColumn()*TILE_SIZE, b.getRow()*TILE_SIZE, null);
 			Log.d(ID,"rysuje na "+b.getColumn()*TILE_SIZE+", " + b.getRow()*TILE_SIZE);
 		}
+		Log.d(ID,"bleh");
 	}
 
 
@@ -116,7 +120,8 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 		int truex = (int)tmp;
 		tmp = y/TILE_SIZE;
 		int truey = (int)tmp;
-		if (checkIfBuildingExists(truex, truey)) {
+		boolean exists;
+		if ( exists = checkIfBuildingExists(truex, truey)) {
 			buildingModuleData.removeBuilding(truex, truey);
 		}
 		else {
@@ -128,10 +133,11 @@ public class BuildingModulePresenter extends AbstractModulePresenter implements 
 					
 			buildingModuleData.addBuilding(building);
 		}
-		
+		Log.e(ID,"x: " + truex + " y: " + truey + "exists?: " + exists);
 		ChangeStateContent content = new ChangeStateContent(buildingModuleData);
 		ModuleDataMessage message = new ModuleDataMessage(name(), content);
 		modulesBroker.tellModule(message, name());
+		Log.e(ID,"size: " +buildingModuleData.getBuildings().size());
 		
 	}
 	
